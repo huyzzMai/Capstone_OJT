@@ -12,6 +12,7 @@ namespace DataAccessLayer.Models
         public OJTDbContext(DbContextOptions options) : base(options) { }
 
         #region DbSet
+        public DbSet<Criteria> Criterias { get; set; }   
         #endregion
     }
 }
