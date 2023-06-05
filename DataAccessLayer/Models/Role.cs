@@ -23,6 +23,6 @@ namespace DataAccessLayer.Models
 
         public DateTime? UpdatedAt { get; set; }
 
-        public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<User> Users { get; set; } 
     }
 }
