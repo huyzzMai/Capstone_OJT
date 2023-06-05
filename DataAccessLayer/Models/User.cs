@@ -47,5 +47,9 @@ namespace DataAccessLayer.Models
         public DateTime? CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
+
+        public int? RoleId { get; set; }
+        [ForeignKey("RoleId")]
+        public Role Role { get; set; }
     }
 }
