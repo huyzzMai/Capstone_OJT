@@ -1,4 +1,4 @@
-﻿namespace API.Models.ResponseModel
+﻿namespace BusinessLayer.Models.ResponseModel
 {
     public class ResponseModel<T> where T : class
     {
