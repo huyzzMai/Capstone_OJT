@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Models
 {
+    [Table("Course")]
     public class Course
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Column(TypeName = "nvarchar(100)")]
@@ -23,10 +25,6 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(500)")]
         public string Link { get; set; }
 
-        public DateTime? StartTime { get; set; } 
-
-        public DateTime? EndTime { get; set; }
-
         public bool? IsCompulsory { get; set; }
 
         public int? Status { get; set; }
@@ -36,5 +34,7 @@ namespace DataAccessLayer.Models
         public DateTime? CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
+
+        public virtual ICollection<CoursePosition> CoursePositions { get; set; }
     }
 }

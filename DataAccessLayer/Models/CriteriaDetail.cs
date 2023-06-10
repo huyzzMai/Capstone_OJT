@@ -12,6 +12,7 @@ namespace DataAccessLayer.Models
     public class CriteriaDetail
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Column(TypeName = "nvarchar(100)")]

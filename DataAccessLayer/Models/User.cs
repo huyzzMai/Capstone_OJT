@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Models
 {
+    [Table("User")]
     public class User
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Column(TypeName = "nvarchar(100)")]
@@ -40,6 +42,11 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(500)")]
         public string AvatarUrl { get; set; }
 
+        [Column(TypeName = "nvarchar(50)")]
+        public string Position { get; set; }
+
+        public int? Role { get; set; }
+
         public int? Status { get; set; }
 
         public bool? IsDeleted { get; set; }
@@ -48,8 +55,26 @@ namespace DataAccessLayer.Models
 
         public DateTime? UpdatedAt { get; set; }
 
-        public int? RoleId { get; set; }
-        [ForeignKey("RoleId")]
-        public Role Role { get; set; }
+        // Relation with OJTBatch 
+        public int? OJTBatchId { get; set; }
+        [ForeignKey("OJTBatchId")]
+        public OJTBatch OJTBatch { get; set; }
+
+        // Relation with Training Plan 
+        public int? TrainingPlanId { get; set; }
+        [ForeignKey("TrainingPlanId")]
+        public TrainingPlan TrainingPlan { get; set; }
+
+        // Relation of Trainer and Trainee
+        public int? UserReferenceId { get; set; }
+        [ForeignKey("UserReferenceId")]
+        public User Trainer { get; set; }
+        public virtual ICollection<User> Trainees { get; set; }
+
+        public virtual ICollection<Attendance> Attendances { get; set; }
+
+
+        public virtual ICollection<Criteria> Criterias { get; set; }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Models
 {
-    [Table("Criteria")]
-    public class Criteria
+    [Table("TrainingPlan")]
+    public class TrainingPlan
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Column(TypeName = "nvarchar(100)")]
-        public string Name { get; set; }    
+        public string Name { get; set; }
 
-        public int? TotalPoint { get; set; }
+        public int? Status { get; set; }
 
         public bool? IsDeleted { get; set; }
 
@@ -26,8 +27,8 @@ namespace DataAccessLayer.Models
 
         public DateTime? UpdatedAt { get; set; }
 
-        public virtual ICollection<CriteriaDetail> CriteriaDetails { get; set; }
+        public virtual ICollection<User> Trainees { get; set; }
 
-        public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<TrainingPlanDetail> TrainingPlanDetails { get; set; }
     }
 }
