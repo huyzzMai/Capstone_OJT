@@ -1,5 +1,7 @@
 ﻿using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
+using DataAccessLayer.Repository.Implement;
+using DataAccessLayer.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,7 @@ namespace DataAccessLayer.Base
         {
             _context = context;
         }
+        public ICriteriaRepository CriteriaRepository => new CriteriaRepository(_context, this);
 
         //public IAccountRepository AccountRepository => new AccountRepository(_context, this);
 
