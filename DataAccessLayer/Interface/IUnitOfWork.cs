@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataAccessLayer.Repository.Interface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace DataAccessLayer.Interface
 {
     public interface IUnitOfWork
     {
+        ICriteriaRepository CriteriaRepository { get; }
         //IAccountRepository AccountRepository { get; }
         //IApplicationRepository ApplicationRepository { get; }
         //ICategoryRepository CategoryRepository { get; }

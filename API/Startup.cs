@@ -1,5 +1,7 @@
 using BusinessLayer.Service.Implement;
 using BusinessLayer.Service.Interface;
+using DataAccessLayer.Base;
+using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
 using DataAccessLayer.Repository.Implement;
 using DataAccessLayer.Repository.Interface;
@@ -46,8 +48,12 @@ namespace API
                options => options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
 
             // Use for user repo and service
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserService, UserService>();          
             services.AddScoped<IUserRepository, UserRepository>();
+
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ICriteriaService, CriteriaService>();
+            
 
             services.AddControllers()
                 .AddJsonOptions(x =>
