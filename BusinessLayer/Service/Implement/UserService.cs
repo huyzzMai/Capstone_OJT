@@ -166,7 +166,7 @@ namespace BusinessLayer.Service.Implement
             //}
         }
 
-        public async Task<User> GerCurrentUser(int id)
+        public async Task<User> GetUserById(int id)
         {
             var user = await _unitOfWork.UserRepository.GetFirst(c=>c.Id==id);
             return user;

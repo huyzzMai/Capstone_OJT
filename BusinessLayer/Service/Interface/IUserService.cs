@@ -12,6 +12,6 @@ namespace BusinessLayer.Service.Interface
     public interface IUserService
     {
         Task<LoginResponse> LoginUser(LoginRequest request);
-        Task<User> GerCurrentUser(int id);
+        Task<User> GetUserById(int id);
     }
 }

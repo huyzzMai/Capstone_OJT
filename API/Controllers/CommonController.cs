@@ -29,7 +29,7 @@ namespace API.Controllers
 
             if (userIdClaim != null)
             {              
-                var user = await userService.GerCurrentUser(int.Parse(userIdClaim.Value));             
+                var user = await userService.GetUserById(int.Parse(userIdClaim.Value));             
                 return Ok(user);
             }
             return Unauthorized();
