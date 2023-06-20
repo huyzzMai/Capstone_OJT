@@ -19,9 +19,8 @@ namespace API.Controllers
         {
             this.userService = userService;
         }
-
-        [HttpPost("login")]
         [AllowAnonymous]
+        [HttpPost("login")]   
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             try

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -130,7 +131,8 @@ namespace BusinessLayer.Service.Implement
                     new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                    new Claim(JwtRegisteredClaimNames.NameId, userId)
+                    new Claim(JwtRegisteredClaimNames.NameId, userId),
+                    new Claim("UserId", userId.ToString())
                     };
                 var result = CreateToken(claims);
                 return result;
@@ -162,6 +164,12 @@ namespace BusinessLayer.Service.Implement
             //    var result = CreateToken(claims);
             //    return result;
             //}
+        }
+
+        public async Task<User> GerCurrentUser(int id)
+        {
+            var user = await _unitOfWork.UserRepository.GetFirst(c=>c.Id==id);
+            return user;
         }
     }
 }
