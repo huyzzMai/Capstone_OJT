@@ -17,6 +17,9 @@ namespace DataAccessLayer.Base
         {
             _context = context;
         }
+
+        public IUserRepository UserRepository => new UserRepository(_context, this);
+
         public ICriteriaRepository CriteriaRepository => new CriteriaRepository(_context, this);
 
         //public IAccountRepository AccountRepository => new AccountRepository(_context, this);

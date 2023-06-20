@@ -1,6 +1,7 @@
 ﻿using BusinessLayer.Models.RequestModel.AuthenticationRequest;
 using BusinessLayer.Models.ResponseModel.AuthenticationResponse;
 using BusinessLayer.Service.Interface;
+using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
 using DataAccessLayer.Repository.Interface;
 using Microsoft.Extensions.Configuration;
@@ -19,13 +20,13 @@ namespace BusinessLayer.Service.Implement
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public IConfiguration _configuration;
 
-        public UserService(IUserRepository userRepository, IConfiguration configuration)
+        public UserService(IUnitOfWork unitOfWork, IConfiguration configuration)
         {
-            this.userRepository = userRepository;
+            _unitOfWork = unitOfWork;
             _configuration = configuration;
         }
 
@@ -107,7 +108,7 @@ namespace BusinessLayer.Service.Implement
 
         public async Task<LoginResponse> LoginUser(LoginRequest request)
         {
-            User u = await userRepository.GetUserByEmailAndDeleteIsFalse(request.Email);
+            User u = await _unitOfWork.UserRepository.GetUserByEmailAndDeleteIsFalse(request.Email);
             if (u == null)
             {
                 throw new Exception("Email is wrong!");

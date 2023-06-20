@@ -48,13 +48,13 @@ namespace API
                options => options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
 
             // Use for user repo and service
-            services.AddScoped<IUserService, UserService>();          
-            services.AddScoped<IUserRepository, UserRepository>();
+                     
+            //services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICriteriaService, CriteriaService>();
             
-
             services.AddControllers()
                 .AddJsonOptions(x =>
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);

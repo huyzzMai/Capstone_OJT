@@ -1,4 +1,6 @@
-﻿using DataAccessLayer.Models;
+﻿using DataAccessLayer.Base;
+using DataAccessLayer.Interface;
+using DataAccessLayer.Models;
 using DataAccessLayer.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,18 +11,15 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Repository.Implement
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : GenericRepository<User>, IUserRepository
     {
-        private readonly OJTDbContext dbContext;
-
-        public UserRepository(OJTDbContext dbContext)
+        public UserRepository(OJTDbContext context, IUnitOfWork unitOfWork) : base(context, unitOfWork)
         {
-            this.dbContext = dbContext;
         }
 
         public async Task<User> GetUserByEmailAndDeleteIsFalse(string email)
         {
-            User user = await dbContext.Users.SingleOrDefaultAsync(u => u.Email == email && u.IsDeleted == false);
+            User user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email && u.IsDeleted == false);
             return user;
         }
     }

@@ -73,8 +73,7 @@ namespace DataAccessLayer.Models
 
         public virtual ICollection<Attendance> Attendances { get; set; }
 
-
-        public virtual ICollection<Criteria> Criterias { get; set; }
+        public virtual ICollection<UserCriteria> UserCriterias { get; set; }
 
     }
 }

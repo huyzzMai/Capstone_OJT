@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,8 +23,6 @@ namespace DataAccessLayer.Models
 
         public DbSet<Criteria> Criterias { get; set; }
 
-        public DbSet<CriteriaDetail> CriteriaDetails { get; set; }
-
         public DbSet<University> Universities { get; set; }
 
         public DbSet<OJTBatch> OJTBatches { get; set; }
@@ -37,6 +36,9 @@ namespace DataAccessLayer.Models
         public DbSet<Skill> Skills { get; set; }
 
         public DbSet<CoursePosition> CoursePositions { get; set; }
+
+        public DbSet<UserCriteria> UserCriterias { get; set; }
+
         #endregion
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -50,6 +52,12 @@ namespace DataAccessLayer.Models
                 String connectionString = config["ConnectionStrings:DBConnection"];
                 optionsBuilder.UseSqlServer(connectionString);
             }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserCriteria>()
+                .HasKey(c => new { c.UserId, c.CriteriaId });
         }
     }
 }

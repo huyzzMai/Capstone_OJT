@@ -9,6 +9,7 @@ namespace DataAccessLayer.Interface
 {
     public interface IUnitOfWork
     {
+        IUserRepository UserRepository { get; }
         ICriteriaRepository CriteriaRepository { get; }
         //IAccountRepository AccountRepository { get; }
         //IApplicationRepository ApplicationRepository { get; }
