@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Models.RequestModel.AuthenticationRequest;
 using BusinessLayer.Models.ResponseModel.AuthenticationResponse;
+using DataAccessLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,6 @@ namespace BusinessLayer.Service.Interface
     public interface IUserService
     {
         Task<LoginResponse> LoginUser(LoginRequest request);
+        Task<User> GetUserById(int id);
     }
 }

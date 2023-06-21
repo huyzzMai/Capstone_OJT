@@ -24,6 +24,7 @@ namespace API.Controllers
         {
             _service= service;
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateCriteria([FromBody] CreateCriteriaRequest request)
         {
