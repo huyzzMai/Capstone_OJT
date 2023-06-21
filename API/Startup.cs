@@ -55,7 +55,12 @@ namespace API
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICriteriaService, CriteriaService>();
-            
+
+
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson()
+                .AddXmlDataContractSerializerFormatters();
+
             services.AddControllers()
                 .AddJsonOptions(x =>
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);

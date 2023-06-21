@@ -21,27 +21,5 @@ namespace DataAccessLayer.Base
         public IUserRepository UserRepository => new UserRepository(_context, this);
 
         public ICriteriaRepository CriteriaRepository => new CriteriaRepository(_context, this);
-
-        //public IAccountRepository AccountRepository => new AccountRepository(_context, this);
-
-        //public IApplicationRepository ApplicationRepository => new ApplicationRepository(_context, this);
-
-        //public ICategoryRepository CategoryRepository => new CategoryRepository(_context, this);
-
-        //public IInterviewRepository InterviewRepository => new InterviewRepository(_context, this);
-
-        //public ILevelRepository LevelRepository => new LevelRepository(_context, this);
-
-        //public IPostRepository PostRepository =>  new PostRepository(_context, this);
-
-        //public IPostSkillRepository PostSkillRepository => new PostSkillRepository(_context, this);
-
-        //public IRoleRepository RoleRepository => new RoleRepository(_context, this);
-
-        //public ISkillRepository SkillRepository => new SkillRepository(_context, this);
-
-        //public ISlotRepository SlotRepository => new SlotRepository(_context, this);
-
-        //public IUserSkillRepository UserSkillRepository => new UserSkillRepository(_context, this);
     }
 }

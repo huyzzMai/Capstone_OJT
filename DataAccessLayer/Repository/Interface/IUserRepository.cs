@@ -11,5 +11,9 @@ namespace DataAccessLayer.Repository.Interface
     public interface IUserRepository : IGenericRepository<User>
     {
         Task<User> GetUserByEmailAndDeleteIsFalse(string email);
+
+        Task<List<User>> GetTrainerList();
+
+        Task<List<User>> GetTraineeList();
     }
 }

@@ -11,16 +11,5 @@ namespace DataAccessLayer.Interface
     {
         IUserRepository UserRepository { get; }
         ICriteriaRepository CriteriaRepository { get; }
-        //IAccountRepository AccountRepository { get; }
-        //IApplicationRepository ApplicationRepository { get; }
-        //ICategoryRepository CategoryRepository { get; }
-        //IInterviewRepository InterviewRepository { get; }
-        //ILevelRepository LevelRepository { get; }
-        //IPostRepository PostRepository { get; }
-        //IPostSkillRepository PostSkillRepository { get; }
-        //IRoleRepository RoleRepository { get; }
-        //ISkillRepository SkillRepository { get; }
-        //ISlotRepository SlotRepository { get; }
-        //IUserSkillRepository UserSkillRepository { get; }        
     }
 }

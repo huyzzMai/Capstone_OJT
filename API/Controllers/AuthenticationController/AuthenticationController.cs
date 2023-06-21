@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 using System;
 using BusinessLayer.Models.RequestModel.AuthenticationRequest;
 
-namespace API.Controllers
+namespace API.Controllers.AuthenticationController
 {
     [Route("api/authen")]
     [ApiController]
+    [AllowAnonymous]
     public class AuthenticationController : ControllerBase
     {
         private readonly IUserService userService;
@@ -19,8 +20,8 @@ namespace API.Controllers
         {
             this.userService = userService;
         }
-        [AllowAnonymous]
-        [HttpPost("login")]   
+        
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             try

@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Base;
+using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
 using DataAccessLayer.Repository.Interface;
@@ -21,6 +22,22 @@ namespace DataAccessLayer.Repository.Implement
         {
             User user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email && u.IsDeleted == false);
             return user;
+        }
+
+        public async Task<List<User>> GetTraineeList()
+        {
+            List<User> users = await _context.Users
+                .Where(u => u.IsDeleted == false && u.Role == CommonEnums.ROLE.TRAINEE)
+                .ToListAsync();
+            return users;
+        }
+
+        public async Task<List<User>> GetTrainerList()
+        {
+            List<User> users = await _context.Users
+                .Where(u => u.IsDeleted == false && u.Role == CommonEnums.ROLE.TRAINER)
+                .ToListAsync();
+            return users;
         }
     }
 }
