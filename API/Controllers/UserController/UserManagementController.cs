@@ -32,7 +32,20 @@ namespace API.Controllers.UserController
                     ex.Message);
             }
         }
-
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> GetAccountList()
+        {
+            try
+            {
+                return Ok(await userService.GetUserList());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
         [Authorize(Roles = "Manager")]
         [HttpGet("trainees")]
         public async Task<IActionResult> GetTraineeList()

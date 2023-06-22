@@ -231,5 +231,23 @@ namespace BusinessLayer.Service.Implement
                 ).ToList();
             return res;
         }
+
+        public async Task<IEnumerable<UserListResponse>> GetUserList()
+        {
+            var listuser = await _unitOfWork.UserRepository.Get(c => c.IsDeleted == false && c.Role !=CommonEnums.ROLE.ADMIN);
+            IEnumerable<UserListResponse> res = listuser.Select(
+                 user =>
+                 {
+                     return new UserListResponse()
+                     {
+                         Id = user.Id,
+                         FullName = user.Name,
+                         AvatarUrl = user.AvatarUrl,
+                         Role= user.Role
+                     };
+                 }
+                 ).ToList();
+            return res;
+        }
     }
 }
