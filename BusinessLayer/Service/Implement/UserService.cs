@@ -1,10 +1,12 @@
 ﻿using BusinessLayer.Models.RequestModel.AuthenticationRequest;
+using BusinessLayer.Models.RequestModel.UserRequest;
 using BusinessLayer.Models.ResponseModel.AuthenticationResponse;
 using BusinessLayer.Models.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
+using DataAccessLayer.Repository.Implement;
 using DataAccessLayer.Repository.Interface;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -109,6 +111,26 @@ namespace BusinessLayer.Service.Implement
         }
         #endregion
 
+        #region Send Token Reset Password
+
+        public async Task SendTokenResetPassword(string email)
+        {
+            var u = await _unitOfWork.UserRepository.GetUserByEmailAndDeleteIsFalse(email);
+            if (u == null)
+            {
+                throw new Exception("User not found!");
+            }
+            Random generator = new Random();
+            String r = generator.Next(0, 1000000).ToString("D6");
+            u.ResetPassordCode = r;
+            await _unitOfWork.UserRepository.Update(u);
+
+            var sender = new MailSender();
+            sender.Send(email, u.Name, r);
+        }
+
+        #endregion
+
         public async Task<LoginResponse> LoginUser(LoginRequest request)
         {
             User u = await _unitOfWork.UserRepository.GetUserByEmailAndDeleteIsFalse(request.Email);
@@ -194,7 +216,11 @@ namespace BusinessLayer.Service.Implement
 
         public async Task<User> GetUserById(int id)
         {
-            var user = await _unitOfWork.UserRepository.GetFirst(c=>c.Id==id);
+            var user = await _unitOfWork.UserRepository.GetFirst(c=>c.Id==id && c.IsDeleted == false);
+            if (user == null)
+            {
+                throw new Exception("This user cannot be found!");
+            }
             return user;
         }
 
@@ -230,6 +256,70 @@ namespace BusinessLayer.Service.Implement
                 }
                 ).ToList();
             return res;
+        }
+
+        public async Task<IEnumerable<TraineeResponse>> GetTraineeListByTrainer(int id)
+        {
+            var users = await _unitOfWork.UserRepository.GetTraineeListByTrainerId(id);
+            IEnumerable<TraineeResponse> res = users.Select(
+                user =>
+                {
+                    return new TraineeResponse()
+                    {
+                        Id = user.Id,
+                        FullName = user.Name,
+                        Email = user.Email
+                    };
+                }
+                ).ToList();
+            return res;
+        }
+
+        public async Task UpdateUserInformation(int id, UpdateUserInformationRequest model)
+        {
+            var u = await _unitOfWork.UserRepository.GetUserByIdAndDeleteIsFalse(id);
+
+            if (u == null)
+            {
+                throw new Exception("This user cannot be updated!");
+            }
+
+            //var check = await _unitOfWork.UserRepository.GetUserByEmailAndDeleteIsFalse(model.Email);
+            //if (check != null)
+            //{
+            //    throw new Exception("This email existed!");
+            //}
+
+            if (model.FullName == null)
+            {
+                u.Name = u.Name;
+            }
+            else
+            {
+                u.Name = model.FullName;
+            }
+
+            if (model.Birthday == null)
+            {
+                u.Birthday = u.Birthday;
+            }
+            else
+            {
+                u.Birthday = model.Birthday;
+            }
+
+            if (model.PhoneNumber == null)
+            {
+                u.PhoneNumber = u.PhoneNumber;
+            }
+            else
+            {
+                u.PhoneNumber = model.PhoneNumber;
+            }
+
+            u.UpdatedAt = DateTime.Now;
+
+            await _unitOfWork.UserRepository.Update(u);
         }
     }
 }

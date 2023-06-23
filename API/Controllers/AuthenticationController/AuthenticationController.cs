@@ -46,5 +46,20 @@ namespace API.Controllers.AuthenticationController
                     ex.Message);
             }
         }
+
+        [HttpPost("reset-password-code")]
+        public async Task<IActionResult> SendForgetPasswordCode(string email)
+        {
+            try
+            {
+               await userService.SendTokenResetPassword(email);
+               return Ok("Reset code sent to your email.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
     }
 }

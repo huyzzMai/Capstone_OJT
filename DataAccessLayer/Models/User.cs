@@ -49,6 +49,9 @@ namespace DataAccessLayer.Models
 
         public int? Status { get; set; }
 
+        [Column(TypeName = "nvarchar(10)")]
+        public string ResetPassordCode { get; set; }
+
         public bool? IsDeleted { get; set; }
 
         public DateTime? CreatedAt { get; set; }
