@@ -52,8 +52,8 @@ namespace API.Controllers.AuthenticationController
         {
             try
             {
-               await userService.SendTokenResetPassword(email);
-               return Ok("Reset code sent to your email.");
+                await userService.SendTokenResetPassword(email);
+                return Ok("Reset code sent to your email.");
             }
             catch (Exception ex)
             {
