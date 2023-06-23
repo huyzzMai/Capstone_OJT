@@ -20,7 +20,13 @@ namespace DataAccessLayer.Repository.Implement
 
         public async Task<User> GetUserByEmailAndDeleteIsFalse(string email)
         {
-            User user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email && u.IsDeleted == false);
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.IsDeleted == false);
+            return user;
+        }
+
+        public async Task<User> GetUserByIdAndDeleteIsFalse(int id)
+        {
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && u.IsDeleted == false);
             return user;
         }
 
@@ -36,6 +42,14 @@ namespace DataAccessLayer.Repository.Implement
         {
             List<User> users = await _context.Users
                 .Where(u => u.IsDeleted == false && u.Role == CommonEnums.ROLE.TRAINER)
+                .ToListAsync();
+            return users;
+        }
+
+        public async Task<List<User>> GetTraineeListByTrainerId(int id)
+        {
+            List<User> users = await _context.Users
+                .Where(u => u.IsDeleted == false && u.Role == CommonEnums.ROLE.TRAINEE && u.UserReferenceId==id)
                 .ToListAsync();
             return users;
         }

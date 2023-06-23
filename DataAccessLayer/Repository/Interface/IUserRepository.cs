@@ -12,8 +12,12 @@ namespace DataAccessLayer.Repository.Interface
     {
         Task<User> GetUserByEmailAndDeleteIsFalse(string email);
 
+        Task<User> GetUserByIdAndDeleteIsFalse(int id);
+
         Task<List<User>> GetTrainerList();
 
         Task<List<User>> GetTraineeList();
+
+        Task<List<User>> GetTraineeListByTrainerId(int id);
     }
 }

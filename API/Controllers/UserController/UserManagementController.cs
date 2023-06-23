@@ -18,7 +18,7 @@ namespace API.Controllers.UserController
             this.userService = userService; 
         }
 
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("trainers")]
         public async Task<IActionResult> GetTrainerList()
         {
@@ -61,6 +61,20 @@ namespace API.Controllers.UserController
             }
         }
 
-
+        [Authorize(Roles = "Trainer")]
+        [HttpGet("trainers/trainees")]
+        public async Task<IActionResult> GetTraineeListByTrainer()
+        {
+            try
+            {
+                int id = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await userService.GetTraineeListByTrainer(id));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
     }
 }

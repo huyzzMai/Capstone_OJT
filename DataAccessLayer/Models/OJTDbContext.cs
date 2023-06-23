@@ -25,6 +25,8 @@ namespace DataAccessLayer.Models
 
         public DbSet<University> Universities { get; set; }
 
+        public DbSet<Template> Templates { get; set; }
+
         public DbSet<OJTBatch> OJTBatches { get; set; }
 
         public DbSet<TrainingPlan> TrainingPlans { get; set; }
