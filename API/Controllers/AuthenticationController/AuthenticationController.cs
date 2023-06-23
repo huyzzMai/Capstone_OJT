@@ -61,5 +61,36 @@ namespace API.Controllers.AuthenticationController
                     ex.Message);
             }
         }
+
+        [HttpPost("verify-reset-code")]
+        public async Task<IActionResult> VerifyResetCode([FromBody] ResetCodeRequest request)
+        {
+            try
+            {
+                await userService.VerifyResetCode(request.ResetCode);
+                return Ok("Reset code correct.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        // After successfully verify reset code, go to this API
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+        {
+            try
+            {
+                await userService.ResetPassword(request);
+                return Ok("Reset password successfully!");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
     }
 }

@@ -10,6 +10,7 @@ using DataAccessLayer.Repository.Implement;
 using DataAccessLayer.Repository.Interface;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -20,6 +21,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace BusinessLayer.Service.Implement
 {
@@ -113,22 +115,84 @@ namespace BusinessLayer.Service.Implement
 
         #region Send Token Reset Password
 
-        public async Task SendTokenResetPassword(string email)
+        public async Task<string> CheckResetCode(string code)
         {
-            var u = await _unitOfWork.UserRepository.GetUserByEmailAndDeleteIsFalse(email);
+            var u = await _unitOfWork.UserRepository.GetUserByResetCode(code);
             if (u == null)
             {
-                throw new Exception("User not found!");
+                return code;
             }
-            Random generator = new Random();
-            String r = generator.Next(0, 1000000).ToString("D6");
-            u.ResetPassordCode = r;
-            await _unitOfWork.UserRepository.Update(u);
-
-            var sender = new MailSender();
-            sender.Send(email, u.Name, r);
+            else
+            {
+                return await CheckResetCode(GenerateRamdomCode());
+            }
         }
 
+        public string GenerateRamdomCode()
+        {
+            Random generator = new Random();
+            String r = generator.Next(0, 1000000).ToString("D6");
+            return r;   
+        }
+
+        public async Task SendTokenResetPassword(string email)
+        {
+            try
+            {
+                var u = await _unitOfWork.UserRepository.GetUserByEmailAndDeleteIsFalse(email);
+                if (u == null)
+                {
+                    throw new Exception("User not found!");
+                }
+                String r = GenerateRamdomCode();
+
+                var finalR = await CheckResetCode(r);
+
+                //var check = await _unitOfWork.UserRepository.GetUserByResetCode(r);
+                //if (check != null)
+                //{
+                //    throw new Exception("There is an error! Please resend verification code.");
+                //}
+
+                u.ResetPassordCode = finalR;
+                await _unitOfWork.UserRepository.Update(u);
+
+                var sender = new MailSender();
+                sender.Send(email, u.Name, r);
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task VerifyResetCode(string token)
+        {
+            var u = await _unitOfWork.UserRepository.GetUserByResetCodeAndDeleteIsFalse(token);
+            if (u == null)
+            {
+                throw new Exception("Reset code is not correct!");
+            }
+        }
+
+        public async Task ResetPassword(ResetPasswordRequest request)
+        {
+            try
+            {
+                var u = await _unitOfWork.UserRepository.GetUserByResetCodeAndDeleteIsFalse(request.ResetCode);
+                if (u == null)
+                {
+                    throw new Exception("Reset code is not correct! Please go back to resend verification code.");
+                }
+                var newPassword = EncryptPassword(request.NewPassword);
+                u.Password = newPassword;
+                u.ResetPassordCode = null;
+                await _unitOfWork.UserRepository.Update(u);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
         #endregion
 
         public async Task<LoginResponse> LoginUser(LoginRequest request)

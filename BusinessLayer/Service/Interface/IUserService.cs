@@ -15,6 +15,8 @@ namespace BusinessLayer.Service.Interface
     {
         Task<LoginResponse> LoginUser(LoginRequest request);
         Task SendTokenResetPassword(string email);
+        Task VerifyResetCode(string token);
+        Task ResetPassword(ResetPasswordRequest request);
         Task<User> GetUserById(int id);
         Task<IEnumerable<TraineeResponse>> GetTrainerList();
         Task<IEnumerable<TraineeResponse>> GetTraineeList();

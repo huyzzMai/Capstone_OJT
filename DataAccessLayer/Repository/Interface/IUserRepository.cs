@@ -14,6 +14,10 @@ namespace DataAccessLayer.Repository.Interface
 
         Task<User> GetUserByIdAndDeleteIsFalse(int id);
 
+        Task<User> GetUserByResetCode(string token);
+
+        Task<User> GetUserByResetCodeAndDeleteIsFalse(string token);
+
         Task<List<User>> GetTrainerList();
 
         Task<List<User>> GetTraineeList();

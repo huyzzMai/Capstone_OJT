@@ -38,6 +38,7 @@ namespace BusinessLayer.Service.Implement
                  .AddJsonFile("appsettings.json", true, true)
                  .Build();
 
+                #region Send mail with System.Net protocol
                 //MailMessage mail = new MailMessage();
                 //SmtpClient SmtpServer = new SmtpClient();
 
@@ -58,7 +59,7 @@ namespace BusinessLayer.Service.Implement
 
                 //SmtpServer.Send(mail);
                 //return "OK";
-
+                #endregion
 
                 var email = new MimeMessage();
 

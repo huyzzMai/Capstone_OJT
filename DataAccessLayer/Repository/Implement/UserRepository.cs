@@ -30,6 +30,18 @@ namespace DataAccessLayer.Repository.Implement
             return user;
         }
 
+        public async Task<User> GetUserByResetCode(string token)
+        {
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.ResetPassordCode == token);
+            return user;
+        }
+
+        public async Task<User> GetUserByResetCodeAndDeleteIsFalse(string token)
+        {
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.ResetPassordCode == token && u.IsDeleted == false);
+            return user;
+        }
+
         public async Task<List<User>> GetTraineeList()
         {
             List<User> users = await _context.Users
