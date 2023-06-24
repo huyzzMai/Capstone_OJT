@@ -17,6 +17,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OfficeOpenXml;
 using Swashbuckle.AspNetCore.Filters;
 using System;
 using System.Collections.Generic;
@@ -49,12 +50,13 @@ namespace API
                options => options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
 
             // Use for user repo and service
-                     
-            //services.AddScoped<IUserRepository, UserRepository>();
 
+            //services.AddScoped<IUserRepository, UserRepository>();
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICriteriaService, CriteriaService>();
+            services.AddScoped<IAttendanceService, AttendanceService>();
 
 
             services.AddControllersWithViews()

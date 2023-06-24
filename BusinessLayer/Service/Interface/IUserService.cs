@@ -19,6 +19,8 @@ namespace BusinessLayer.Service.Interface
         Task ResetPassword(ResetPasswordRequest request);
         Task<User> GetUserById(int id);
         Task<IEnumerable<TraineeResponse>> GetTrainerList();
+
+        Task<IEnumerable<UserListResponse>> GetUserList();
         Task<IEnumerable<TraineeResponse>> GetTraineeList();
         Task<IEnumerable<TraineeResponse>> GetTraineeListByTrainer(int id);
         int GetCurrentLoginUserId(string authHeader);
