@@ -63,10 +63,8 @@ namespace DataAccessLayer.Models
         [ForeignKey("OJTBatchId")]
         public OJTBatch OJTBatch { get; set; }
 
-        // Relation with Training Plan 
-        public int? TrainingPlanId { get; set; }
-        [ForeignKey("TrainingPlanId")]
-        public TrainingPlan TrainingPlan { get; set; }
+        // Relation with Training Plan
+        public virtual ICollection<UserTrainingPlan> UserTrainingPlans { get; set; }
 
         // Relation of Trainer and Trainee
         public int? UserReferenceId { get; set; }
@@ -74,9 +72,20 @@ namespace DataAccessLayer.Models
         public User Trainer { get; set; }
         public virtual ICollection<User> Trainees { get; set; }
 
+        // Relation with Attendance
         public virtual ICollection<Attendance> Attendances { get; set; }
 
+        // Relation with Criteria
         public virtual ICollection<UserCriteria> UserCriterias { get; set; }
 
+        // Relation with Skill
+        public virtual ICollection<UserSkill> UserSkills { get; set; }
+
+        // Relation with Certificate
+        public virtual ICollection<Certificate> Certificates { get; set; }
+
+
+        // Relation with Notification
+        public virtual ICollection<Notification> Notifications { get; set; }
     }
 }

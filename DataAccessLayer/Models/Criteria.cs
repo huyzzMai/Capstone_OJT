@@ -27,5 +27,8 @@ namespace DataAccessLayer.Models
         public DateTime? UpdatedAt { get; set; }
 
         public virtual ICollection<UserCriteria> UserCriterias { get; set; }
+
+        // Relation with Template
+        public virtual ICollection<TemplateCriteria> TemplateCriterias { get; set; }
     }
 }

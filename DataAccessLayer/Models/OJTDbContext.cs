@@ -41,6 +41,14 @@ namespace DataAccessLayer.Models
 
         public DbSet<UserCriteria> UserCriterias { get; set; }
 
+        public DbSet<UserTrainingPlan> UserTrainingPlans { get; set; }
+
+        public DbSet<UserSkill> UserSkills { get; set; }
+
+        public DbSet<CourseSkill> CourseSkills { get; set; }
+
+        public DbSet<TemplateCriteria> TemplateCriterias { get; set; }
+
         #endregion
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -60,6 +68,21 @@ namespace DataAccessLayer.Models
         {
             modelBuilder.Entity<UserCriteria>()
                 .HasKey(c => new { c.UserId, c.CriteriaId });
+
+            modelBuilder.Entity<UserTrainingPlan>()
+                .HasKey(c => new { c.UserId, c.TrainingPlanId });
+
+            modelBuilder.Entity<Certificate>()
+                .HasKey(c => new { c.CourseId, c.UserId });
+
+            modelBuilder.Entity<CourseSkill>()
+                .HasKey(c => new { c.SkillId, c.CourseId });
+
+            modelBuilder.Entity<UserSkill>()
+                .HasKey(c => new { c.SkillId, c.UserId });
+
+            modelBuilder.Entity<TemplateCriteria>()
+                .HasKey(c => new { c.TemplateId, c.CriteriaId });
         }
     }
 }

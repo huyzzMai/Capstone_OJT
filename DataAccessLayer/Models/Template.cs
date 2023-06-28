@@ -29,5 +29,8 @@ namespace DataAccessLayer.Models
         public int? UniversityId { get; set; }
         [ForeignKey("UniversityId")]
         public University University { get; set; }
+
+        // Relation with Criteria
+        public virtual ICollection<TemplateCriteria> TemplateCriterias { get; set; }
     }
 }

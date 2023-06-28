@@ -31,6 +31,6 @@ namespace DataAccessLayer.Models
 
         public virtual ICollection<OJTBatch> OJTBatches { get; set; }
 
-        public virtual ICollection<University> Universities { get; set; }
+        public virtual ICollection<Template> Templates { get; set; }
     }
 }
