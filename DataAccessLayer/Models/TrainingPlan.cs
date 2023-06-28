@@ -27,8 +27,10 @@ namespace DataAccessLayer.Models
 
         public DateTime? UpdatedAt { get; set; }
 
-        public virtual ICollection<User> Trainees { get; set; }
+        // Relation with User
+        public virtual ICollection<UserTrainingPlan> UserTrainingPlans { get; set; }
 
+        // Relation with Training Plan Detail
         public virtual ICollection<TrainingPlanDetail> TrainingPlanDetails { get; set; }
     }
 }

@@ -11,28 +11,28 @@ namespace DataAccessLayer.Models
     [Table("Certificate")]
     public class Certificate
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        //[Key]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //public int Id { get; set; }
+
+        public int CourseId { get; set; }
+        [ForeignKey("CourseId")]
+        public Course Course { get; set; }
+
+        public int UserId { get; set; }
+        [ForeignKey("UserId")]
+        public User User { get; set; }
 
         [Column(TypeName = "nvarchar(500)")]
         public string Link { get; set; }
 
         public int? Status { get; set; }
 
-        public bool? IsDeleted { get; set; }
+        public DateTime? EnrollDate { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
+        public DateTime? SubmitDate { get; set; }
 
-        public DateTime? UpdatedAt { get; set; }
-
-        public int? CourseId { get; set; }
-        [ForeignKey("CourseId")]
-        public Course Course { get; set; }
-
-        public int? UserId { get; set; }
-        [ForeignKey("UserId")]
-        public User User { get; set; }
+        //public bool? IsDeleted { get; set; }
     }
 }
 

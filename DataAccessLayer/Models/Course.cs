@@ -19,6 +19,9 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(100)")]
         public string Name { get; set; }
 
+        [Column(TypeName = "nvarchar(100)")]
+        public string PlatformName { get; set; }
+
         [Column(TypeName = "nvarchar(500)")]
         public string Description { get; set; }
 
@@ -35,6 +38,13 @@ namespace DataAccessLayer.Models
 
         public DateTime? UpdatedAt { get; set; }
 
+        // Relation with Position
         public virtual ICollection<CoursePosition> CoursePositions { get; set; }
+
+        // Relation with Skill
+        public virtual ICollection<CourseSkill> CourseSkills { get; set; }
+
+        // Relation with User by Certificate
+        public virtual ICollection<Certificate> Certificates { get; set; }
     }
 }
