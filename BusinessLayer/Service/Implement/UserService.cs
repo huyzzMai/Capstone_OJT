@@ -21,7 +21,6 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace BusinessLayer.Service.Implement
 {
@@ -337,6 +336,45 @@ namespace BusinessLayer.Service.Implement
                 }
                 ).ToList();
             return res;
+        }
+
+        public async Task<CreateUserResponse> CreateUser(CreateUserRequest request)
+        {
+            var emailCheck = await _unitOfWork.UserRepository.GetUserByEmail(request.Email);
+            if (emailCheck != null)
+            {
+                throw new Exception("Email has been used!");
+            }
+
+            String r = GenerateRamdomCode();
+            string pwd = "tn" + r;
+            string encryptPwd = EncryptPassword(pwd);
+
+            User user = new User()
+            {
+                Name = request.FullName,
+                Email = request.Email,
+                Birthday = request.Birthday,    
+                PhoneNumber = request.PhoneNumber,
+                Address = request.Address,
+                Gender = request.Gender,    
+                RollNumber = request.RollNumber,
+                AvatarUrl = request.AvatarUrl,
+                Role = request.Role,
+                Password = encryptPwd,
+                IsDeleted = false,
+                CreatedAt = DateTime.Now,
+                Status = CommonEnums.USER_STATUS.ACTIVE
+            };
+
+            await _unitOfWork.UserRepository.Add(user);
+
+            var rs = new CreateUserResponse
+            {
+                Email = request.Email,
+                Password = pwd
+            };
+            return rs;
         }
 
         public async Task UpdateUserInformation(int id, UpdateUserInformationRequest model)

@@ -57,7 +57,7 @@ namespace API
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICriteriaService, CriteriaService>();
             services.AddScoped<IAttendanceService, AttendanceService>();
-
+            services.AddScoped<ITrainingPlanService, TrainingPlanService>();
 
             services.AddControllersWithViews()
                 .AddNewtonsoftJson()

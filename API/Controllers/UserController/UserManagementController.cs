@@ -1,4 +1,5 @@
-﻿using BusinessLayer.Models.ResponseModel.ExcelResponse;
+﻿using BusinessLayer.Models.RequestModel.UserRequest;
+using BusinessLayer.Models.ResponseModel.ExcelResponse;
 using BusinessLayer.Service.Implement;
 using BusinessLayer.Service.Interface;
 using Microsoft.AspNetCore.Authorization;
@@ -96,6 +97,22 @@ namespace API.Controllers.UserController
             {
                 int id = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 return Ok(await userService.GetTraineeListByTrainer(id));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Manager")]
+        [HttpPost]
+        public async Task<IActionResult> CreateAccount([FromBody] CreateUserRequest request)
+        {
+            try
+            {
+                return StatusCode(StatusCodes.Status201Created,
+                    await userService.CreateUser(request));
             }
             catch (Exception ex)
             {

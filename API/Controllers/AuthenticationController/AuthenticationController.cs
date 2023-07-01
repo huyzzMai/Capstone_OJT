@@ -47,7 +47,7 @@ namespace API.Controllers.AuthenticationController
             }
         }
 
-        [HttpPost("reset-password-code")]
+        [HttpPost("reset-password-code/{email}")]
         public async Task<IActionResult> SendForgetPasswordCode(string email)
         {
             try
@@ -79,7 +79,7 @@ namespace API.Controllers.AuthenticationController
 
         // After successfully verify reset code, go to this API
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
             try
             {

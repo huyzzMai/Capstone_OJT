@@ -4,13 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-//using System.Net.Http;
-//using System.Net.Mail;
+using System.Net.Http;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
-using MailKit.Net.Smtp;
-using MailKit;
-using MimeKit;
+
 
 namespace BusinessLayer.Service.Implement
 {
@@ -18,14 +16,17 @@ namespace BusinessLayer.Service.Implement
     {
         public static string Content(String username, string resetCode)
         {
-            return 
-                //"\tEmail Reset Password\n" +
-                "\tDear " + username + " ,\n" +
-                "\tThis is an email to confirm your reset password password. Please use code below to reset your password.\n" +
-                "\t" + resetCode + "\n" +
-                "\t\n" +
-                "\tThank you for your attention. Have a nice day!\n" +
-                "\n";
+            return
+                "<html>\n" +
+                "<body>\n" +
+                "\t<h2>Email Reset Password</h2>\n" +
+                "\t<p>Dear " + username + " ,</p>\n" +
+                "\t<p>This is email for confirm your registration account. Please use code below to reset your password.</p><br>\n" +
+                "\t<b>" + resetCode + "</b>\n" +
+                "\t<br>\n" +
+                "\t<p>Thanks for using our product. Have a nice day!</p>\n" +
+                "</body>\n" +
+                "</html>";
         }
 
         public void Send(string sendto, string username, string code)
@@ -39,48 +40,50 @@ namespace BusinessLayer.Service.Implement
                  .Build();
 
                 #region Send mail with System.Net protocol
-                //MailMessage mail = new MailMessage();
-                //SmtpClient SmtpServer = new SmtpClient();
+                MailMessage mail = new MailMessage();
+                SmtpClient SmtpServer = new SmtpClient();
 
-                //mail.From = new MailAddress(config["HostEmail:Email"]);
-                //mail.To.Add(sendto);
-                //mail.Subject = "KNS - Reset Password Code";
-                //mail.IsBodyHtml = true;
-                //mail.Body = Content(username, code);
+                mail.From = new MailAddress(config["HostEmail:Email"]);
+                mail.To.Add(sendto);
+                mail.Subject = "KNS - Reset Password Code";
+                mail.IsBodyHtml = true;
+                mail.Body = Content(username, code);
 
-                //mail.Priority = MailPriority.High;
+                mail.Priority = MailPriority.High;
 
-                //SmtpServer.Host = "smtp.gmail.com";
-                //SmtpServer.Port = 587;
-                //SmtpServer.DeliveryMethod = SmtpDeliveryMethod.Network;
-                //SmtpServer.UseDefaultCredentials = false;
-                //SmtpServer.Credentials = new System.Net.NetworkCredential(config["HostEmail:Email"], config["HostEmail:Password"]);
-                //SmtpServer.EnableSsl = true;
+                SmtpServer.Host = "smtp.gmail.com";
+                SmtpServer.Port = 587;
+                SmtpServer.DeliveryMethod = SmtpDeliveryMethod.Network;
+                SmtpServer.UseDefaultCredentials = false;
+                SmtpServer.Credentials = new System.Net.NetworkCredential(config["HostEmail:Email"], config["HostEmail:Password"]);
+                SmtpServer.EnableSsl = true;
 
-                //SmtpServer.Send(mail);
-                //return "OK";
+                SmtpServer.Send(mail);
                 #endregion
 
-                var email = new MimeMessage();
+                #region Send mail with MailKit protocol
 
-                email.From.Add(new MailboxAddress("KNS OJT Support", config["HostEmail:Email"]));
-                email.To.Add(new MailboxAddress("KNS OJT User", sendto));
+                //var email = new MimeMessage();
 
-                email.Subject = "KNS - Reset Password Code";
-                email.Body = new TextPart(MimeKit.Text.TextFormat.Plain)
-                {
-                    Text = Content(username, code)
-                };
-                using (var smtp = new SmtpClient())
-                {
-                    smtp.Connect("smtp.gmail.com", 587, false);
+                //email.From.Add(new MailboxAddress("KNS OJT Support", config["HostEmail:Email"]));
+                //email.To.Add(new MailboxAddress("KNS OJT User", sendto));
 
-                    // Note: only needed if the SMTP server requires authentication
-                    smtp.Authenticate(config["HostEmail:Email"], config["HostEmail:Password"]);
+                //email.Subject = "KNS - Reset Password Code";
+                //email.Body = new TextPart(MimeKit.Text.TextFormat.Plain)
+                //{
+                //    Text = Content(username, code)
+                //};
+                //using (var smtp = new SmtpClient())
+                //{
+                //    smtp.Connect("smtp.gmail.com", 587, false);
 
-                    smtp.Send(email);
-                    smtp.Disconnect(true);
-                }
+                //    // Note: only needed if the SMTP server requires authentication
+                //    smtp.Authenticate(config["HostEmail:Email"], config["HostEmail:Password"]);
+
+                //    smtp.Send(email);
+                //    smtp.Disconnect(true);
+                //}
+                #endregion
 
             }
             catch (Exception ex)

@@ -11,5 +11,7 @@ namespace DataAccessLayer.Interface
     {
         IUserRepository UserRepository { get; }
         ICriteriaRepository CriteriaRepository { get; }
+        ITrainingPlanRepository TrainingPlanRepository { get; } 
+        IUserTrainingPlanRepository UserTrainingPlanRepository { get; }
     }
 }

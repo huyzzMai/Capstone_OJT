@@ -12,6 +12,8 @@ namespace DataAccessLayer.Repository.Interface
     {
         Task<User> GetUserByEmailAndDeleteIsFalse(string email);
 
+        Task<User> GetUserByEmail(string email);
+
         Task<User> GetUserByIdAndDeleteIsFalse(int id);
 
         Task<User> GetUserByResetCode(string token);

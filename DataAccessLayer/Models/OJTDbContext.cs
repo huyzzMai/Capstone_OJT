@@ -35,6 +35,8 @@ namespace DataAccessLayer.Models
 
         public DbSet<Attendance> Attendances { get; set; }
 
+        public DbSet<Notification> Notifications { get; set; }
+
         public DbSet<Skill> Skills { get; set; }
 
         public DbSet<CoursePosition> CoursePositions { get; set; }

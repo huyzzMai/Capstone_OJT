@@ -16,12 +16,16 @@ namespace DataAccessLayer.Commons
             public const int TRAINEE = 4;
         }
 
-        //public class DEPARTMENTID
-        //{
-        //    public const int ADMINDEPARTMENT = 1;
-        //    public const int MAINTENANCEDEPARTMENT = 2;
-        //    public const int USERDEPARTMENT = 3;
-        //    public const int FACILITYDEPARTMENT = 4;
-        //}
+        public class USER_STATUS
+        {
+            public const int ACTIVE = 1;
+        }
+
+        public class TRAINING_PLAN_STATUS
+        {
+            public const int PENDING = 1;
+            public const int ACCEPTED = 2;
+            public const int DENIED = 3;
+        }
     }
 }
