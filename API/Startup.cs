@@ -1,3 +1,4 @@
+using API.Hubs;
 using BusinessLayer.Service.Implement;
 using BusinessLayer.Service.Interface;
 using DataAccessLayer.Base;
@@ -81,6 +82,18 @@ namespace API
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                     };
                 });
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("clientURL")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .AllowCredentials();
+                });
+            });
+            services.AddSignalR();
+            services.AddMemoryCache();
             services.AddSwaggerGen(opt =>
             {
                 opt.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -112,10 +125,14 @@ namespace API
 
             app.UseAuthorization();
 
+            app.UseCors();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<SignalHub>("/signalhub");
             });
+           
         }
     }
 }
