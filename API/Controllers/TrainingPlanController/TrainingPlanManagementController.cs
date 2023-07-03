@@ -108,5 +108,41 @@ namespace API.Controllers.TrainingPlanController
                     ex.Message);
             }
         }
+
+        [Authorize(Roles = "Trainer")]
+        [HttpPut("deactivated-post/{planId}")]
+        public async Task<IActionResult> DeactivateTrainingPlan(int planId)
+        {
+            try
+            {
+                // Get id of current log in user 
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                await trainingService.DeactivateTrainingPlan(userId, planId);
+                return Ok("Training plan is deactivated.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainer")]
+        [HttpPut("open-post/{planId}")]
+        public async Task<IActionResult> OpenDeactivatedTrainingPlan(int planId)
+        {
+            try
+            {
+                // Get id of current log in user 
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                await trainingService.OpenDeactivatedTrainingPlan(userId, planId);
+                return Ok("Training plan is re-opened.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
     }
 }

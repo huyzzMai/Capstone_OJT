@@ -12,8 +12,8 @@ namespace BusinessLayer.Models.RequestModel.TrainingPLanRequest
 
         public string Description { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
+        public DateTime? StartTime { get; set; }
 
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime? EndTime { get; set; }
     }
 }

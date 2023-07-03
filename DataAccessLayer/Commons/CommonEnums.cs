@@ -24,8 +24,9 @@ namespace DataAccessLayer.Commons
         public class TRAINING_PLAN_STATUS
         {
             public const int PENDING = 1;
-            public const int ACCEPTED = 2;
+            public const int ACTIVE = 2;
             public const int DENIED = 3;
+            public const int CLOSED = 4;
         }
     }
 }

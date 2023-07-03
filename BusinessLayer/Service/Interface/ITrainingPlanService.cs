@@ -18,6 +18,10 @@ namespace BusinessLayer.Service.Interface
 
         Task CreateTrainingPlan(int userId, CreateTrainingPlanRequest request);
 
+        Task DeactivateTrainingPlan(int userId, int planId);
+
+        Task OpenDeactivatedTrainingPlan(int userId, int planId);
+
         Task AcceptTrainingPlan(int id);
 
         Task DenyTrainingPlan(int id);  

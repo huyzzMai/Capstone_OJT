@@ -10,6 +10,6 @@ namespace BusinessLayer.Models.RequestModel.TrainingPLanRequest
     {
         public string Name { get; set; }
 
-        //public List<CreateTrainingPlanDetailRequest> Details { get; set; }  
+        public List<CreateTrainingPlanDetailRequest> Details { get; set; }
     }
 }

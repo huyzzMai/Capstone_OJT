@@ -37,5 +37,14 @@ namespace DataAccessLayer.Repository.Implement
                 .ToListAsync();
             return list;
         }
+
+        public async Task<UserTrainingPlan> GetUserTrainingPlanById(int userId, int planId)
+        {
+            var u = await _context.UserTrainingPlans
+                .Where(u => u.UserId == userId && u.TrainingPlanId == planId && u.IsOwner == true)
+                //.Include("TrainingPlan")
+                .FirstOrDefaultAsync();
+            return u;
+        }
     }
 }

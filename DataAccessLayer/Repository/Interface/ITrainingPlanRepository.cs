@@ -16,5 +16,7 @@ namespace DataAccessLayer.Repository.Interface
         Task<List<TrainingPlan>> GetTrainingPlanList();
 
         Task<List<TrainingPlan>> GetTrainingPlanListByOwnerId(int id);
+
+        Task<UserTrainingPlan> GetUserTrainingPlanById(int userId, int planId);
     }
 }
