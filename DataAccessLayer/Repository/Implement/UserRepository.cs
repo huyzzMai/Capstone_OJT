@@ -71,5 +71,13 @@ namespace DataAccessLayer.Repository.Implement
                 .ToListAsync();
             return users;
         }
+
+        public async Task<List<User>> GetTraineeListByBatch(int batchid)
+        {
+            List<User> users = await _context.Users
+                .Where(u => u.IsDeleted == false && u.Role == CommonEnums.ROLE.TRAINEE && u.OJTBatchId==batchid)
+                .ToListAsync();
+            return users;
+        }
     }
 }

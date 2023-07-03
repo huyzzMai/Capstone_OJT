@@ -14,5 +14,6 @@ namespace DataAccessLayer.Interface
         ITrainingPlanRepository TrainingPlanRepository { get; } 
         ITrainingPlanDetailRepository TrainingPlanDetailRepository { get; } 
         IUserTrainingPlanRepository UserTrainingPlanRepository { get; }
+        IOJTBatchRepository OJTBatchRepository { get; }
     }
 }
