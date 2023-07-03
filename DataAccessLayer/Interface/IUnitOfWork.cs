@@ -11,5 +11,6 @@ namespace DataAccessLayer.Interface
     {
         IUserRepository UserRepository { get; }
         ICriteriaRepository CriteriaRepository { get; }
+        IOJTBatchRepository OJTBatchRepository { get; }
     }
 }

@@ -6,6 +6,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using System;
 using BusinessLayer.Models.RequestModel.AuthenticationRequest;
+using OfficeOpenXml;
+using System.Data;
 
 namespace API.Controllers.AuthenticationController
 {
@@ -20,7 +22,35 @@ namespace API.Controllers.AuthenticationController
         {
             this.userService = userService;
         }
-        
+        [HttpGet("export-excel")]
+        public IActionResult ExportExcel()
+        {
+            // Tạo DataTable với dữ liệu
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("ID", typeof(int));
+            dataTable.Columns.Add("Name", typeof(string));
+
+            // Thêm dữ liệu vào DataTable
+            dataTable.Rows.Add(1, "John Doe");
+            dataTable.Rows.Add(2, "Jane Smith");
+            dataTable.Rows.Add(3, "Mike Johnson");
+
+            // Tạo tệp Excel mới và lấy sheet đầu tiên
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (var package = new ExcelPackage())
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Sheet1");
+
+                // Đổ dữ liệu từ DataTable vào sheet
+                worksheet.Cells.LoadFromDataTable(dataTable, true);
+
+                // Lưu tệp Excel
+                byte[] excelBytes = package.GetAsByteArray();
+
+                // Trả về tệp Excel như là một File trực tiếp
+                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "data.xlsx");
+            }
+        }
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {

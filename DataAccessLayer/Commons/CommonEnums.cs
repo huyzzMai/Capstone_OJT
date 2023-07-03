@@ -15,7 +15,17 @@ namespace DataAccessLayer.Commons
             public const int TRAINER = 3;
             public const int TRAINEE = 4;
         }
-
+        
+        public class DataExcel
+        {
+            public const string TraineeName = "Name";
+            public const string NumberStudent = "RollNumber";
+            public const string Gender = "Gender";
+            public const string PhoneNumber = "PhoneNumber";
+            public const string Address = "Address";
+            public const string Email = "Email";
+            public const string Position = "Position";         
+        }
         //public class DEPARTMENTID
         //{
         //    public const int ADMINDEPARTMENT = 1;

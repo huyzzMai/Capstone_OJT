@@ -57,7 +57,9 @@ namespace API
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICriteriaService, CriteriaService>();
+            services.AddScoped<IOJTBatchService, OJTBatchService>();
             services.AddScoped<IAttendanceService, AttendanceService>();
+            services.AddScoped<IReportService, ReportService>();
 
 
             services.AddControllersWithViews()

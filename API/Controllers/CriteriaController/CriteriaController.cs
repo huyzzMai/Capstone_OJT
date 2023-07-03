@@ -12,7 +12,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace API.Controllers
+namespace API.Controllers.CriteriaController
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -22,7 +22,7 @@ namespace API.Controllers
 
         public CriteriaController(ICriteriaService service)
         {
-            _service= service;
+            _service = service;
         }
         [Authorize]
         [HttpPost]
@@ -30,13 +30,14 @@ namespace API.Controllers
         {
             try
             {
-               await _service.CreateCriteria(request);
+                await _service.CreateCriteria(request);
                 return Ok(request);
-            } catch(Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,e.Message);
             }
-           
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+
         }
     }
 }
