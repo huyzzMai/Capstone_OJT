@@ -10,5 +10,6 @@ namespace DataAccessLayer.Repository.Interface
 {
     public interface ICriteriaRepository : IGenericRepository<Criteria>
     {
+        Task<List<TemplatePoint>> GetPointListByUserId(int id);
     }
 }

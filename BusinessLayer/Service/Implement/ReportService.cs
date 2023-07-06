@@ -1,11 +1,13 @@
-﻿using BusinessLayer.Models.RequestModel.ExcelRequest;
-using BusinessLayer.Service.Interface;
+﻿using BusinessLayer.Service.Interface;
 using ClosedXML.Excel;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -20,72 +22,87 @@ namespace BusinessLayer.Service.Implement
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<byte[]> CreateReportGradeExcelFile(ReportExcelRequest data)
+        public byte[] GenerateExcel(string Name,List<UserCriteriaReport> reports)
         {
-            using (var workbook = new XLWorkbook())
+            using (var package = new ExcelPackage())
             {
-                var namesheet = await _unitOfWork.OJTBatchRepository.GetFirst(c => c.Id == data.BatchId);
-                var worksheet = workbook.Worksheets.Add(namesheet.Name);
+                var worksheet = package.Workbook.Worksheets.Add(Name);
 
-                var pairdata = data.PairDataExcel.ToList();
-                // Add headers
-                var headers = pairdata.Select(pair => pair.NameCustom).ToList();
-                for (int i = 0; i < headers.Count; i++)
+                // Add headers for UserCriteriaReport
+                var userCriteriaReportHeaders = typeof(UserCriteriaReport).GetProperties();
+                for (int i = 0; i < userCriteriaReportHeaders.Length; i++)
                 {
-                    worksheet.Cell(1, i + 1).Value = headers[i];
-                    // Apply formatting to header cells
-                    var headerCell = worksheet.Cell(1, i + 1);
-                    headerCell.Style.Font.Bold = true;
-                    headerCell.Style.Fill.BackgroundColor = XLColor.LightGray;
+                    worksheet.Cells[1, i + 1].Value = userCriteriaReportHeaders[i].Name;
+                    worksheet.Cells[1, i + 1].Style.Font.Bold = true;
+                    worksheet.Cells[1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[1, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
                 }
 
-                // Get data for each property
-                for (int i = 0; i < data.PairDataExcel.Count; i++)
+                // Add headers and fill in data for TemplatePoint properties
+                var templatePointHeaders = reports.SelectMany(r => r.TemplatePoint).Select(tp => tp.Name).Distinct().ToList();
+                for (int i = 0; i < templatePointHeaders.Count; i++)
                 {
-                    var propertyName = data.PairDataExcel[i].NameTable;
-                    var propertyData = await GetDataFromDatabase(data.BatchId, propertyName); // Replace with your own method to retrieve data from the database
+                    worksheet.Cells[1, userCriteriaReportHeaders.Length + i + 1].Value = templatePointHeaders[i];
+                    worksheet.Cells[1, userCriteriaReportHeaders.Length + i + 1].Style.Font.Bold = true;
+                    worksheet.Cells[1, userCriteriaReportHeaders.Length + i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[1, userCriteriaReportHeaders.Length + i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
+                }
 
-                    for (int j = 0; j < propertyData.Count; j++)
+                // Fill in the data
+                for (int row = 0; row < reports.Count; row++)
+                {
+                    var report = reports[row];
+                    var userCriteriaReportValues = userCriteriaReportHeaders.Select(h => h.GetValue(report));
+                    var templatePointValues = templatePointHeaders.Select(h =>
                     {
-                        worksheet.Cell(j + 2, i + 1).Value = propertyData[j];
+                        var point = report.TemplatePoint?.FirstOrDefault(tp => tp.Name == h)?.Point;
+                        return point != null ? point.ToString() : "N/A";
+                    });
+
+                    var rowValues = userCriteriaReportValues.Concat(templatePointValues?.Cast<object>() ?? Enumerable.Empty<object>());
+
+                    for (int col = 0; col < rowValues.Count(); col++)
+                    {
+                        worksheet.Cells[row + 2, col + 1].Value = rowValues.ElementAt(col);
                     }
-
-                    // Adjust column width to fit the content
-                    worksheet.Column(i + 1).AdjustToContents();
                 }
 
-                // Save the Excel file to a memory stream
-                using (var memoryStream = new MemoryStream())
-                {
-                    workbook.SaveAs(memoryStream);
-                    return memoryStream.ToArray();
-                }
+                worksheet.DeleteColumn(7);
+
+                // Auto-fit columns
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                // Convert ExcelPackage to byte array
+                return package.GetAsByteArray();
             }
         }
 
-       
-        public async Task<List<string>> GetDataFromDatabase(int batchid, string propertyName)
+        public async Task<byte[]> CreateReportExcelFileFromBatch(int batchid)
         {
-            var trannee = await _unitOfWork.UserRepository.GetTraineeListByBatch(batchid);
-            var propertyValues = new List<string>();
-
-            foreach (var trainee in trannee.ToList())
+            try
             {
-                var property = trainee.GetType().GetProperty(propertyName);
-                if (property != null)
+                var batch = await _unitOfWork.OJTBatchRepository.GetFirst(c => c.Id == batchid);
+                if (batch == null)
                 {
-                    var value = property.GetValue(trainee);
-                    if (value != null)
-                    {
-                        propertyValues.Add(value.ToString());
-                    }
-                    else
-                    {
-                        propertyValues.Add(string.Empty);
-                    }
+                    throw new Exception("Batch not found");
                 }
-            }
-            return propertyValues;
+                var trannee = await _unitOfWork.UserRepository.GetTraineeListByBatch(batchid);
+                if (trannee == null || trannee.Count <1)
+                {
+                    throw new Exception("Not found trainee in batch");
+                }
+                var lituser = await _unitOfWork.UserRepository.GetUserReportList(batchid, trannee);
+                if (lituser == null || lituser.Count < 1)
+                {
+                    throw new Exception("List not found");
+                }
+                var excel = GenerateExcel(batch.Name, lituser);
+
+                return excel;
+            } catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }           
         }
     }
 }

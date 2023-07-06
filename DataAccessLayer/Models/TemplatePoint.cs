@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Models
 {
-    public class PairDataExcel
+    public class TemplatePoint
     {
-        public string NameCustom { get; set; }
-        public string NameTable { get; set; }
+        public string? Name { get; set; }
+        public int? Point { get; set; }
     }
 }
