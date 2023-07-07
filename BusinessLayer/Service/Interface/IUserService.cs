@@ -22,6 +22,7 @@ namespace BusinessLayer.Service.Interface
         Task<IEnumerable<UserListResponse>> GetUserList();
         Task<IEnumerable<TraineeResponse>> GetTraineeList();
         Task<IEnumerable<TraineeResponse>> GetTraineeListByTrainer(int id);
+        Task AssignTraineeToTrainer(int trainerId, int traineeId);
         int GetCurrentLoginUserId(string authHeader);
         Task<CreateUserResponse> CreateUser(CreateUserRequest request);
         Task UpdateUserInformation(int id, UpdateUserInformationRequest model);

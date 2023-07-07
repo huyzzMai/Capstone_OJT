@@ -88,7 +88,8 @@ namespace BusinessLayer.Service.Implement
         #region Decrypt Password
         public string DecryptPassword(string plainText)
         {
-            var key = "b14ca5898a4e4133bbce2ea2315a1916";
+            //var key = "b14ca5898a4e4133bbce2ea2315a1916";
+            var key = _configuration["Secret:Value"];
             byte[] iv = new byte[16];
             byte[] buffer = Convert.FromBase64String(plainText);
 
@@ -138,7 +139,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var u = await _unitOfWork.UserRepository.GetUserByEmailAndDeleteIsFalse(email);
+                var u = await _unitOfWork.UserRepository.GetUserByEmailAndStatusActive(email);
                 if (u == null)
                 {
                     throw new Exception("User not found!");
@@ -166,7 +167,7 @@ namespace BusinessLayer.Service.Implement
 
         public async Task VerifyResetCode(string token)
         {
-            var u = await _unitOfWork.UserRepository.GetUserByResetCodeAndDeleteIsFalse(token);
+            var u = await _unitOfWork.UserRepository.GetUserByResetCodeAndStatusActive(token);
             if (u == null)
             {
                 throw new Exception("Reset code is not correct!");
@@ -177,7 +178,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var u = await _unitOfWork.UserRepository.GetUserByResetCodeAndDeleteIsFalse(request.ResetCode);
+                var u = await _unitOfWork.UserRepository.GetUserByResetCodeAndStatusActive(request.ResetCode);
                 if (u == null)
                 {
                     throw new Exception("Reset code is not correct! Please go back to resend verification code.");
@@ -196,7 +197,7 @@ namespace BusinessLayer.Service.Implement
 
         public async Task<LoginResponse> LoginUser(LoginRequest request)
         {
-            User u = await _unitOfWork.UserRepository.GetUserByEmailAndDeleteIsFalse(request.Email);
+            User u = await _unitOfWork.UserRepository.GetUserByEmailAndStatusActive(request.Email);
             if (u == null)
             {
                 throw new Exception("Email is wrong!");
@@ -279,7 +280,7 @@ namespace BusinessLayer.Service.Implement
 
         public async Task<User> GetUserById(int id)
         {
-            var user = await _unitOfWork.UserRepository.GetFirst(c=>c.Id==id && c.IsDeleted == false);
+            var user = await _unitOfWork.UserRepository.GetFirst(c=>c.Id==id && c.Status == CommonEnums.USER_STATUS.ACTIVE);
             if (user == null)
             {
                 throw new Exception("This user cannot be found!");
@@ -338,6 +339,31 @@ namespace BusinessLayer.Service.Implement
             return res;
         }
 
+        public async Task AssignTraineeToTrainer (int trainerId, int traineeId)
+        {
+            try
+            {
+                var trainer = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(trainerId);  
+                if (trainer.Role != CommonEnums.ROLE.TRAINER)
+                {
+                    throw new Exception("Trainer not found!");
+                }
+                var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
+                if (trainee.Role != CommonEnums.ROLE.TRAINEE)
+                {
+                    throw new Exception("Trainee not found!");
+                }
+
+                trainee.UserReferenceId = trainerId;
+                trainee.UpdatedAt = DateTime.Now;
+                await _unitOfWork.UserRepository.Update(trainee);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<CreateUserResponse> CreateUser(CreateUserRequest request)
         {
             var emailCheck = await _unitOfWork.UserRepository.GetUserByEmail(request.Email);
@@ -379,7 +405,7 @@ namespace BusinessLayer.Service.Implement
 
         public async Task UpdateUserInformation(int id, UpdateUserInformationRequest model)
         {
-            var u = await _unitOfWork.UserRepository.GetUserByIdAndDeleteIsFalse(id);
+            var u = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(id);
 
             if (u == null)
             {

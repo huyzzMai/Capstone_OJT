@@ -2,6 +2,7 @@
 using BusinessLayer.Models.ResponseModel.ExcelResponse;
 using BusinessLayer.Service.Implement;
 using BusinessLayer.Service.Interface;
+using DocumentFormat.OpenXml.Office2016.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace API.Controllers.UserController
 {
-    [Route("api/users")]
+    [Route("api/user")]
     [ApiController]
     public class UserManagementController : ControllerBase
     {
@@ -27,13 +28,14 @@ namespace API.Controllers.UserController
             _attendanceService = attendanceService;
         }
 
-        [Authorize(Roles = "Admin,Manager")]
-        [HttpGet("trainers")]
-        public async Task<IActionResult> GetTrainerList()
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> CreateAccount([FromBody] CreateUserRequest request)
         {
             try
             {
-                return Ok(await userService.GetTrainerList());
+                return StatusCode(StatusCodes.Status201Created,
+                    await userService.CreateUser(request));
             }
             catch (Exception ex)
             {
@@ -41,6 +43,7 @@ namespace API.Controllers.UserController
                     ex.Message);
             }
         }
+
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAccountList()
@@ -73,9 +76,24 @@ namespace API.Controllers.UserController
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        
+
+        [Authorize(Roles = "Admin,Manager")]
+        [HttpGet("trainer")]
+        public async Task<IActionResult> GetTrainerList()
+        {
+            try
+            {
+                return Ok(await userService.GetTrainerList());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
         [Authorize(Roles = "Manager")]
-        [HttpGet("trainees")]
+        [HttpGet("trainee")]
         public async Task<IActionResult> GetTraineeList()
         {
             try
@@ -89,14 +107,15 @@ namespace API.Controllers.UserController
             }
         }
 
-        [Authorize(Roles = "Trainer")]
-        [HttpGet("trainers/trainees")]
-        public async Task<IActionResult> GetTraineeListByTrainer()
+        [Authorize(Roles = "Manager")]
+        [HttpPost("trainer/{trainerId}/trainee/{traineeId}")]
+        public async Task<IActionResult> AssignTraineeToTrainer(int trainerId, int traineeId)
         {
             try
             {
-                int id = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                return Ok(await userService.GetTraineeListByTrainer(id));
+                await userService.AssignTraineeToTrainer(trainerId, traineeId);
+                return StatusCode(StatusCodes.Status201Created,
+                    "Assign successfully.");
             }
             catch (Exception ex)
             {
@@ -105,14 +124,14 @@ namespace API.Controllers.UserController
             }
         }
 
-        [Authorize(Roles = "Manager")]
-        [HttpPost]
-        public async Task<IActionResult> CreateAccount([FromBody] CreateUserRequest request)
+        [Authorize(Roles = "Trainer")]
+        [HttpGet("trainer/trainee")]
+        public async Task<IActionResult> GetTraineeListByTrainer()
         {
             try
             {
-                return StatusCode(StatusCodes.Status201Created,
-                    await userService.CreateUser(request));
+                int id = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await userService.GetTraineeListByTrainer(id));
             }
             catch (Exception ex)
             {

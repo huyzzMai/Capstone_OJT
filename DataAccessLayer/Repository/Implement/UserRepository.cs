@@ -18,9 +18,9 @@ namespace DataAccessLayer.Repository.Implement
         {
         }
 
-        public async Task<User> GetUserByEmailAndDeleteIsFalse(string email)
+        public async Task<User> GetUserByEmailAndStatusActive(string email)
         {
-            User user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.IsDeleted == false);
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Status == CommonEnums.USER_STATUS.ACTIVE);
             return user;
         }
 
@@ -30,9 +30,9 @@ namespace DataAccessLayer.Repository.Implement
             return user;
         }
 
-        public async Task<User> GetUserByIdAndDeleteIsFalse(int id)
+        public async Task<User> GetUserByIdAndStatusActive(int id)
         {
-            User user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && u.IsDeleted == false);
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && u.Status == CommonEnums.USER_STATUS.ACTIVE);
             return user;
         }
 
@@ -42,16 +42,16 @@ namespace DataAccessLayer.Repository.Implement
             return user;
         }
 
-        public async Task<User> GetUserByResetCodeAndDeleteIsFalse(string token)
+        public async Task<User> GetUserByResetCodeAndStatusActive(string token)
         {
-            User user = await _context.Users.FirstOrDefaultAsync(u => u.ResetPassordCode == token && u.IsDeleted == false);
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.ResetPassordCode == token && u.Status == CommonEnums.USER_STATUS.ACTIVE);
             return user;
         }
 
         public async Task<List<User>> GetTraineeList()
         {
             List<User> users = await _context.Users
-                .Where(u => u.IsDeleted == false && u.Role == CommonEnums.ROLE.TRAINEE)
+                .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE)
                 .ToListAsync();
             return users;
         }
@@ -59,7 +59,7 @@ namespace DataAccessLayer.Repository.Implement
         public async Task<List<User>> GetTrainerList()
         {
             List<User> users = await _context.Users
-                .Where(u => u.IsDeleted == false && u.Role == CommonEnums.ROLE.TRAINER)
+                .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER)
                 .ToListAsync();
             return users;
         }
@@ -67,7 +67,7 @@ namespace DataAccessLayer.Repository.Implement
         public async Task<List<User>> GetTraineeListByTrainerId(int id)
         {
             List<User> users = await _context.Users
-                .Where(u => u.IsDeleted == false && u.Role == CommonEnums.ROLE.TRAINEE && u.UserReferenceId==id)
+                .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE && u.UserReferenceId==id)
                 .ToListAsync();
             return users;
         }

@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Base;
+using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
 using DataAccessLayer.Repository.Interface;
@@ -17,15 +18,27 @@ namespace DataAccessLayer.Repository.Implement
         {
         }
 
-        public async Task<TrainingPlan> GetTrainingPLanByIdAndDeleteIsFalse(int id)
+        public async Task<TrainingPlan> GetTrainingPLanByIdAndNotDeleted(int id)
         {
-            var tp = await _context.TrainingPlans.FirstOrDefaultAsync(u => u.Id == id && u.IsDeleted == false);
+            var tp = await _context.TrainingPlans
+                     .Where(u => u.Id == id && u.Status != CommonEnums.TRAINING_PLAN_STATUS.DELETED)
+                     .Include(u => u.TrainingPlanDetails)
+                     .FirstOrDefaultAsync();
+            return tp;
+        }
+
+        public async Task<TrainingPlan> GetTrainingPLanByIdAndStatusActive(int id)
+        {
+            var tp = await _context.TrainingPlans
+                     .Where(u => u.Id == id && u.Status == CommonEnums.TRAINING_PLAN_STATUS.ACTIVE)
+                     .Include(u => u.TrainingPlanDetails)
+                     .FirstOrDefaultAsync();
             return tp;
         }
 
         public async Task<List<TrainingPlan>> GetTrainingPlanList()
         {
-            var list = await _context.TrainingPlans.Where(u => u.IsDeleted == false).ToListAsync();
+            var list = await _context.TrainingPlans.Where(u => u.Status != CommonEnums.TRAINING_PLAN_STATUS.DELETED).ToListAsync();
             return list;
         }
 
@@ -34,17 +47,34 @@ namespace DataAccessLayer.Repository.Implement
             var list = await _context.UserTrainingPlans
                 .Where(u => u.UserId == id && u.IsOwner == true)
                 .Select(u => u.TrainingPlan)
+                .Where(u => u.Status != CommonEnums.TRAINING_PLAN_STATUS.DELETED)
                 .ToListAsync();
             return list;
         }
 
-        public async Task<UserTrainingPlan> GetUserTrainingPlanById(int userId, int planId)
+        public async Task<UserTrainingPlan> GetUserTrainingPlanByIdAndIsOwner(int userId, int planId)
         {
             var u = await _context.UserTrainingPlans
                 .Where(u => u.UserId == userId && u.TrainingPlanId == planId && u.IsOwner == true)
                 //.Include("TrainingPlan")
                 .FirstOrDefaultAsync();
             return u;
+        }
+
+        public async Task<UserTrainingPlan> GetUserTrainingPlanById(int userId, int planId)
+        {
+            var u = await _context.UserTrainingPlans
+                .Where(u => u.UserId == userId && u.TrainingPlanId == planId)
+                .FirstOrDefaultAsync();
+            return u;
+        }
+
+        public async Task<TrainingPlanDetail> GetTrainingPlanDetailByIdAndNotDeleted(int id)
+        {
+            var detail = await _context.TrainingPlanDetails
+                         .Where(u => u.Id == id && u.Status != CommonEnums.TRAINING_PLAN_DETAIL_STATUS.DELETED)
+                         .FirstOrDefaultAsync();
+            return detail;  
         }
     }
 }

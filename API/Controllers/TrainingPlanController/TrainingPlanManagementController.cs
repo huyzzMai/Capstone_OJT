@@ -22,6 +22,26 @@ namespace API.Controllers.TrainingPlanController
             this.userService = userService;
         }
 
+        // API for all Role
+
+        [Authorize(Roles = "Manager, Trainer, Trainee")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetTrainingPlanAllRole(int id)
+        {
+            try
+            {
+                // Get id of current log in user 
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await trainingService.GetTrainingPlanForAllRole(userId, id));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+
         // API for Manager
 
         [Authorize(Roles = "Manager")]
@@ -101,6 +121,60 @@ namespace API.Controllers.TrainingPlanController
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await trainingService.CreateTrainingPlan(userId, request);
                 return StatusCode(StatusCodes.Status201Created,"Training plan is created successfully");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainer")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTrainingPlan(int id, [FromBody] UpdateTrainingPlanRequest request)
+        {
+            try
+            {
+                // Get id of current log in user 
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                await trainingService.UpdateTrainingPlan(userId, id, request);
+                return Ok("Training plan is updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainer")]
+        [HttpPost("detail/{planId}")]
+        public async Task<IActionResult> CreateTrainingPlanDetailForExistingTrainingPlan(int planId, [FromBody] CreateTrainingPlanDetailRequest request)
+        {
+            try
+            {
+                // Get id of current log in user 
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                await trainingService.CreateTrainingPlanDetailForExistingTrainingPlan(userId, planId, request);
+                return StatusCode(StatusCodes.Status201Created, "Training plan detail is created successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainer")]
+        [HttpPut("detail/{id}")]
+        public async Task<IActionResult> UpdateTrainingPlanDetail(int id, [FromBody] CreateTrainingPlanDetailRequest request)
+        {
+            try
+            {
+                // Get id of current log in user 
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                await trainingService.UpdateTrainingPlanDetail(userId, id, request);
+                return Ok("Update training plan detail successfully.");
             }
             catch (Exception ex)
             {

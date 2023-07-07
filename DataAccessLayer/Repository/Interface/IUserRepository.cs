@@ -10,15 +10,15 @@ namespace DataAccessLayer.Repository.Interface
 {
     public interface IUserRepository : IGenericRepository<User>
     {
-        Task<User> GetUserByEmailAndDeleteIsFalse(string email);
+        Task<User> GetUserByEmailAndStatusActive(string email);
 
         Task<User> GetUserByEmail(string email);
 
-        Task<User> GetUserByIdAndDeleteIsFalse(int id);
+        Task<User> GetUserByIdAndStatusActive(int id);
 
         Task<User> GetUserByResetCode(string token);
 
-        Task<User> GetUserByResetCodeAndDeleteIsFalse(string token);
+        Task<User> GetUserByResetCodeAndStatusActive(string token);
 
         Task<List<User>> GetTrainerList();
 

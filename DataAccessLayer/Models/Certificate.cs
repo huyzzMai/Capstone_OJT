@@ -31,8 +31,6 @@ namespace DataAccessLayer.Models
         public DateTime? EnrollDate { get; set; }
 
         public DateTime? SubmitDate { get; set; }
-
-        //public bool? IsDeleted { get; set; }
     }
 }
 
