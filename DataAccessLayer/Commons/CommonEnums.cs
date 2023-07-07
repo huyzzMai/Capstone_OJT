@@ -38,15 +38,6 @@ namespace DataAccessLayer.Commons
             public const int CLOSED = 2;    
         }
 
-        public class DataExcel
-        {
-            public const string TraineeName = "Name";
-            public const string NumberStudent = "RollNumber";
-            public const string Gender = "Gender";
-            public const string PhoneNumber = "PhoneNumber";
-            public const string Address = "Address";
-            public const string Email = "Email";
-            public const string Position = "Position";         
-        }
-    }
+    }      
 }
+

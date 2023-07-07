@@ -1,4 +1,5 @@
-﻿using DataAccessLayer.Interface;
+﻿using DataAccessLayer.Commons.CommonModels;
+using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
 using System;
 using System.Collections.Generic;
@@ -10,5 +11,6 @@ namespace DataAccessLayer.Repository.Interface
 {
     public interface ICriteriaRepository : IGenericRepository<Criteria>
     {
+        Task<List<TemplatePoint>> GetPointListByUserId(int id);
     }
 }
