@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Base;
+using DataAccessLayer.Commons;
 using DataAccessLayer.Commons.CommonModels;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
@@ -17,22 +18,43 @@ namespace DataAccessLayer.Repository.Implement
         public CriteriaRepository(OJTDbContext context, IUnitOfWork unitOfWork) : base(context,unitOfWork)
         {
         }
-
         public async Task<List<TemplatePoint>> GetPointListByUserId(int id)
         {
-           var list = new List<TemplatePoint>();
-           var listcriteriauser = await _context.UserCriterias.Where(c=>c.UserId==id).OrderBy(c=>c.CriteriaId).ToListAsync();
-            foreach (var item in listcriteriauser)
+            var list = new List<TemplatePoint>();
+            var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == id && c.IsDeleted == false, "OJTBatch");
+            var listtemplate = await _context.Templates.Where(c => c.UniversityId == user.OJTBatch.UniversityId && c.Status == CommonEnums.TEMPLATE_STATUS.ACTIVE).Include(c => c.TemplateCriterias).ToListAsync();
+            foreach (var item in listtemplate)
             {
-                var temp = await _context.TemplateCriterias.Where(c => c.CriteriaId == item.CriteriaId).Include(c=>c.Template).FirstOrDefaultAsync();
+               
                 var Criteria = new TemplatePoint()
                 {
-                    Name = temp.Template.Name,
-                    Point = item.Point
-                };
+                    Name = item.Name,
+                    Point =  await GetPointByTemplateIdandUserid(user.Id,item.Id)
+            };
                 list.Add(Criteria);
             }
             return list;
         }
+
+        public async Task<int?> GetPointByTemplateIdandUserid(int userid, int templateid)
+        {
+            int? point = null;
+            var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == userid && c.IsDeleted == false, "OJTBatch");
+            var tempelate = await _context.Templates.Where(c => c.Id == templateid && c.Status == CommonEnums.TEMPLATE_STATUS.ACTIVE).Include(c => c.TemplateCriterias).FirstOrDefaultAsync();
+            if(tempelate==null || tempelate.TemplateCriterias == null) 
+            {
+                return null;
+            }
+            foreach (var item in tempelate.TemplateCriterias)
+            {
+                var userCriteria = await _context.UserCriterias.Where(c => c.UserId == user.Id && c.CriteriaId == item.CriteriaId).FirstOrDefaultAsync();
+                if (userCriteria != null && userCriteria.Point != null)
+                {
+                    point = userCriteria.Point;
+                    break; 
+                }
+            }
+            return point;
+        }     
     }
 }

@@ -37,7 +37,12 @@ namespace DataAccessLayer.Commons
             public const int ACTIVE = 1;
             public const int CLOSED = 2;    
         }
-
+        public class TEMPLATE_STATUS
+        {
+            public const int DELETED = 0;
+            public const int ACTIVE = 1;
+            public const int CLOSED = 2;
+        }
     }      
 }
 
