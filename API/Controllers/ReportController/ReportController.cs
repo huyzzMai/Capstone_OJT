@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using static DataAccessLayer.Commons.CommonEnums;
 using System.Linq;
 using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Vml.Office;
 
 namespace API.Controllers.ReportController
 {
@@ -23,7 +24,7 @@ namespace API.Controllers.ReportController
             _service= service;
         }
        
-        [Authorize]
+        [Authorize(Roles = "Manager, Trainer")]
         [HttpPost("export-excel-report-batch")]
         public async Task<IActionResult> CreateReportInformation(int batchid)
         {

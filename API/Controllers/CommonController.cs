@@ -11,6 +11,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using DataAccessLayer.Models;
+using DocumentFormat.OpenXml.Wordprocessing;
+using Newtonsoft.Json.Linq;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace API.Controllers
 {
@@ -36,7 +39,7 @@ namespace API.Controllers
         public async Task<IActionResult> GetCurrentUserInfo()
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
-            var cacheKey = "ListLocation";
+            var cacheKey = "CurrentUser";
             if (_cache.TryGetValue(cacheKey, out var cachedData))
             {
                 return Ok(cachedData);
