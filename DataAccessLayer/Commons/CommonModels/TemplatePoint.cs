@@ -8,7 +8,7 @@ namespace DataAccessLayer.Commons.CommonModels
 {
     public class TemplatePoint
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public int? Point { get; set; }
     }
 }
