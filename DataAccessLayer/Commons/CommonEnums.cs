@@ -51,18 +51,28 @@ namespace DataAccessLayer.Commons
             public const int DONE = 2;
             public const int FAILED = 3;
         }
+
+        public class TEMPLATE_STATUS
+        {
+            public const int DELETED = 0;
+            public const int ACTIVE = 1;
+            public const int CLOSED = 2;
+        }
+
         public class COURSE_STATUS
         {
             public const int DELETED = 0;
             public const int ACTIVE = 1;
             public const int CLOSED = 2;
         }
+
         public class SKILL_STATUS
         {
             public const int DELETED = 0;
             public const int ACTIVE = 1;
             public const int CLOSED = 2;
         }
+
         public class SKILL_LEVEL
         {
             public const int BEGINNER = 0;
