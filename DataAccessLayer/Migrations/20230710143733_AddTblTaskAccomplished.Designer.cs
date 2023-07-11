@@ -4,14 +4,16 @@ using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(OJTDbContext))]
-    partial class OJTDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230710143733_AddTblTaskAccomplished")]
+    partial class AddTblTaskAccomplished
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -298,9 +300,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTimeOffset?>("StartDate")
-                        .HasColumnType("datetimeoffset");
 
                     b.Property<int?>("Status")
                         .HasColumnType("int");

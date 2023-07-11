@@ -33,5 +33,7 @@ namespace BusinessLayer.Service.Interface
         Task CreateTrainingPlanDetailForExistingTrainingPlan(int userId, int planId, CreateTrainingPlanDetailRequest request);
 
         Task UpdateTrainingPlanDetail(int userId, int detailId, CreateTrainingPlanDetailRequest request);
+
+        Task AssignTraineeToTrainingPlan(int trainerId, int traineeId, int planId);
     }
 }

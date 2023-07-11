@@ -184,7 +184,7 @@ namespace API.Controllers.TrainingPlanController
         }
 
         [Authorize(Roles = "Trainer")]
-        [HttpPut("deactivated-post/{planId}")]
+        [HttpPut("deactivated-plan/{planId}")]
         public async Task<IActionResult> DeactivateTrainingPlan(int planId)
         {
             try
@@ -202,7 +202,7 @@ namespace API.Controllers.TrainingPlanController
         }
 
         [Authorize(Roles = "Trainer")]
-        [HttpPut("open-post/{planId}")]
+        [HttpPut("open-plan/{planId}")]
         public async Task<IActionResult> OpenDeactivatedTrainingPlan(int planId)
         {
             try
@@ -211,6 +211,24 @@ namespace API.Controllers.TrainingPlanController
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await trainingService.OpenDeactivatedTrainingPlan(userId, planId);
                 return Ok("Training plan is re-opened.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainer")]
+        [HttpPost("{id}/trainee/{traineeId}")]
+        public async Task<IActionResult> AssignTraineeToTrainingPlan(int id, int traineeId)
+        {
+            try
+            {
+                // Get id of current log in user 
+                int trainerId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                await trainingService.AssignTraineeToTrainingPlan(trainerId, traineeId, id);
+                return StatusCode(StatusCodes.Status201Created, "Assign trainee to training plan successfully.");
             }
             catch (Exception ex)
             {

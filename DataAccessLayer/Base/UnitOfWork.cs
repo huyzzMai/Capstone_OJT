@@ -29,5 +29,7 @@ namespace DataAccessLayer.Base
         public IUserTrainingPlanRepository UserTrainingPlanRepository => new UserTrainingPlanRepository(_context, this);
 
         public IOJTBatchRepository OJTBatchRepository => new OJTBatchRepository(_context, this);
+
+        public ITaskRepository TaskRepository => new TaskRepository(_context, this);
     }
 }
