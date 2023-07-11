@@ -56,7 +56,7 @@ namespace BusinessLayer.Service.Implement
         #region Encrypt Password
         public string EncryptPassword(string plainText)
         {
-            var key = "b14ca5898a4e4133bbce2ea2315a1916";
+            var key = _configuration["Secret:Value"];
             byte[] iv = new byte[16];
             byte[] array;
 
@@ -88,7 +88,6 @@ namespace BusinessLayer.Service.Implement
         #region Decrypt Password
         public string DecryptPassword(string plainText)
         {
-            //var key = "b14ca5898a4e4133bbce2ea2315a1916";
             var key = _configuration["Secret:Value"];
             byte[] iv = new byte[16];
             byte[] buffer = Convert.FromBase64String(plainText);
@@ -391,7 +390,6 @@ namespace BusinessLayer.Service.Implement
                 AvatarUrl = request.AvatarUrl,
                 Role = request.Role,
                 Password = encryptPwd,
-                IsDeleted = false,
                 CreatedAt = DateTime.Now,
                 Status = CommonEnums.USER_STATUS.ACTIVE
             };

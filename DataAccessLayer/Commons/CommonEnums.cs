@@ -37,13 +37,20 @@ namespace DataAccessLayer.Commons
             public const int ACTIVE = 1;
             public const int CLOSED = 2;    
         }
-        public class TEMPLATE_STATUS
+
+        public class TRAINEE_TASK_STATUS
         {
-            public const int DELETED = 0;
-            public const int ACTIVE = 1;
-            public const int CLOSED = 2;
+            public const int FINISHED = 1;
+            public const int OVERDUE = 2;
+            public const int IN_PROCESS = 3;
         }
 
+        public class ACCOMPLISHED_TASK_STATUS
+        {
+            public const int PENDING = 1;
+            public const int DONE = 2;
+            public const int FAILED = 3;
+        }
         public class COURSE_STATUS
         {
             public const int DELETED = 0;

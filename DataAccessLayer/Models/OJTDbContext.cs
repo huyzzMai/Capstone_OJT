@@ -51,6 +51,8 @@ namespace DataAccessLayer.Models
 
         public DbSet<TemplateCriteria> TemplateCriterias { get; set; }
 
+        public DbSet<TaskAccomplished> TaskAccomplisheds { get; set; }
+
         #endregion
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -6,6 +6,7 @@ using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections;
@@ -173,6 +174,42 @@ namespace BusinessLayer.Service.Implement
                 }
                 ).ToList();
             return res;
+        }
+
+        public async Task AssignTraineeToTrainingPlan(int trainerId, int traineeId, int planId)
+        {
+            try
+            {
+                var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
+                if (trainee == null || trainee.UserReferenceId != trainerId)
+                {
+                    throw new Exception("Not found trainee or this is not your assiged trainee!");
+                }
+
+                var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(trainerId, planId);
+                if (check == null)
+                {
+                    throw new Exception("Training plan not found or you not the owner of this training plan!");
+                }
+
+                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndStatusActive(planId);
+                if (tp == null)
+                {
+                    throw new Exception("Invalid training plan!");
+                }
+
+                UserTrainingPlan utp = new()
+                {
+                    UserId = traineeId,
+                    TrainingPlanId = planId,
+                    IsOwner = false
+                };
+                await _unitOfWork.UserTrainingPlanRepository.Add(utp);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task CreateTrainingPlan(int userId, CreateTrainingPlanRequest request)

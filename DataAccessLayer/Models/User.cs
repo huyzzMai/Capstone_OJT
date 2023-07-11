@@ -52,6 +52,9 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(10)")]
         public string ResetPassordCode { get; set; }
 
+        [Column(TypeName = "nvarchar(40)")]
+        public string TrelloId { get; set; }
+
         public bool? IsDeleted { get; set; }
 
         public DateTime? CreatedAt { get; set; }
@@ -87,5 +90,8 @@ namespace DataAccessLayer.Models
 
         // Relation with Notification
         public virtual ICollection<Notification> Notifications { get; set; }
+
+        // Relation with Task
+        public virtual ICollection<TaskAccomplished> TaskAccomplished { get; set; }
     }
 }

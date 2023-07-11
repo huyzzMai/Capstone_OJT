@@ -30,6 +30,8 @@ namespace DataAccessLayer.Base
 
         public IOJTBatchRepository OJTBatchRepository => new OJTBatchRepository(_context, this);
 
+        public ITaskRepository TaskRepository => new TaskRepository(_context, this);
+
         public ICourseRepository CourseRepository => new CourseRepository(_context, this);
     }
 }
