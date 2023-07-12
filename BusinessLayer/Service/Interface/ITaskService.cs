@@ -1,21 +1,23 @@
-﻿using BusinessLayer.Models.ResponseModel.TaskResponse;
-using BusinessLayer.Models.ResponseModel.TrainingPlanResponse;
-using System;
+﻿using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Models.ResponseModel;
+using BusinessLayer.Models.ResponseModel.TaskResponse;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLayer.Service.Interface
 {
     public interface ITaskService
     {
-        Task<IEnumerable<TraineeTaskResponse>> GetAllTaskOfTrainee(int userId);
+        Task<BasePagingViewModel<TraineeTaskResponse>> GetAllTaskOfTrainee(int userId, PagingRequestModel paging);
 
         //Task<IEnumerable<TraineeTaskResponse>> GetListUnFinishTaskOfTrainee(int userId);
 
-        Task<IEnumerable<TraineeTaskResponse>> GetListTaskAccomplished(int userId);
+        Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskAccomplished(int userId, PagingRequestModel paging);
 
-        Task UpdateFinishTask(int userId, string taskId);  
+        Task CreateFinishTask(int userId, string taskId);
+
+        Task AcceptTraineeTask(int trainerId, string taskId);
+
+        Task RejectTraineeTask(int trainerId, string taskId);
     }
 }

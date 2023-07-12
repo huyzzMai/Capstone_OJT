@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
 using BusinessLayer.Models.RequestModel.TrainingPLanRequest;
+using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Utilities;
 
 namespace API.Controllers.TrainingPlanController
 {
@@ -46,11 +48,12 @@ namespace API.Controllers.TrainingPlanController
 
         [Authorize(Roles = "Manager")]
         [HttpGet]
-        public async Task<IActionResult> GetTrainingPlanList()
+        public async Task<IActionResult> GetTrainingPlanList([FromQuery] PagingRequestModel paging)
         {
             try
             {
-                return Ok(await trainingService.GetTrainingPlanList());
+                paging = PagingUtil.checkDefaultPaging(paging);
+                return Ok(await trainingService.GetTrainingPlanList(paging));
             }
             catch (Exception ex)
             {
@@ -96,13 +99,14 @@ namespace API.Controllers.TrainingPlanController
 
         [Authorize(Roles = "Trainer")]
         [HttpGet("owner")]
-        public async Task<IActionResult> GetTrainingPlanListOfOwner()
+        public async Task<IActionResult> GetTrainingPlanListOfOwner([FromQuery] PagingRequestModel paging)
         {
             try
             {
+                paging = PagingUtil.checkDefaultPaging(paging);
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                return Ok(await trainingService.GetTrainingPlanListByOwner(userId));
+                return Ok(await trainingService.GetTrainingPlanListByOwner(userId, paging));
             }
             catch (Exception ex)
             {

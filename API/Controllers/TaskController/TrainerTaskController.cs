@@ -1,37 +1,37 @@
-﻿using BusinessLayer.Service.Interface;
+﻿using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Service.Interface;
+using BusinessLayer.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using System;
-using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Utilities;
+using System.Threading.Tasks;
 
 namespace API.Controllers.TaskController
 {
-    [Route("api/trainee-tasks")]
+    [Route("api/task-process")]
     [ApiController]
-    [Authorize(Roles = "Trainee")]
-    public class TraineeTaskController : ControllerBase
+    [Authorize(Roles = "Trainer")]
+    public class TrainerTaskController : ControllerBase
     {
         private readonly ITaskService taskService;
         private readonly IUserService userService;
 
-        public TraineeTaskController(ITaskService taskService, IUserService userService)
+        public TrainerTaskController(ITaskService taskService, IUserService userService)
         {
             this.taskService = taskService;
             this.userService = userService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllTaskOfTrainee([FromQuery] PagingRequestModel paging)
+        [HttpGet()]
+        public async Task<IActionResult> GetListTaskPendingOfTrainee([FromQuery] PagingRequestModel paging)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                return Ok(await taskService.GetAllTaskOfTrainee(userId, paging));
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -40,15 +40,15 @@ namespace API.Controllers.TaskController
             }
         }
 
-        [HttpGet("accomplished-tasks")]
-        public async Task<IActionResult> GetListFinishTaskOfTrainee([FromQuery] PagingRequestModel paging)
+        [HttpPut("task-accept/{taskId}")]
+        public async Task<IActionResult> AcceptTraineeTask(string taskId)
         {
             try
             {
-                paging = PagingUtil.checkDefaultPaging(paging);
-                // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                return Ok(await taskService.GetListTaskAccomplished(userId, paging));
+                await taskService.AcceptTraineeTask(userId, taskId);
+
+                return Ok("Process task successfully.");
             }
             catch (Exception ex)
             {
@@ -57,14 +57,15 @@ namespace API.Controllers.TaskController
             }
         }
 
-        [HttpPost("{taskId}")]
-        public async Task<IActionResult> UpdateFinishTask(string taskId)
+        [HttpPut("task-reject/{taskId}")]
+        public async Task<IActionResult> DenyTraineeTask(string taskId)
         {
             try
             {
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                await taskService.CreateFinishTask(userId, taskId);
-                return StatusCode(StatusCodes.Status201Created, "Accomplish task successfully.");
+                await taskService.RejectTraineeTask(userId, taskId);
+
+                return Ok("Process task successfully.");
             }
             catch (Exception ex)
             {

@@ -1,9 +1,12 @@
-﻿using BusinessLayer.Models.ResponseModel.TaskResponse;
+﻿using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Models.ResponseModel;
+using BusinessLayer.Models.ResponseModel.TaskResponse;
 using BusinessLayer.Models.ResponseModel.TrainingPlanResponse;
 using BusinessLayer.Service.Interface;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
+using DocumentFormat.OpenXml.ExtendedProperties;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -26,7 +29,7 @@ namespace BusinessLayer.Service.Implement
             _configuration = configuration;
         }
 
-        public async Task<IEnumerable<TraineeTaskResponse>> GetAllTaskOfTrainee(int userId)
+        public async Task<BasePagingViewModel<TraineeTaskResponse>> GetAllTaskOfTrainee(int userId, PagingRequestModel paging)
         {
             try
             {
@@ -40,7 +43,7 @@ namespace BusinessLayer.Service.Implement
                 
                 var cards = await client.GetCardsForMemberAsync(trelloUserId);
 
-                ICollection<TraineeTaskResponse> res = new List<TraineeTaskResponse>(); 
+                List<TraineeTaskResponse> res = new List<TraineeTaskResponse>(); 
 
                 foreach ( var card in cards)
                 {
@@ -74,7 +77,21 @@ namespace BusinessLayer.Service.Implement
 
                     res.Add(task);
                 }
-                return res;
+                
+                int totalItem = res.Count;
+
+                res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                    .Take(paging.PageSize).ToList();
+
+                var result = new BasePagingViewModel<TraineeTaskResponse>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = res
+                };
+                return result;
             }
             catch (Exception ex)
             {
@@ -94,7 +111,7 @@ namespace BusinessLayer.Service.Implement
         //    }
         //}
 
-        public async Task<IEnumerable<TraineeTaskResponse>> GetListTaskAccomplished(int userId)
+        public async Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskAccomplished(int userId, PagingRequestModel paging)
         {
             try
             {
@@ -104,12 +121,12 @@ namespace BusinessLayer.Service.Implement
                     throw new Exception("User not found!");
                 }
 
-                var tasks = await _unitOfWork.TaskRepository.GetTaskAccomplishedOfTrainee(userId);
+                var tasks = await _unitOfWork.TaskRepository.GetListTaskAccomplishedOfTrainee(userId);
 
-                IEnumerable<TraineeTaskResponse> res = tasks.Select(
+                List<TaskAccomplishedResponse> res = tasks.Select(
                 task =>
                 {
-                    return new TraineeTaskResponse()
+                    return new TaskAccomplishedResponse()
                     {
                         Id = task.Id,
                         Name = task.Name,
@@ -117,10 +134,22 @@ namespace BusinessLayer.Service.Implement
                         StartTime = task.StartDate,
                         EndTime = task.DueDate,
                         FinishTime = task.AccomplishDate,
+                        ProcessStatus = task.Status
                     };
                 }
                 ).ToList();
-                return res;
+
+                int totalItem = res.Count;
+
+                var result = new BasePagingViewModel<TaskAccomplishedResponse>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = res
+                };
+                return result;
             }
             catch (Exception ex)
             {
@@ -128,7 +157,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task UpdateFinishTask(int userId, string taskId)
+        public async Task CreateFinishTask(int userId, string taskId)
         {
             try
             {
@@ -156,6 +185,52 @@ namespace BusinessLayer.Service.Implement
                 };
 
                 await _unitOfWork.TaskRepository.Add(ta);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task AcceptTraineeTask(int trainerId, string taskId)
+        {
+            try
+            {
+                var task = await _unitOfWork.TaskRepository.GastTaskByIdAndStatusPending(taskId);
+                if (task == null)
+                {
+                    throw new Exception("Task not found or task not pending!");
+                }
+                if (trainerId != task.User.UserReferenceId)
+                {
+                    throw new Exception("Not your trainee's task!");
+                }
+
+                task.Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.DONE;
+                await _unitOfWork.TaskRepository.Update(task);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task RejectTraineeTask(int trainerId, string taskId)
+        {
+            try
+            {
+                var task = await _unitOfWork.TaskRepository.GastTaskByIdAndStatusPending(taskId);
+                if (task == null)
+                {
+                    throw new Exception("Task not found or task not pending!");
+                }
+                if (trainerId != task.User.UserReferenceId)
+                {
+                    throw new Exception("Not your trainee's task!");
+                }
+
+                task.Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.FAILED;
+                await _unitOfWork.TaskRepository.Update(task);
             }
             catch (Exception ex)
             {

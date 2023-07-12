@@ -1,6 +1,9 @@
-﻿using BusinessLayer.Models.RequestModel.AuthenticationRequest;
+﻿using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Models.RequestModel.AuthenticationRequest;
 using BusinessLayer.Models.RequestModel.UserRequest;
+using BusinessLayer.Models.ResponseModel;
 using BusinessLayer.Models.ResponseModel.AuthenticationResponse;
+using BusinessLayer.Models.ResponseModel.TaskResponse;
 using BusinessLayer.Models.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
 using DataAccessLayer.Commons;
@@ -290,13 +293,13 @@ namespace BusinessLayer.Service.Implement
             return user;
         }
 
-        public async Task<IEnumerable<TraineeResponse>> GetTrainerList()
+        public async Task<BasePagingViewModel<TrainerResponse>> GetTrainerList(PagingRequestModel paging)
         {
             var users = await _unitOfWork.UserRepository.GetTrainerList();
-            IEnumerable<TraineeResponse> res = users.Select(
+            List<TrainerResponse> res = users.Select(
                 user =>
                 {
-                    return new TraineeResponse()
+                    return new TrainerResponse()
                     {
                         Id = user.Id,
                         FullName = user.Name,
@@ -304,13 +307,24 @@ namespace BusinessLayer.Service.Implement
                     };
                 }
                 ).ToList();
-            return res;
+
+            int totalItem = res.Count;
+
+            var result = new BasePagingViewModel<TrainerResponse>()
+            {
+                PageIndex = paging.PageIndex,
+                PageSize = paging.PageSize,
+                TotalItem = totalItem,
+                TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                Data = res
+            };
+            return result;
         }
 
-        public async Task<IEnumerable<TraineeResponse>> GetTraineeList()
+        public async Task<BasePagingViewModel<TraineeResponse>> GetTraineeList(PagingRequestModel paging)
         {
             var users = await _unitOfWork.UserRepository.GetTraineeList();
-            IEnumerable<TraineeResponse> res = users.Select(
+            List<TraineeResponse> res = users.Select(
                 user =>
                 {
                     return new TraineeResponse()
@@ -321,13 +335,24 @@ namespace BusinessLayer.Service.Implement
                     };
                 }
                 ).ToList();
-            return res;
+
+            int totalItem = res.Count;
+
+            var result = new BasePagingViewModel<TraineeResponse>()
+            {
+                PageIndex = paging.PageIndex,
+                PageSize = paging.PageSize,
+                TotalItem = totalItem,
+                TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                Data = res
+            };
+            return result;
         }
 
-        public async Task<IEnumerable<TraineeResponse>> GetTraineeListByTrainer(int id)
+        public async Task<BasePagingViewModel<TraineeResponse>> GetTraineeListByTrainer(int id, PagingRequestModel paging)
         {
             var users = await _unitOfWork.UserRepository.GetTraineeListByTrainerId(id);
-            IEnumerable<TraineeResponse> res = users.Select(
+            List<TraineeResponse> res = users.Select(
                 user =>
                 {
                     return new TraineeResponse()
@@ -338,7 +363,18 @@ namespace BusinessLayer.Service.Implement
                     };
                 }
                 ).ToList();
-            return res;
+
+            int totalItem = res.Count;
+
+            var result = new BasePagingViewModel<TraineeResponse>()
+            {
+                PageIndex = paging.PageIndex,
+                PageSize = paging.PageSize,
+                TotalItem = totalItem,
+                TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                Data = res
+            };
+            return result;
         }
 
         public async Task AssignTraineeToTrainer (int trainerId, int traineeId)
@@ -451,10 +487,10 @@ namespace BusinessLayer.Service.Implement
             await _unitOfWork.UserRepository.Update(u);
         }
 
-        public async Task<IEnumerable<UserListResponse>> GetUserList()
+        public async Task<BasePagingViewModel<UserListResponse>> GetUserList(PagingRequestModel paging)
         {
             var users = await _unitOfWork.UserRepository.Get(c=>c.IsDeleted==false && c.Role!= CommonEnums.ROLE.ADMIN);
-            IEnumerable<UserListResponse> res = users.Select(
+            List<UserListResponse> res = users.Select(
                 user =>
                 {
                     return new UserListResponse()
@@ -465,7 +501,18 @@ namespace BusinessLayer.Service.Implement
                     };
                 }
                 ).ToList();
-            return res;
+
+            int totalItem = res.Count;
+
+            var result = new BasePagingViewModel<UserListResponse>()
+            {
+                PageIndex = paging.PageIndex,
+                PageSize = paging.PageSize,
+                TotalItem = totalItem,
+                TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                Data = res
+            };
+            return result;
         }
     }
 }

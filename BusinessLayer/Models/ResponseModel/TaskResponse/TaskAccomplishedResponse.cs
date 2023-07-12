@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Models.ResponseModel.TaskResponse
 {
-    public class TraineeTaskResponse
+    public class TaskAccomplishedResponse
     {
         public string Id { get; set; }
 
@@ -16,8 +16,10 @@ namespace BusinessLayer.Models.ResponseModel.TaskResponse
 
         public DateTimeOffset? StartTime { get; set; }
 
-        public DateTimeOffset? EndTime { get; set;}
+        public DateTimeOffset? EndTime { get; set; }
 
-        public int? Status { get; set; }
+        public DateTimeOffset? FinishTime { get; set; }
+
+        public int? ProcessStatus { get; set; }
     }
 }

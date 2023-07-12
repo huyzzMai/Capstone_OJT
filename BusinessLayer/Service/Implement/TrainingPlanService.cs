@@ -1,4 +1,7 @@
-﻿using BusinessLayer.Models.RequestModel.TrainingPLanRequest;
+﻿using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Models.RequestModel.TrainingPLanRequest;
+using BusinessLayer.Models.ResponseModel.TaskResponse;
+using BusinessLayer.Models.ResponseModel;
 using BusinessLayer.Models.ResponseModel.TrainingPlanResponse;
 using BusinessLayer.Models.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
@@ -142,10 +145,10 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<IEnumerable<TrainingPlanResponse>> GetTrainingPlanList()
+        public async Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanList(PagingRequestModel paging)
         {
             var tplans = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanList();
-            IEnumerable<TrainingPlanResponse> res = tplans.Select(
+            List<TrainingPlanResponse> res = tplans.Select(
                 tplan =>
                 {
                     return new TrainingPlanResponse()
@@ -156,13 +159,24 @@ namespace BusinessLayer.Service.Implement
                     };
                 }
                 ).ToList();
-            return res;
+
+            int totalItem = res.Count;
+
+            var result = new BasePagingViewModel<TrainingPlanResponse>()
+            {
+                PageIndex = paging.PageIndex,
+                PageSize = paging.PageSize,
+                TotalItem = totalItem,
+                TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                Data = res
+            };
+            return result;
         }
 
-        public async Task<IEnumerable<TrainingPlanResponse>> GetTrainingPlanListByOwner(int id)
+        public async Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanListByOwner(int id, PagingRequestModel paging)
         {
             var tplans = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanListByOwnerId(id);
-            IEnumerable<TrainingPlanResponse> res = tplans.Select(
+            List<TrainingPlanResponse> res = tplans.Select(
                 tplan =>
                 {
                     return new TrainingPlanResponse()
@@ -173,7 +187,18 @@ namespace BusinessLayer.Service.Implement
                     };
                 }
                 ).ToList();
-            return res;
+
+            int totalItem = res.Count;
+
+            var result = new BasePagingViewModel<TrainingPlanResponse>()
+            {
+                PageIndex = paging.PageIndex,
+                PageSize = paging.PageSize,
+                TotalItem = totalItem,
+                TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                Data = res
+            };
+            return result;
         }
 
         public async Task AssignTraineeToTrainingPlan(int trainerId, int traineeId, int planId)

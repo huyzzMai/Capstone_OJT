@@ -1,4 +1,6 @@
-﻿using BusinessLayer.Models.RequestModel.TrainingPLanRequest;
+﻿using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Models.RequestModel.TrainingPLanRequest;
+using BusinessLayer.Models.ResponseModel;
 using BusinessLayer.Models.ResponseModel.TrainingPlanResponse;
 using BusinessLayer.Models.ResponseModel.UserResponse;
 using DataAccessLayer.Models;
@@ -14,9 +16,9 @@ namespace BusinessLayer.Service.Interface
     {
         Task<TrainingPlanResponse> GetTrainingPlanForAllRole(int userId, int id);
 
-        Task<IEnumerable<TrainingPlanResponse>> GetTrainingPlanList();
+        Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanList(PagingRequestModel paging);
 
-        Task<IEnumerable<TrainingPlanResponse>> GetTrainingPlanListByOwner(int id);
+        Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanListByOwner(int id, PagingRequestModel paging);
 
         Task CreateTrainingPlan(int userId, CreateTrainingPlanRequest request);
 
