@@ -12,14 +12,14 @@ namespace BusinessLayer.Service.Interface
     {
         Task CreateCourse(CreateCourseRequest request);
 
-        Task UpadateCourse(int courseId,UpdateCourseRequest request);
+        //Task UpadateCourse(int courseId,UpdateCourseRequest request);
 
         Task DeleteCourse(int courseId);
 
-        Task<IEnumerable<CourseResponse>> GetCourseList();
+        //Task<IEnumerable<CourseResponse>> GetCourseList();
 
-        Task<IEnumerable<CourseResponse>> GetCourserecommendListForUser(int userid);
+        //Task<IEnumerable<CourseResponse>> GetCourserecommendListForUser(int userid);
 
-        Task<IEnumerable<CourseResponse>> GetCourseCompulsoryForUser();
+        //Task<IEnumerable<CourseResponse>> GetCourseCompulsoryForUser();
     }
 }

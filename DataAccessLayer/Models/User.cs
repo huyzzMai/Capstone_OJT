@@ -40,7 +40,7 @@ namespace DataAccessLayer.Models
         public string Birthday { get; set; }
 
         [Column(TypeName = "nvarchar(500)")]
-        public string AvatarUrl { get; set; }
+        public string AvatarURL { get; set; }
 
         [Column(TypeName = "nvarchar(50)")]
         public string Position { get; set; }
@@ -55,7 +55,7 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(40)")]
         public string TrelloId { get; set; }
 
-        public bool? IsDeleted { get; set; }
+        //public bool? IsDeleted { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 

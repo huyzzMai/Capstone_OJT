@@ -19,6 +19,8 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(100)")]
         public string Position { get; set; }
 
+        public bool? IsCompulsory { get; set; }
+
         public bool? IsDeleted { get; set; }
 
         public DateTime? CreatedAt { get; set; }

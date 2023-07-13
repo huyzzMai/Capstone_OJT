@@ -20,15 +20,21 @@ namespace DataAccessLayer.Models
 
         public int? TotalPoint { get; set; }
 
-        public bool? IsDeleted { get; set; }
+        public int? Status { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
 
+        // Relation with User
         public virtual ICollection<UserCriteria> UserCriterias { get; set; }
 
+        // Relation with University
+        public int UniversityId { get; set; }
+        [ForeignKey("UniversityId")]
+        public virtual University University { get; set; }
+
         // Relation with Template
-        public virtual ICollection<TemplateCriteria> TemplateCriterias { get; set; }
+        //public virtual ICollection<TemplateCriteria> TemplateCriterias { get; set; }
     }
 }

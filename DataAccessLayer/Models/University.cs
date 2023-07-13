@@ -19,6 +19,9 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(100)")]
         public string Name { get; set; }
 
+        [Column(TypeName = "nvarchar(500)")]
+        public string ImgURL { get; set; }
+
         public int? Status { get; set; }
 
         public DateTime? JoinDate { get; set; }
@@ -31,6 +34,8 @@ namespace DataAccessLayer.Models
 
         public virtual ICollection<OJTBatch> OJTBatches { get; set; }
 
-        public virtual ICollection<Template> Templates { get; set; }
+        public virtual ICollection<Criteria> Criterias { get; set; }
+
+        //public virtual ICollection<Template> Templates { get; set; }
     }
 }

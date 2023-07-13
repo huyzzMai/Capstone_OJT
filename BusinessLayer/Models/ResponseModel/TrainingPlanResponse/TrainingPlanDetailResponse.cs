@@ -14,6 +14,8 @@ namespace BusinessLayer.Models.ResponseModel.TrainingPlanResponse
 
         public string Description { get; set; }
 
+        public bool? IsEvaluativeTask { get; set; }
+
         public int? Status { get; set; }    
 
         public DateTime? StartTime { get; set; }

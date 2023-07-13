@@ -58,6 +58,7 @@ namespace BusinessLayer.Service.Implement
                                              Description = detail.Description,
                                              StartTime = detail.StartTime,
                                              EndTime = detail.EndTime,
+                                             IsEvaluativeTask = detail.IsEvaluativeTask
                                          };
                                      }
                                      ).ToList()
@@ -89,6 +90,7 @@ namespace BusinessLayer.Service.Implement
                                              Description = detail.Description,
                                              StartTime = detail.StartTime,
                                              EndTime = detail.EndTime,
+                                             IsEvaluativeTask = detail.IsEvaluativeTask
                                          };
                                      }
                                      ).ToList()
@@ -124,6 +126,7 @@ namespace BusinessLayer.Service.Implement
                                              Description = detail.Description,
                                              StartTime = detail.StartTime,
                                              EndTime = detail.EndTime,
+                                             IsEvaluativeTask = detail.IsEvaluativeTask,
                                              Status = detail.Status,
                                          };
                                      }
@@ -257,8 +260,9 @@ namespace BusinessLayer.Service.Implement
                         Description = detail.Description,
                         StartTime = detail.StartTime,
                         EndTime = detail.EndTime,
-                        CreatedAt = DateTime.Now,
+                        IsEvaluativeTask = detail.IsEvaluativeTask,
                         Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.ACTIVE,
+                        CreatedAt = DateTime.Now,
                         TrainingPlanId = tp.Id
                     };
                     re.Add(tpd);
@@ -390,6 +394,7 @@ namespace BusinessLayer.Service.Implement
                     Description = request.Description,
                     StartTime = request.StartTime,
                     EndTime = request.EndTime,
+                    IsEvaluativeTask = request.IsEvaluativeTask,
                     CreatedAt = DateTime.Now,
                     Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.ACTIVE,
                     TrainingPlanId = planId
@@ -432,6 +437,10 @@ namespace BusinessLayer.Service.Implement
                 if (request.EndTime != null)
                 {
                     detail.EndTime = request.EndTime;
+                }
+                if (request.IsEvaluativeTask != null)
+                {
+                    detail.IsEvaluativeTask = request.IsEvaluativeTask;
                 }
 
                 detail.UpdatedAt = DateTime.Now;

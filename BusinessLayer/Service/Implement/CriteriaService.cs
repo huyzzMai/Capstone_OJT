@@ -25,7 +25,7 @@ namespace BusinessLayer.Service.Implement
             criteria.Name = request.Name;
             criteria.TotalPoint= request.TotalPoint;
             criteria.CreatedAt=DateTime.Now;
-            criteria.IsDeleted = false;
+            //criteria.IsDeleted = false;
             await _unitOfWork.CriteriaRepository.Add(criteria);
             return criteria;
         }

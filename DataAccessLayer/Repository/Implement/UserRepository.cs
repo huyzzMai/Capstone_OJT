@@ -77,7 +77,7 @@ namespace DataAccessLayer.Repository.Implement
         public async Task<List<User>> GetTraineeListByBatch(int batchid)
         {
             List<User> users = await _context.Users
-                .Where(u => u.IsDeleted == false && u.Role == CommonEnums.ROLE.TRAINEE && u.OJTBatchId==batchid).OrderBy(c=>c.Id)
+                .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE && u.OJTBatchId==batchid).OrderBy(c=>c.Id)
                 .ToListAsync();
             return users;
         }
@@ -97,7 +97,7 @@ namespace DataAccessLayer.Repository.Implement
                     RollNumber= useritem.RollNumber,
                     Birthday= useritem.Birthday,
                     University=batch.University.Name,
-                    TemplatePoint= await _unitOfWork.CriteriaRepository.GetPointListByUserId(useritem.Id)
+                    //TemplatePoint= await _unitOfWork.CriteriaRepository.GetPointListByUserId(useritem.Id)
                 };
                 reportuser.Add(newreportuser);
             }

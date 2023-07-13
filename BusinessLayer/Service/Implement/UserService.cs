@@ -423,7 +423,7 @@ namespace BusinessLayer.Service.Implement
                 Address = request.Address,
                 Gender = request.Gender,    
                 RollNumber = request.RollNumber,
-                AvatarUrl = request.AvatarUrl,
+                AvatarURL = request.AvatarUrl,
                 Role = request.Role,
                 Password = encryptPwd,
                 CreatedAt = DateTime.Now,
@@ -489,7 +489,7 @@ namespace BusinessLayer.Service.Implement
 
         public async Task<BasePagingViewModel<UserListResponse>> GetUserList(PagingRequestModel paging)
         {
-            var users = await _unitOfWork.UserRepository.Get(c=>c.IsDeleted==false && c.Role!= CommonEnums.ROLE.ADMIN);
+            var users = await _unitOfWork.UserRepository.Get(c=>c.Status == CommonEnums.USER_STATUS.ACTIVE && c.Role!= CommonEnums.ROLE.ADMIN);
             List<UserListResponse> res = users.Select(
                 user =>
                 {

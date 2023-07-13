@@ -25,7 +25,7 @@ namespace DataAccessLayer.Models
 
         public DbSet<University> Universities { get; set; }
 
-        public DbSet<Template> Templates { get; set; }
+        //public DbSet<Template> Templates { get; set; }
 
         public DbSet<OJTBatch> OJTBatches { get; set; }
 
@@ -49,7 +49,7 @@ namespace DataAccessLayer.Models
 
         public DbSet<CourseSkill> CourseSkills { get; set; }
 
-        public DbSet<TemplateCriteria> TemplateCriterias { get; set; }
+        //public DbSet<TemplateCriteria> TemplateCriterias { get; set; }
 
         public DbSet<TaskAccomplished> TaskAccomplisheds { get; set; }
 
@@ -82,11 +82,11 @@ namespace DataAccessLayer.Models
             modelBuilder.Entity<CourseSkill>()
                 .HasKey(c => new { c.SkillId, c.CourseId });
 
-            modelBuilder.Entity<UserSkill>()
-                .HasKey(c => new { c.SkillId, c.UserId });
+            //modelBuilder.Entity<UserSkill>()
+            //    .HasKey(c => new { c.SkillId, c.UserId });
 
-            modelBuilder.Entity<TemplateCriteria>()
-                .HasKey(c => new { c.TemplateId, c.CriteriaId });
+            //modelBuilder.Entity<TemplateCriteria>()
+            //    .HasKey(c => new { c.TemplateId, c.CriteriaId });
         }
     }
 }

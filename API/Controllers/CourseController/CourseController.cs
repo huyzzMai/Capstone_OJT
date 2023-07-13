@@ -35,22 +35,22 @@ namespace API.Controllers.CourseController
                     ex.Message);
             }
         }
-        [Authorize]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCourse(int id, [FromBody] UpdateCourseRequest request)
-        {
-            try
-            {
-                // Get id of current log in user 
-                await _service.UpadateCourse(id, request);
-                return Ok("Course is updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    ex.Message);
-            }
-        }
+        //[Authorize]
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> UpdateCourse(int id, [FromBody] UpdateCourseRequest request)
+        //{
+        //    try
+        //    {
+        //        // Get id of current log in user 
+        //        await _service.UpadateCourse(id, request);
+        //        return Ok("Course is updated successfully.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            ex.Message);
+        //    }
+        //}
 
         [Authorize]
         [HttpDelete("{id}")]
@@ -69,54 +69,54 @@ namespace API.Controllers.CourseController
             }
         }
 
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> GetListCourse()
-        {
-            try
-            {
-               var list= await _service.GetCourseList();
-                return Ok(list);
+        //[Authorize]
+        //[HttpGet]
+        //public async Task<IActionResult> GetListCourse()
+        //{
+        //    try
+        //    {
+        //       var list= await _service.GetCourseList();
+        //        return Ok(list);
 
-            } catch (Exception ex) 
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                   ex.Message);
-            }
-        }
+        //    } catch (Exception ex) 
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //           ex.Message);
+        //    }
+        //}
 
-        [Authorize]
-        [HttpGet("recommendedList/{userid}")]
-        public async Task<IActionResult> GetListCourseRecommendForUser(int userid)
-        {
-            try
-            {
-                var list = await _service.GetCourserecommendListForUser(userid);
-                return Ok(list);
+        //[Authorize]
+        //[HttpGet("recommendedList/{userid}")]
+        //public async Task<IActionResult> GetListCourseRecommendForUser(int userid)
+        //{
+        //    try
+        //    {
+        //        var list = await _service.GetCourserecommendListForUser(userid);
+        //        return Ok(list);
 
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                   ex.Message);
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //           ex.Message);
+        //    }
+        //}
 
-        [Authorize]
-        [HttpGet("compulsoryList")]
-        public async Task<IActionResult> GetListCourseCompulsoryForUser()
-        {
-            try
-            {
-                var list = await _service.GetCourseCompulsoryForUser();
-                return Ok(list);
+        //[Authorize]
+        //[HttpGet("compulsoryList")]
+        //public async Task<IActionResult> GetListCourseCompulsoryForUser()
+        //{
+        //    try
+        //    {
+        //        var list = await _service.GetCourseCompulsoryForUser();
+        //        return Ok(list);
 
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                   ex.Message);
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //           ex.Message);
+        //    }
+        //}
     }
 }

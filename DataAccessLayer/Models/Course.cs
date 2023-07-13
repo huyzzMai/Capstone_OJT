@@ -28,11 +28,10 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(500)")]
         public string Link { get; set; }
 
-        public bool? IsCompulsory { get; set; }
+        [Column(TypeName = "nvarchar(500)")]
+        public string ImageURL { get; set; }
 
         public int? Status { get; set; }
-
-        public bool? IsDeleted { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 

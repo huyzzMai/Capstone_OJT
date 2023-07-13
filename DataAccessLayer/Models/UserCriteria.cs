@@ -21,6 +21,8 @@ namespace DataAccessLayer.Models
 
         public int? Point { get; set; }
 
+        public int? TrainerIdMark { get; set; }
+
         public DateTime? CreatedAt { get; set; }
 
     }
