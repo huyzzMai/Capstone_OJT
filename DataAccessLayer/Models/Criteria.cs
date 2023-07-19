@@ -32,7 +32,7 @@ namespace DataAccessLayer.Models
         // Relation with University
         public int UniversityId { get; set; }
         [ForeignKey("UniversityId")]
-        public virtual University University { get; set; }
+        public University University { get; set; }
 
         // Relation with Template
         //public virtual ICollection<TemplateCriteria> TemplateCriterias { get; set; }

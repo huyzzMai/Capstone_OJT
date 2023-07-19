@@ -13,11 +13,11 @@ namespace DataAccessLayer.Models
     {      
         public int UserId { get; set; }
         [ForeignKey("UserId")]
-        public virtual User User { get; set; }
+        public User User { get; set; }
 
         public int CriteriaId { get; set; }
         [ForeignKey("CriteriaId")]
-        public virtual Criteria Criteria { get; set; }
+        public Criteria Criteria { get; set; }
 
         public int? Point { get; set; }
 

@@ -12,11 +12,11 @@ namespace DataAccessLayer.Models
     {
         public int UserId { get; set; }
         [ForeignKey("UserId")]
-        public virtual User User { get; set; }
+        public User User { get; set; }
 
         public int TrainingPlanId { get; set; }
         [ForeignKey("TrainingPlanId")]
-        public virtual TrainingPlan TrainingPlan { get; set; }
+        public TrainingPlan TrainingPlan { get; set; }
 
         public bool? IsOwner { get; set; }
     }
