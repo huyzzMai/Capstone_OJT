@@ -308,7 +308,7 @@ namespace BusinessLayer.Service.Implement
                 }
                 ).ToList();
 
-            int totalItem = res.Count;
+           int totalItem = res.Count;
 
             var result = new BasePagingViewModel<TrainerResponse>()
             {

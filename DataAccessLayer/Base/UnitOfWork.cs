@@ -33,5 +33,11 @@ namespace DataAccessLayer.Base
         public ITaskRepository TaskRepository => new TaskRepository(_context, this);
 
         public ICourseRepository CourseRepository => new CourseRepository(_context, this);
+
+        public ICoursePositionRepository CoursePositionRepository => new CoursePositionRepository(_context, this);
+
+        public ICertificateRepository CertificateRepository => new CertificateRepository(_context, this);   
+
+        public IUserSkillRepository UserSkillRepository=> new UserSkillRepository(_context, this);
     }
 }

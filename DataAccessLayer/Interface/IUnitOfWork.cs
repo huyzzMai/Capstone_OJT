@@ -18,5 +18,11 @@ namespace DataAccessLayer.Interface
         ITaskRepository TaskRepository { get; }
 
         ICourseRepository CourseRepository { get; }
+
+        ICoursePositionRepository CoursePositionRepository { get; }
+
+        ICertificateRepository CertificateRepository { get; }
+
+        IUserSkillRepository UserSkillRepository { get; }
     }
 }
