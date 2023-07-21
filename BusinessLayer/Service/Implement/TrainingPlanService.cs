@@ -499,5 +499,55 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task DeleteTrainingPlan(int planId, int trainerId)
+        {
+            try
+            {
+                var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(trainerId, planId);
+                if (check == null)
+                {
+                    throw new Exception("Training plan not found or You not the owner of this training plan !");
+                }
+                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(planId);
+                if (tp == null)
+                {
+                    throw new Exception("Training plan not found !");
+                }
+
+                tp.Status = CommonEnums.TRAINING_PLAN_STATUS.DELETED;
+                tp.UpdatedAt = DateTime.Now;
+                await _unitOfWork.TrainingPlanRepository.Update(tp);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task DeleteTrainingPlanDetail(int detailId, int trainerId)
+        {
+            try
+            {
+                var detail = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailByIdAndNotDeleted(detailId);
+                if (detail == null)
+                {
+                    throw new Exception("Training plan detail not found !");
+                }
+                var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(trainerId, detail.TrainingPlanId ?? default(int));
+                if (check == null)
+                {
+                    throw new Exception("You are not the owner of this training plan detail !");
+                }
+
+                detail.Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.DELETED;
+                detail.UpdatedAt = DateTime.Now;    
+                await _unitOfWork.TrainingPlanDetailRepository.Update(detail);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

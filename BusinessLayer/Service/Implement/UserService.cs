@@ -449,37 +449,68 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception("This user cannot be updated!");
             }
 
+            #region Old method
             //var check = await _unitOfWork.UserRepository.GetUserByEmailAndDeleteIsFalse(model.Email);
             //if (check != null)
             //{
             //    throw new Exception("This email existed!");
             //}
 
-            if (model.FullName == null)
-            {
-                u.Name = u.Name;
-            }
-            else
+            //if (model.FullName == null)
+            //{
+            //    u.Name = u.Name;
+            //}
+            //else
+            //{
+            //    u.Name = model.FullName;
+            //}
+            //if (model.Birthday == null)
+            //{
+            //    u.Birthday = u.Birthday;
+            //}
+            //else
+            //{
+            //    u.Birthday = model.Birthday;
+            //}
+
+            //if (model.PhoneNumber == null)
+            //{
+            //    u.PhoneNumber = u.PhoneNumber;
+            //}
+            //else
+            //{
+            //    u.PhoneNumber = model.PhoneNumber;
+            //}
+            #endregion
+
+            if (model.FullName != null)
             {
                 u.Name = model.FullName;
             }
 
-            if (model.Birthday == null)
-            {
-                u.Birthday = u.Birthday;
-            }
-            else
+            if (model.Birthday != null)
             {
                 u.Birthday = model.Birthday;
             }
 
-            if (model.PhoneNumber == null)
-            {
-                u.PhoneNumber = u.PhoneNumber;
-            }
-            else
+            if (model.PhoneNumber != null)
             {
                 u.PhoneNumber = model.PhoneNumber;
+            }
+
+            if (model.Gender != null)
+            {
+                u.Gender = model.Gender;
+            }
+
+            if (model.Address != null)
+            {
+                u.Address = model.Address;
+            }
+
+            if (model.AvatarURL != null)
+            {
+                u.AvatarURL = model.AvatarURL;
             }
 
             u.UpdatedAt = DateTime.Now;

@@ -124,7 +124,7 @@ namespace API.Controllers.TrainingPlanController
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await trainingService.CreateTrainingPlan(userId, request);
-                return StatusCode(StatusCodes.Status201Created,"Training plan is created successfully");
+                return StatusCode(StatusCodes.Status201Created, "Training plan is created successfully");
             }
             catch (Exception ex)
             {
@@ -233,6 +233,42 @@ namespace API.Controllers.TrainingPlanController
                 int trainerId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await trainingService.AssignTraineeToTrainingPlan(trainerId, traineeId, id);
                 return StatusCode(StatusCodes.Status201Created, "Assign trainee to training plan successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainer")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTrainingPlan(int id)
+        {
+            try
+            {
+                // Get id of current log in user 
+                int trainerId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                await trainingService.DeleteTrainingPlan(id, trainerId);
+                return Ok("Training plan is deleted.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainer")]
+        [HttpDelete("detail/{id}")]
+        public async Task<IActionResult> DeleteTrainingPlanDetail(int id)
+        {
+            try
+            {
+                // Get id of current log in user 
+                int trainerId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                await trainingService.DeleteTrainingPlanDetail(id, trainerId);  
+                return Ok("Training plan detail is deleted.");
             }
             catch (Exception ex)
             {

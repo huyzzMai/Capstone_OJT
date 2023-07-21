@@ -16,6 +16,13 @@ namespace DataAccessLayer.Commons
             public const int TRAINEE = 4;
         }
 
+        public class USER_GENDER
+        {
+            public const int MALE = 1;
+            public const int FEMALE = 2;
+            public const int OTHER = 3;
+        }
+
         public class USER_STATUS
         {
             public const int DELETED = 0;

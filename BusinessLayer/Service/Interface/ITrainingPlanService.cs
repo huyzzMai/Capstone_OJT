@@ -37,5 +37,9 @@ namespace BusinessLayer.Service.Interface
         Task UpdateTrainingPlanDetail(int userId, int detailId, CreateTrainingPlanDetailRequest request);
 
         Task AssignTraineeToTrainingPlan(int trainerId, int traineeId, int planId);
+
+        Task DeleteTrainingPlan(int planId, int trainerId);
+
+        Task DeleteTrainingPlanDetail(int detailId, int trainerId);
     }
 }
