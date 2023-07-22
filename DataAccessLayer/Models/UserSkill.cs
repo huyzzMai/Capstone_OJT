@@ -11,7 +11,6 @@ namespace DataAccessLayer.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
         public int SkillId { get; set; }
         [ForeignKey("SkillId")]
         public Skill Skill { get; set; }
@@ -20,8 +19,8 @@ namespace DataAccessLayer.Models
         [ForeignKey("UserId")]
         public User User { get; set; }
 
-        public int? Level { get; set; }
+        public int? CurrentLevel { get; set; }
 
-        public bool? IsInit { get; set; }
+        public int? InitLevel { get; set; }
     }
 }

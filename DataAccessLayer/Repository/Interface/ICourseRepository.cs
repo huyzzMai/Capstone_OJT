@@ -11,6 +11,6 @@ namespace DataAccessLayer.Repository.Interface
 {
     public interface ICourseRepository : IGenericRepository<Course>
     {
-      Task<IEnumerable<Course>> GetCoursesForUserSkills(List<UserSkill> userSkills);   
+      Task<IEnumerable<Course>> GetrecommendCoursesForUser(User user);   
     }
 }

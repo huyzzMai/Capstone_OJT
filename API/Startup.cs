@@ -63,6 +63,7 @@ namespace API
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<ITaskService, TaskService>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ICertificateService, CertificateService>();
 
 
             services.AddControllersWithViews()

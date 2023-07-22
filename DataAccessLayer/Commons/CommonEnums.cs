@@ -88,6 +88,22 @@ namespace DataAccessLayer.Commons
             public const int ADVANCED = 3;
             public const int FLUENT = 4;
         }
+        public class CERTIFICATE_STATUS
+        {
+            public const int DELETED = 0;
+            public const int PENDING = 1;
+            public const int NOT_SUBMIT = 2;
+            public const int APPROVED = 3;
+            public const int DENY = 4;
+        }
+        public class POSITION
+        {
+            public const int BACKEND_DEVELOPER = 0;
+            public const int FRONTEND_DEVELOPER = 1;
+            public const int BUSINESS_ANALYST = 2;
+            public const int DESIGN_UX_UI = 3;
+            public const int TESTER = 4;
+        }
     }      
 }
 

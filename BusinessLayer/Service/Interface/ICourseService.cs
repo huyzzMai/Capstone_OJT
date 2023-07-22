@@ -1,4 +1,6 @@
-﻿using BusinessLayer.Models.RequestModel.CourseRequest;
+﻿using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Models.RequestModel.CourseRequest;
+using BusinessLayer.Models.ResponseModel;
 using BusinessLayer.Models.ResponseModel.CourseResponse;
 using System;
 using System.Collections.Generic;
@@ -12,14 +14,17 @@ namespace BusinessLayer.Service.Interface
     {
         Task CreateCourse(CreateCourseRequest request);
 
-        //Task UpadateCourse(int courseId,UpdateCourseRequest request);
+        Task UpadateCourse(int courseId, UpdateCourseRequest request);
 
         Task DeleteCourse(int courseId);
 
-        //Task<IEnumerable<CourseResponse>> GetCourseList();
+        Task<BasePagingViewModel<CourseResponse>> GetCourseList(PagingRequestModel paging);
 
-        //Task<IEnumerable<CourseResponse>> GetCourserecommendListForUser(int userid);
+        Task<BasePagingViewModel<CourseResponse>> GetCourserecommendListForUser(int userid,PagingRequestModel paging);
 
-        //Task<IEnumerable<CourseResponse>> GetCourseCompulsoryForUser();
+        Task<BasePagingViewModel<CourseResponse>> GetCourseCompulsoryForUser(int userid, PagingRequestModel paging);
+
+        Task EnrollCourse(int userid, int courseId);       
+        Task<BasePagingViewModel<CourseResponse>> GetEnrollCourse(int userid, PagingRequestModel paging);
     }
 }

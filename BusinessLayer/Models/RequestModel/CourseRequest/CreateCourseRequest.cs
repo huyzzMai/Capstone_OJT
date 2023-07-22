@@ -11,8 +11,10 @@ namespace BusinessLayer.Models.RequestModel.CourseRequest
         public string Name { get; set; }
         public string PlatformName { get; set; }
         public string Description { get; set; }
-        public string Link { get; set; }
-        public bool? IsCompulsory { get; set; }
+        public string Link { get; set; }        
+        public string ImageURL { get; set; }
+
+        public List<CoursePositionRequest> CoursePosition { get; set; }
 
     }
 }
