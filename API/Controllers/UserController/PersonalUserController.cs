@@ -30,7 +30,7 @@ namespace API.Controllers.UserController
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
 
-                var u = await userService.GetUserById(userId);
+                var u = await userService.GetCurrentUserById(userId);
                 var user = new PersonalUserResponse
                 {
                     Email = u.Email,
@@ -56,7 +56,7 @@ namespace API.Controllers.UserController
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
 
-                var u = await userService.GetUserById(userId);
+                var u = await userService.GetCurrentUserById(userId);
 
                 if (u == null)
                 {
