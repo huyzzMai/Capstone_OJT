@@ -96,7 +96,7 @@ namespace API.Controllers.UserController
             }
         }
 
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("trainee")]
         public async Task<IActionResult> GetTraineeList([FromQuery] PagingRequestModel paging)
         {
@@ -113,12 +113,12 @@ namespace API.Controllers.UserController
         }
 
         [Authorize(Roles = "Manager")]
-        [HttpPost("trainer/{trainerId}/trainee/{traineeId}")]
-        public async Task<IActionResult> AssignTraineeToTrainer(int trainerId, int traineeId)
+        [HttpPost("trainer/assign-trainees")]
+        public async Task<IActionResult> AssignTraineeToTrainer([FromBody] AssignTraineesRequest request)
         {
             try
             {
-                await userService.AssignTraineeToTrainer(trainerId, traineeId);
+                //await userService.AssignTraineeToTrainer(trainerId, traineeId);
                 return StatusCode(StatusCodes.Status201Created,
                     "Assign successfully.");
             }

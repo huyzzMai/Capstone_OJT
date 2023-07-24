@@ -39,17 +39,19 @@ namespace API.Controllers
         public async Task<IActionResult> GetCurrentUserInfo()
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
-            var cacheKey = "CurrentUser";
-            if (_cache.TryGetValue(cacheKey, out var cachedData))
-            {
-                return Ok(cachedData);
-            }
-            else
-            {
-                var user = await userService.GetUserById(int.Parse(userIdClaim.Value));
-                _cache.Set(cacheKey, user, TimeSpan.FromMinutes(10));
-                return Ok(user);
-            }
+            var user = await userService.GetUserById(int.Parse(userIdClaim.Value));
+            return Ok(user);
+            //var cacheKey = "CurrentUser";
+            //if (_cache.TryGetValue(cacheKey, out var cachedData))
+            //{
+            //    return Ok(cachedData);
+            //}
+            //else
+            //{
+            //    var user = await userService.GetUserById(int.Parse(userIdClaim.Value));
+            //    _cache.Set(cacheKey, user, TimeSpan.FromMinutes(10));
+            //    return Ok(user);
+            //}
         }
     }
 }

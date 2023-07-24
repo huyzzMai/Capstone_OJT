@@ -386,6 +386,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new Exception("Trainer not found!");
                 }
+
                 var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
                 if (trainee.Role != CommonEnums.ROLE.TRAINEE)
                 {
@@ -395,6 +396,34 @@ namespace BusinessLayer.Service.Implement
                 trainee.UserReferenceId = trainerId;
                 trainee.UpdatedAt = DateTime.Now;
                 await _unitOfWork.UserRepository.Update(trainee);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public async Task AssignTraineeToTrainer(AssignTraineesRequest request)
+        {
+            try
+            {
+                var trainer = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(request.TrainerId);
+                if (trainer.Role != CommonEnums.ROLE.TRAINER)
+                {
+                    throw new Exception("Trainer not found!");
+                }
+
+                foreach (var item in request.Trainees)
+                {
+                    var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(item.TraineeId);
+                    if (trainee.Role != CommonEnums.ROLE.TRAINEE || trainee.UserReferenceId != null)
+                    {
+                        throw new Exception("Trainee not available!");
+                    }
+
+                    trainee.UserReferenceId = request.TrainerId;
+                    trainee.UpdatedAt = DateTime.Now;
+                    await _unitOfWork.UserRepository.Update(trainee);
+                }
             }
             catch (Exception ex)
             {
