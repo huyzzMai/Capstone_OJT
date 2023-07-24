@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.Drawing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace BusinessLayer.Models.RequestModel.UserRequest
 {
     public class CreateUserRequest
     {
+        public int Role { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }   
         public string Birthday { get; set; }
@@ -16,6 +18,7 @@ namespace BusinessLayer.Models.RequestModel.UserRequest
         public int Gender { get; set; }
         public string RollNumber { get; set; }
         public string AvatarUrl { get; set; }   
-        public int Role { get; set; }
+        public string Position { get; set; }
+        public string TrelloId { get; set; }
     }
 }
