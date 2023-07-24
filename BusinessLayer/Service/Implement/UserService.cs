@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -283,14 +284,31 @@ namespace BusinessLayer.Service.Implement
             return userId;
         }
 
-        public async Task<User> GetUserById(int id)
+        public async Task<UserCommonResponse> GetCurrentUserById(int id)
         {
             var user = await _unitOfWork.UserRepository.GetFirst(c=>c.Id==id && c.Status == CommonEnums.USER_STATUS.ACTIVE);
             if (user == null)
             {
                 throw new Exception("This user cannot be found!");
             }
-            return user;
+            UserCommonResponse usercommon = new UserCommonResponse()
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                Address = user.Address,
+                AvatarURL= user.AvatarURL,
+                Birthday= user.Birthday,
+                Gender=user.Gender,
+                PhoneNumber= user.PhoneNumber,
+                Role=user.Role,
+                RollNumber= user.RollNumber,
+                TrelloId= user.TrelloId,
+                CreatedAt= user.CreatedAt,
+                UpdatedAt = user.UpdatedAt                
+            };
+               
+            return usercommon;
         }
 
         public async Task<BasePagingViewModel<TrainerResponse>> GetTrainerList(PagingRequestModel paging)
