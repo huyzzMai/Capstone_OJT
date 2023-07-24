@@ -377,31 +377,31 @@ namespace BusinessLayer.Service.Implement
             return result;
         }
 
-        public async Task AssignTraineeToTrainer (int trainerId, int traineeId)
-        {
-            try
-            {
-                var trainer = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(trainerId);  
-                if (trainer.Role != CommonEnums.ROLE.TRAINER)
-                {
-                    throw new Exception("Trainer not found!");
-                }
+        //public async Task AssignTraineeToTrainer (int trainerId, int traineeId)
+        //{
+        //    try
+        //    {
+        //        var trainer = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(trainerId);  
+        //        if (trainer.Role != CommonEnums.ROLE.TRAINER)
+        //        {
+        //            throw new Exception("Trainer not found!");
+        //        }
 
-                var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
-                if (trainee.Role != CommonEnums.ROLE.TRAINEE)
-                {
-                    throw new Exception("Trainee not found!");
-                }
+        //        var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
+        //        if (trainee.Role != CommonEnums.ROLE.TRAINEE)
+        //        {
+        //            throw new Exception("Trainee not found!");
+        //        }
 
-                trainee.UserReferenceId = trainerId;
-                trainee.UpdatedAt = DateTime.Now;
-                await _unitOfWork.UserRepository.Update(trainee);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+        //        trainee.UserReferenceId = trainerId;
+        //        trainee.UpdatedAt = DateTime.Now;
+        //        await _unitOfWork.UserRepository.Update(trainee);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
         public async Task AssignTraineeToTrainer(AssignTraineesRequest request)
         {
             try
@@ -445,6 +445,7 @@ namespace BusinessLayer.Service.Implement
 
             User user = new User()
             {
+                Role = request.Role,
                 Name = request.FullName,
                 Email = request.Email,
                 Birthday = request.Birthday,    
@@ -453,8 +454,9 @@ namespace BusinessLayer.Service.Implement
                 Gender = request.Gender,    
                 RollNumber = request.RollNumber,
                 AvatarURL = request.AvatarUrl,
-                Role = request.Role,
                 Password = encryptPwd,
+                Position = request.Position,    
+                TrelloId = request.TrelloId,
                 CreatedAt = DateTime.Now,
                 Status = CommonEnums.USER_STATUS.ACTIVE
             };

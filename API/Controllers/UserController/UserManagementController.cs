@@ -119,6 +119,7 @@ namespace API.Controllers.UserController
             try
             {
                 //await userService.AssignTraineeToTrainer(trainerId, traineeId);
+                await userService.AssignTraineeToTrainer(request);
                 return StatusCode(StatusCodes.Status201Created,
                     "Assign successfully.");
             }
