@@ -31,11 +31,16 @@ namespace API.Controllers.CourseController
               
                 await _service.CreateCourse(request);
                 return StatusCode(StatusCodes.Status201Created, "Course is created successfully");
+
             }
-            catch (Exception ex)
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ex.Message);
+                  e.Message);
             }
         }
         [Authorize]
@@ -47,10 +52,14 @@ namespace API.Controllers.CourseController
                 await _service.UpadateCourse(id, request);
                 return Ok("Course is updated successfully.");
             }
-            catch (Exception ex)
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ex.Message);
+                  e.Message);
             }
         }
         [Authorize]
@@ -64,10 +73,14 @@ namespace API.Controllers.CourseController
                 await _service.EnrollCourse(int.Parse(userIdClaim.Value), courseid);
                 return Ok("Enroll successfully.");
             }
-            catch (Exception ex)
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ex.Message);
+                  e.Message);
             }
         }
         [Authorize]
@@ -79,10 +92,14 @@ namespace API.Controllers.CourseController
                 await _service.DeleteCourse(id);
                 return Ok("Course is delete successfully.");
             }
-            catch (Exception ex)
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ex.Message);
+                  e.Message);
             }
         }
 
@@ -97,10 +114,14 @@ namespace API.Controllers.CourseController
                 return Ok(list);
 
             }
-            catch (Exception ex)
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                   ex.Message);
+                  e.Message);
             }
         }
         [Authorize]
@@ -115,10 +136,14 @@ namespace API.Controllers.CourseController
                 return Ok(list);
 
             }
-            catch (Exception ex)
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                   ex.Message);
+                  e.Message);
             }
         }
         [Authorize]
@@ -133,10 +158,14 @@ namespace API.Controllers.CourseController
                 return Ok(list);
 
             }
-            catch (Exception ex)
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                   ex.Message);
+                  e.Message);
             }
         }
 
@@ -152,10 +181,14 @@ namespace API.Controllers.CourseController
                 return Ok(list);
 
             }
-            catch (Exception ex)
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                   ex.Message);
+                  e.Message);
             }
         }
     }
