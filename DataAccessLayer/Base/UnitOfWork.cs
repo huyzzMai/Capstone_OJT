@@ -39,5 +39,9 @@ namespace DataAccessLayer.Base
         public ICertificateRepository CertificateRepository => new CertificateRepository(_context, this);   
 
         public IUserSkillRepository UserSkillRepository=> new UserSkillRepository(_context, this);
+
+        public ICourseSkillRepository CourseSkillRepository => new CourseSkillRepository(_context, this);
+
+        public ISkillRepository SkillRepository => new SkillRepository(_context, this);
     }
 }

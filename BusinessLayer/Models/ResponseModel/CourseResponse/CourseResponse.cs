@@ -15,5 +15,7 @@ namespace BusinessLayer.Models.ResponseModel.CourseResponse
         public string Link { get; set; }
         public string ImageURL { get; set; }
         public List<CoursePositionResponse> coursePositions { get; set; }
+        public List<CourseSkillResponse> courseSkills { get; set; }
+
     }
 }

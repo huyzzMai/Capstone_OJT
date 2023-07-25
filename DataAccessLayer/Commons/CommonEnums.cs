@@ -104,6 +104,14 @@ namespace DataAccessLayer.Commons
             public const int DESIGN_UX_UI = 3;
             public const int TESTER = 4;
         }
+
+        public class  CLIENT_ERROR
+        {
+            public const int BAD_REQUET = 400;
+            public const int UNAUTHORIZED = 401;
+            public const int NOT_FOUND = 404;
+            public const int CONFLICT = 409;
+        }
     }      
 }
 

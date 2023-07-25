@@ -24,5 +24,9 @@ namespace DataAccessLayer.Interface
         ICertificateRepository CertificateRepository { get; }
 
         IUserSkillRepository UserSkillRepository { get; }
+
+        ICourseSkillRepository CourseSkillRepository { get; }
+
+        ISkillRepository SkillRepository { get; }
     }
 }
