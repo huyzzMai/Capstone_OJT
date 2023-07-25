@@ -440,7 +440,7 @@ namespace BusinessLayer.Service.Implement
                     }
 
                     trainee.UserReferenceId = request.TrainerId;
-                    trainee.UpdatedAt = DateTime.Now;
+                    trainee.UpdatedAt = DateTime.UtcNow.AddHours(7);
                     await _unitOfWork.UserRepository.Update(trainee);
                 }
             }
@@ -476,7 +476,7 @@ namespace BusinessLayer.Service.Implement
                 Password = encryptPwd,
                 Position = request.Position,    
                 TrelloId = request.TrelloId,
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.UtcNow.AddHours(7),
                 Status = CommonEnums.USER_STATUS.ACTIVE
             };
 
@@ -566,7 +566,7 @@ namespace BusinessLayer.Service.Implement
                 u.AvatarURL = model.AvatarURL;
             }
 
-            u.UpdatedAt = DateTime.Now;
+            u.UpdatedAt = DateTime.UtcNow.AddHours(7);
 
             await _unitOfWork.UserRepository.Update(u);
         }

@@ -61,7 +61,7 @@ namespace BusinessLayer.Service.Implement
                     task.EndTime = dueCheck;
                     if (card.DueComplete == false)
                     {
-                        if (dueCheck.CompareTo(DateTimeOffset.Now) < 0)
+                        if (dueCheck.CompareTo(DateTimeOffset.UtcNow.AddHours(7)) < 0)
                         {
                             task.Status = CommonEnums.TRAINEE_TASK_STATUS.OVERDUE;
                         }
@@ -179,7 +179,7 @@ namespace BusinessLayer.Service.Implement
                     Description = card.Description,
                     StartDate = card.Start,
                     DueDate = card.Due,
-                    AccomplishDate = DateTimeOffset.Now,
+                    AccomplishDate = DateTimeOffset.UtcNow.AddHours(7),
                     Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.PENDING,
                     UserId = userId
                 };

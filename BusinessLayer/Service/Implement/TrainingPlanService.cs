@@ -248,7 +248,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     Name = request.Name,
                     Status = CommonEnums.TRAINING_PLAN_STATUS.PENDING,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.UtcNow.AddHours(7)
                 };
 
                 ICollection<TrainingPlanDetail> re = new List<TrainingPlanDetail>();
@@ -262,7 +262,7 @@ namespace BusinessLayer.Service.Implement
                         EndTime = detail.EndTime,
                         IsEvaluativeTask = detail.IsEvaluativeTask,
                         Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.ACTIVE,
-                        CreatedAt = DateTime.Now,
+                        CreatedAt = DateTime.UtcNow.AddHours(7),
                         TrainingPlanId = tp.Id
                     };
                     re.Add(tpd);
@@ -306,7 +306,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     tp.Name = request.Name;
                 }
-                tp.UpdatedAt = DateTime.Now;
+                tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.TrainingPlanRepository.Update(tp);
 
             }
@@ -336,7 +336,7 @@ namespace BusinessLayer.Service.Implement
                 }
 
                 tp.Status = CommonEnums.TRAINING_PLAN_STATUS.CLOSED;
-                tp.UpdatedAt = DateTime.Now;
+                tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.TrainingPlanRepository.Update(tp);
             }
             catch (Exception ex)
@@ -365,7 +365,7 @@ namespace BusinessLayer.Service.Implement
                 }
 
                 tp.Status = CommonEnums.TRAINING_PLAN_STATUS.ACTIVE;
-                tp.UpdatedAt = DateTime.Now;
+                tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.TrainingPlanRepository.Update(tp);
             }
             catch (Exception ex)
@@ -395,7 +395,7 @@ namespace BusinessLayer.Service.Implement
                     StartTime = request.StartTime,
                     EndTime = request.EndTime,
                     IsEvaluativeTask = request.IsEvaluativeTask,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow.AddHours(7),
                     Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.ACTIVE,
                     TrainingPlanId = planId
                 };
@@ -443,7 +443,7 @@ namespace BusinessLayer.Service.Implement
                     detail.IsEvaluativeTask = request.IsEvaluativeTask;
                 }
 
-                detail.UpdatedAt = DateTime.Now;
+                detail.UpdatedAt = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.TrainingPlanDetailRepository.Update(detail);
             }
             catch (Exception ex)
@@ -467,7 +467,7 @@ namespace BusinessLayer.Service.Implement
                 }
 
                 tp.Status = CommonEnums.TRAINING_PLAN_STATUS.ACTIVE;
-                tp.UpdatedAt = DateTime.Now;
+                tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.TrainingPlanRepository.Update(tp);
             }
             catch (Exception ex)
@@ -491,7 +491,7 @@ namespace BusinessLayer.Service.Implement
                 }
 
                 tp.Status = CommonEnums.TRAINING_PLAN_STATUS.DENIED;
-                tp.UpdatedAt = DateTime.Now;
+                tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.TrainingPlanRepository.Update(tp);
             }
             catch (Exception ex)
@@ -516,7 +516,7 @@ namespace BusinessLayer.Service.Implement
                 }
 
                 tp.Status = CommonEnums.TRAINING_PLAN_STATUS.DELETED;
-                tp.UpdatedAt = DateTime.Now;
+                tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.TrainingPlanRepository.Update(tp);
             }
             catch (Exception ex)
@@ -541,7 +541,7 @@ namespace BusinessLayer.Service.Implement
                 }
 
                 detail.Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.DELETED;
-                detail.UpdatedAt = DateTime.Now;    
+                detail.UpdatedAt = DateTime.UtcNow.AddHours(7);    
                 await _unitOfWork.TrainingPlanDetailRepository.Update(detail);
             }
             catch (Exception ex)
