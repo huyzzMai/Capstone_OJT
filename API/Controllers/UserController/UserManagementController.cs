@@ -36,8 +36,9 @@ namespace API.Controllers.UserController
         {
             try
             {
+                await userService.CreateUser(request);
                 return StatusCode(StatusCodes.Status201Created,
-                    await userService.CreateUser(request));
+                    "Create account successfully.");
             }
             catch (Exception ex)
             {

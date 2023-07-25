@@ -11,6 +11,7 @@ using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
 using DataAccessLayer.Repository.Implement;
 using DataAccessLayer.Repository.Interface;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
@@ -449,7 +450,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<CreateUserResponse> CreateUser(CreateUserRequest request)
+        public async Task CreateUser(CreateUserRequest request)
         {
             var emailCheck = await _unitOfWork.UserRepository.GetUserByEmail(request.Email);
             if (emailCheck != null)
@@ -481,12 +482,15 @@ namespace BusinessLayer.Service.Implement
 
             await _unitOfWork.UserRepository.Add(user);
 
-            var rs = new CreateUserResponse
-            {
-                Email = request.Email,
-                Password = pwd
-            };
-            return rs;
+            //var rs = new CreateUserResponse
+            //{
+            //    Email = request.Email,
+            //    Password = pwd
+            //};
+            //return rs;
+
+            var sender = new MailSender();
+            sender.SendMailCreateAccount(user.Email, user.Name, user.Email, pwd);
         }
 
         public async Task UpdateUserInformation(int id, UpdateUserInformationRequest model)

@@ -27,7 +27,8 @@ namespace BusinessLayer.Service.Interface
         //Task AssignTraineeToTrainer(int trainerId, int traineeId);
         Task AssignTraineeToTrainer(AssignTraineesRequest request);
         int GetCurrentLoginUserId(string authHeader);
-        Task<CreateUserResponse> CreateUser(CreateUserRequest request);
+        //Task<CreateUserResponse> CreateUser(CreateUserRequest request);
+        Task CreateUser(CreateUserRequest request);
         Task UpdateUserInformation(int id, UpdateUserInformationRequest model);
     }
 }
