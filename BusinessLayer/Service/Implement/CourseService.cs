@@ -247,7 +247,8 @@ namespace BusinessLayer.Service.Implement
                 ).ToList();
                 listresponse = SortingHelper.ApplySorting(listresponse.AsQueryable(), sortField, sortOrder).ToList();
                 int totalItem = listresponse.Count;
-
+                listresponse = listresponse.Skip((paging.PageIndex - 1) * paging.PageSize)
+                   .Take(paging.PageSize).ToList();
                 var result = new BasePagingViewModel<CourseResponse>()
                 {
                     PageIndex = paging.PageIndex,
@@ -314,7 +315,8 @@ namespace BusinessLayer.Service.Implement
                 }
                 ).ToList();
                 int totalItem = listresponse.Count;
-
+                listresponse = listresponse.Skip((paging.PageIndex - 1) * paging.PageSize)
+                  .Take(paging.PageSize).ToList();
                 var result = new BasePagingViewModel<CourseResponse>()
                 {
                     PageIndex = paging.PageIndex,
@@ -358,7 +360,8 @@ namespace BusinessLayer.Service.Implement
                 }
                 ).ToList();
                 int totalItem = listresponse.Count;
-
+                listresponse = listresponse.Skip((paging.PageIndex - 1) * paging.PageSize)
+                  .Take(paging.PageSize).ToList();
                 var result = new BasePagingViewModel<CourseResponse>()
                 {
                     PageIndex = paging.PageIndex,
