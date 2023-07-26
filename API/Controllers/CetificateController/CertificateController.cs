@@ -52,5 +52,21 @@ namespace API.Controllers.CetificateController
                     ex.Message);
             }
         }
+        [Authorize]
+        [HttpPut("resubmition-certificate")]
+        public async Task<IActionResult> ReSubmitCertificate([FromBody] SubmitCertificateRequest request)
+        {
+            try
+            {
+                var userid = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+                await _service.ReSubmitCertificate(userid, request);
+                return Ok("Certificate resubmit successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
     }
 }

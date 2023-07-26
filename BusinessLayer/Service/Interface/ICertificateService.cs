@@ -11,5 +11,6 @@ namespace BusinessLayer.Service.Interface
     {
         Task EvaluateCertificate(EvaluateCertificateRequest request);
         Task SubmitCertificate(int userid, SubmitCertificateRequest request);
+        Task ReSubmitCertificate(int userid, SubmitCertificateRequest request);
     }
 }

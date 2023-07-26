@@ -84,5 +84,34 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
+
+        public async Task ReSubmitCertificate(int userid, SubmitCertificateRequest request)
+        {
+            try
+            {
+                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == request.CourseId && c.Status == CommonEnums.COURSE_STATUS.ACTIVE, "CoursePositions");
+                var cer = await _unitOfWork.CertificateRepository.GetFirst(c => c.CourseId == request.CourseId && c.UserId == userid);
+                if (cer != null && cer.Status != CommonEnums.CERTIFICATE_STATUS.DENY)
+                {
+                    throw new Exception("This is not a deny certificate");
+                }
+                if (string.IsNullOrEmpty(request.link))
+                {
+                    throw new Exception("Link can not be empty");
+                }
+                if (cour == null)
+                {
+                    throw new Exception("Course not found");
+                }
+                cer.Link = request.link;
+                cer.Status = CommonEnums.CERTIFICATE_STATUS.PENDING;
+                cer.SubmitDate = DateTime.Now;
+                await _unitOfWork.CertificateRepository.Update(cer);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }
