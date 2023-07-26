@@ -14,7 +14,7 @@ namespace BusinessLayer.Service.Interface
     {
         Task CreateCourse(CreateCourseRequest request);
 
-        Task UpadateCourse(int courseId, UpdateCourseRequest request);
+        Task UpdateCourse(int courseId, UpdateCourseRequest request);
 
         Task DeleteCourse(int courseId);
 
