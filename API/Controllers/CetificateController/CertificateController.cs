@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace API.Controllers.CetificateController
 {
-    [Route("api/[controller]")]
+    [Route("api/certificate")]
     [ApiController]
     public class CertificateController : ControllerBase
     {
@@ -21,7 +21,7 @@ namespace API.Controllers.CetificateController
         }
 
         [Authorize]
-        [HttpPut("Evaluate-Certificate")]
+        [HttpPut("evaluation-certificate")]
         public async Task<IActionResult> EvaluateCertificate([FromBody] EvaluateCertificateRequest request)
         {
             try
@@ -37,7 +37,7 @@ namespace API.Controllers.CetificateController
         }
 
         [Authorize]
-        [HttpPut("Submit-Certificate")]
+        [HttpPut("submition-certificate")]
         public async Task<IActionResult> SubmitCertificate([FromBody] SubmitCertificateRequest request)
         {
             try

@@ -112,6 +112,12 @@ namespace DataAccessLayer.Commons
             public const int NOT_FOUND = 404;
             public const int CONFLICT = 409;
         }
+        public class COURSE_SIGNALR_MESSAGE
+        {
+            public const string CREATED = "NewCourseCreated";
+            public const string UPDATED = "NewCourseUpdated";
+            public const string DELETED = "NewCourseDeleted";
+        }
     }      
 }
 

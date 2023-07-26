@@ -18,7 +18,7 @@ using System.IdentityModel.Tokens.Jwt;
 namespace API.Controllers
 {
 
-    [Route("api/[controller]")]
+    [Route("api/common")]
     [ApiController]
     public class CommonController : ControllerBase
     {
@@ -35,7 +35,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("GetCurrentUser")]
+        [Route("current-user")]
         public async Task<IActionResult> GetCurrentUserInfo()
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");

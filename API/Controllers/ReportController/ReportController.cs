@@ -13,7 +13,7 @@ using DocumentFormat.OpenXml.Vml.Office;
 
 namespace API.Controllers.ReportController
 {
-    [Route("api/[controller]")]
+    [Route("api/report")]
     [ApiController]
     public class ReportController : ControllerBase
     {

@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace API.Controllers.CriteriaController
 {
-    [Route("api/[controller]")]
+    [Route("api/criteria")]
     [ApiController]
     public class CriteriaController : ControllerBase
     {

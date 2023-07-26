@@ -10,17 +10,22 @@ using BusinessLayer.Models.RequestModel.CourseRequest;
 using System.Linq;
 using BusinessLayer.Models.RequestModel;
 using BusinessLayer.Utilities;
+using API.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using DataAccessLayer.Commons;
 
 namespace API.Controllers.CourseController
 {
-    [Route("api/[controller]")]
+    [Route("api/course")]
     [ApiController]
     public class CourseController : ControllerBase
     {
         private readonly ICourseService _service;
-        public CourseController(ICourseService service)
+        private readonly IHubContext<SignalHub> _hubContext;
+        public CourseController(ICourseService service, IHubContext<SignalHub> hubContext)
         {
            _service= service;
+           _hubContext= hubContext;
         }
         [Authorize]
         [HttpPost]
@@ -30,6 +35,7 @@ namespace API.Controllers.CourseController
             {
               
                 await _service.CreateCourse(request);
+                await _hubContext.Clients.All.SendAsync(CommonEnums.COURSE_SIGNALR_MESSAGE.CREATED);
                 return StatusCode(StatusCodes.Status201Created, "Course is created successfully");
 
             }
@@ -50,6 +56,7 @@ namespace API.Controllers.CourseController
             try
             {
                 await _service.UpadateCourse(id, request);
+                await _hubContext.Clients.All.SendAsync(CommonEnums.COURSE_SIGNALR_MESSAGE.UPDATED);
                 return Ok("Course is updated successfully.");
             }
             catch (ApiException ex)
@@ -64,7 +71,7 @@ namespace API.Controllers.CourseController
         }
         [Authorize]
         [HttpPost]
-        [Route("EnrollCourse")]
+        [Route("course-participation")]
         public async Task<IActionResult> EnrollCourse(int courseid)
         {
             try
@@ -90,6 +97,7 @@ namespace API.Controllers.CourseController
             try
             {             
                 await _service.DeleteCourse(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnums.COURSE_SIGNALR_MESSAGE.DELETED);
                 return Ok("Course is delete successfully.");
             }
             catch (ApiException ex)
@@ -105,12 +113,12 @@ namespace API.Controllers.CourseController
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetListCourse([FromQuery] PagingRequestModel paging)
+        public async Task<IActionResult> GetListCourse([FromQuery] PagingRequestModel paging, string sortField, string sortOrder)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                var list = await _service.GetCourseList(paging);
+                var list = await _service.GetCourseList(paging,sortField,sortOrder);
                 return Ok(list);
 
             }
@@ -125,7 +133,7 @@ namespace API.Controllers.CourseController
             }
         }
         [Authorize]
-        [HttpGet("GetAllCourseEnroll")]
+        [HttpGet("attendance-courses")]
         public async Task<IActionResult> GetEnrollCourse([FromQuery] PagingRequestModel paging)
         {
             try
@@ -147,7 +155,7 @@ namespace API.Controllers.CourseController
             }
         }
         [Authorize]
-        [HttpGet("recommendedList")]
+        [HttpGet("recommendation-courses")]
         public async Task<IActionResult> GetListCourseRecommendForUser([FromQuery] PagingRequestModel paging)
         {
             try
@@ -170,7 +178,7 @@ namespace API.Controllers.CourseController
         }
 
         [Authorize]
-        [HttpGet("compulsoryList")]
+        [HttpGet("compulsory-courses")]
         public async Task<IActionResult> GetListCourseCompulsoryForUser([FromQuery] PagingRequestModel paging)
         {
             try

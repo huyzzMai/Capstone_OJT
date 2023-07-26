@@ -160,7 +160,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND,"No courses found");
                 }
-                var listresponse = listcour.Select(c =>
+                var listresponse = listcour.OrderByDescending(c => c.CreatedAt).Select(c =>
                 {
                     return new CourseResponse()
                     {
@@ -209,7 +209,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<BasePagingViewModel<CourseResponse>> GetCourseList(PagingRequestModel paging)
+        public async Task<BasePagingViewModel<CourseResponse>> GetCourseList(PagingRequestModel paging, string sortField, string sortOrder)
         {
             try
             {
@@ -218,7 +218,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
                 }
-                var listresponse = listcour.Select(c =>
+                var listresponse = listcour.OrderByDescending(c=>c.CreatedAt).Select(c =>
                 {
                     return new CourseResponse()
                     {
@@ -245,6 +245,7 @@ namespace BusinessLayer.Service.Implement
                     };
                 }
                 ).ToList();
+                listresponse = SortingHelper.ApplySorting(listresponse.AsQueryable(), sortField, sortOrder).ToList();
                 int totalItem = listresponse.Count;
 
                 var result = new BasePagingViewModel<CourseResponse>()
@@ -285,7 +286,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
                 }
-                var listresponse = listcour.Select(c =>
+                var listresponse = listcour.OrderByDescending(c => c.CreatedAt).Select(c =>
                 {
                     return new CourseResponse()
                     {
@@ -343,7 +344,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
                 }
-                var listresponse = listcour.Select(c =>
+                var listresponse = listcour.OrderByDescending(c => c.CreatedAt).Select(c =>
                 {
                     return new CourseResponse()
                     {
