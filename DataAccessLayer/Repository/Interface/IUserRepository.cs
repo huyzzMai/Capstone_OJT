@@ -29,6 +29,6 @@ namespace DataAccessLayer.Repository.Interface
 
         Task<List<User>> GetTraineeListByTrainerId(int id);
 
-        Task<List<UserCriteriaReport>> GetUserReportList(int batchid,List<User> user);
+        //Task<List<UserCriteriaReport>> GetUserReportList(int batchid,List<User> user);
     }
 }

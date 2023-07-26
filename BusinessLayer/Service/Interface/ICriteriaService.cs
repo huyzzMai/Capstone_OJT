@@ -10,6 +10,6 @@ namespace BusinessLayer.Service.Interface
 {
     public interface ICriteriaService
     {
-        Task<Criteria> CreateCriteria(CreateCriteriaRequest request);
+        //Task<Criteria> CreateCriteria(CreateCriteriaRequest request);
     }
 }

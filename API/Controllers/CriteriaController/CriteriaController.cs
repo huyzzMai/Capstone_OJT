@@ -24,20 +24,20 @@ namespace API.Controllers.CriteriaController
         {
             _service = service;
         }
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> CreateCriteria([FromBody] CreateCriteriaRequest request)
-        {
-            try
-            {
-                await _service.CreateCriteria(request);
-                return Ok(request);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-            }
+        //[Authorize]
+        //[HttpPost]
+        //public async Task<IActionResult> CreateCriteria([FromBody] CreateCriteriaRequest request)
+        //{
+        //    try
+        //    {
+        //        await _service.CreateCriteria(request);
+        //        return Ok(request);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+        //    }
 
-        }
+        //}
     }
 }

@@ -9,6 +9,6 @@ namespace BusinessLayer.Service.Interface
 {
     public interface IReportService
     {
-       Task<byte[]> CreateReportExcelFileFromBatch(int batchid);
+       //Task<byte[]> CreateReportExcelFileFromBatch(int batchid);
     }
 }
