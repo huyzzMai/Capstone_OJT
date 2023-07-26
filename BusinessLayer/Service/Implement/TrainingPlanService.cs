@@ -165,6 +165,9 @@ namespace BusinessLayer.Service.Implement
 
             int totalItem = res.Count;
 
+            res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                    .Take(paging.PageSize).ToList();
+
             var result = new BasePagingViewModel<TrainingPlanResponse>()
             {
                 PageIndex = paging.PageIndex,
@@ -192,6 +195,9 @@ namespace BusinessLayer.Service.Implement
                 ).ToList();
 
             int totalItem = res.Count;
+
+            res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                    .Take(paging.PageSize).ToList();
 
             var result = new BasePagingViewModel<TrainingPlanResponse>()
             {

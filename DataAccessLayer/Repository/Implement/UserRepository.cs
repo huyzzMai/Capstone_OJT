@@ -95,7 +95,7 @@ namespace DataAccessLayer.Repository.Implement
                     Email= useritem.Email,
                     Position= useritem.Position,
                     RollNumber= useritem.RollNumber,
-                    Birthday= useritem.Birthday,
+                    Birthday= useritem.Birthday ?? default(DateTime),
                     University=batch.University.Name,
                     //TemplatePoint= await _unitOfWork.CriteriaRepository.GetPointListByUserId(useritem.Id)
                 };

@@ -299,7 +299,7 @@ namespace BusinessLayer.Service.Implement
                 Email = user.Email,
                 Address = user.Address,
                 AvatarURL= user.AvatarURL,
-                Birthday= user.Birthday,
+                Birthday= user.Birthday ?? default(DateTime),
                 Gender=user.Gender,
                 PhoneNumber= user.PhoneNumber,
                 Role=user.Role,
@@ -329,6 +329,9 @@ namespace BusinessLayer.Service.Implement
 
            int totalItem = res.Count;
 
+            res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                    .Take(paging.PageSize).ToList();
+
             var result = new BasePagingViewModel<TrainerResponse>()
             {
                 PageIndex = paging.PageIndex,
@@ -357,6 +360,9 @@ namespace BusinessLayer.Service.Implement
 
             int totalItem = res.Count;
 
+            res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                    .Take(paging.PageSize).ToList();
+
             var result = new BasePagingViewModel<TraineeResponse>()
             {
                 PageIndex = paging.PageIndex,
@@ -384,6 +390,9 @@ namespace BusinessLayer.Service.Implement
                 ).ToList();
 
             int totalItem = res.Count;
+
+            res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                    .Take(paging.PageSize).ToList();
 
             var result = new BasePagingViewModel<TraineeResponse>()
             {
@@ -587,6 +596,9 @@ namespace BusinessLayer.Service.Implement
                 ).ToList();
 
             int totalItem = res.Count;
+
+            res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                    .Take(paging.PageSize).ToList();
 
             var result = new BasePagingViewModel<UserListResponse>()
             {

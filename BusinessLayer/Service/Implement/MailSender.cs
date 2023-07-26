@@ -40,7 +40,7 @@ namespace BusinessLayer.Service.Implement
                 "\t<b>" + email + "</b>\n" +
                 "\t<b>" + password + "</b>\n" +
                 "\t<br>\n" +
-                "\t<p>Please do not share information in this email to anyone. Have a nice day!</p>\n" +
+                "\t<p>Please do not share information in this email to anyone. You should reset the password as you please. Have a nice day!</p>\n" +
                 "</body>\n" +
                 "</html>";
         }

@@ -14,7 +14,8 @@ namespace DataAccessLayer.Commons.CommonModels
         public string Email { get; set; }
 
         public string RollNumber { get; set; }
-        public string Birthday { get; set; }
+
+        public DateTime Birthday { get; set; }
 
         public string Position { get; set; }
 

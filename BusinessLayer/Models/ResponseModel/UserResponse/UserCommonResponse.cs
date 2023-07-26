@@ -22,7 +22,7 @@ namespace BusinessLayer.Models.ResponseModel.UserResponse
 
         public string Address { get; set; }
 
-        public string Birthday { get; set; }
+        public DateTime Birthday { get; set; }
 
         public string AvatarURL { get; set; }
 

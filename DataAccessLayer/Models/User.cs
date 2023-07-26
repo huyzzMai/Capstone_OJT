@@ -36,8 +36,7 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(50)")]
         public string Address { get; set; }
 
-        [Column(TypeName = "nvarchar(20)")]
-        public string Birthday { get; set; }
+        public DateTime? Birthday { get; set; }
 
         [Column(TypeName = "nvarchar(500)")]
         public string AvatarURL { get; set; }
