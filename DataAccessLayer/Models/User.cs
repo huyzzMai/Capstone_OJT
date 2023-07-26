@@ -77,7 +77,7 @@ namespace DataAccessLayer.Models
         // Relation with Attendance
         public virtual ICollection<Attendance> Attendances { get; set; }
 
-        // Relation with Criteria
+        // Relation with Template Header
         public virtual ICollection<UserCriteria> UserCriterias { get; set; }
 
         // Relation with Skill

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Repository.Implement
 {
-    public class CriteriaRepository : GenericRepository<Criteria>, ICriteriaRepository
+    public class CriteriaRepository : GenericRepository<TemplateHeader>, ICriteriaRepository
     {
         public CriteriaRepository(OJTDbContext context, IUnitOfWork unitOfWork) : base(context,unitOfWork)
         {

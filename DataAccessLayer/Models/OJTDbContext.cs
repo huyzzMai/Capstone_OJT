@@ -21,11 +21,11 @@ namespace DataAccessLayer.Models
 
         public DbSet<Certificate> Certificates { get; set; }
 
-        public DbSet<Criteria> Criterias { get; set; }
+        //public DbSet<Criteria> Criterias { get; set; }
 
         public DbSet<University> Universities { get; set; }
 
-        //public DbSet<Template> Templates { get; set; }
+        public DbSet<Template> Templates { get; set; }
 
         public DbSet<OJTBatch> OJTBatches { get; set; }
 
@@ -49,7 +49,7 @@ namespace DataAccessLayer.Models
 
         public DbSet<CourseSkill> CourseSkills { get; set; }
 
-        //public DbSet<TemplateCriteria> TemplateCriterias { get; set; }
+        public DbSet<TemplateHeader> TemplateHeaders { get; set; }
 
         public DbSet<TaskAccomplished> TaskAccomplisheds { get; set; }
 
@@ -71,7 +71,7 @@ namespace DataAccessLayer.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserCriteria>()
-                .HasKey(c => new { c.UserId, c.CriteriaId });
+                .HasKey(c => new { c.UserId, c.TemplateHeaderId });
 
             modelBuilder.Entity<UserTrainingPlan>()
                 .HasKey(c => new { c.UserId, c.TrainingPlanId });

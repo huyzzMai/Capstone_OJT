@@ -15,15 +15,17 @@ namespace DataAccessLayer.Models
         [ForeignKey("UserId")]
         public User User { get; set; }
 
-        public int CriteriaId { get; set; }
-        [ForeignKey("CriteriaId")]
-        public Criteria Criteria { get; set; }
+        public int TemplateHeaderId { get; set; }
+        [ForeignKey("TemplateHeaderId")]
+        public TemplateHeader TemplateHeader { get; set; }
 
-        public int? Point { get; set; }
+        public double? Point { get; set; }
 
         public int? TrainerIdMark { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
+        public DateTime? CreatedDate { get; set; }
+
+        public DateTime? UpdatedDate { get;set; }
 
     }
 }

@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Models
 {
-    [Table("Criteria")]
-    public class Criteria
+    [Table("TemplateHeader")]
+    public class TemplateHeader
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -18,7 +18,11 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(100)")]
         public string Name { get; set; }    
 
-        public int? TotalPoint { get; set; }
+        public double? TotalPoint { get; set; }
+
+        public int? MatchedAttribute { get; set; }  
+
+        public bool? IsCriteria { get; set; }
 
         public int? Status { get; set; }
 
@@ -29,12 +33,10 @@ namespace DataAccessLayer.Models
         // Relation with User
         public virtual ICollection<UserCriteria> UserCriterias { get; set; }
 
-        // Relation with University
-        public int UniversityId { get; set; }
-        [ForeignKey("UniversityId")]
-        public University University { get; set; }
-
         // Relation with Template
-        //public virtual ICollection<TemplateCriteria> TemplateCriterias { get; set; }
+        public int TemplateId { get; set; }
+        [ForeignKey("TemplateId")]
+        public Template Template { get; set; }
+
     }
 }

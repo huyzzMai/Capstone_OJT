@@ -18,9 +18,14 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(100)")]
         public string Name { get; set; }
 
-        public int? Status { get; set; }
+        [Column(TypeName = "nvarchar(MAX)")]
+        public string Url { get; set; }
 
-        public bool? IsDeleted { get; set; }
+        public int? DataStartColumn { get; set; }
+
+        public int? DataStartRow { get; set; }
+
+        public int? Status { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 
@@ -30,7 +35,7 @@ namespace DataAccessLayer.Models
         [ForeignKey("UniversityId")]
         public University University { get; set; }
 
-        // Relation with Criteria
-        public virtual ICollection<TemplateCriteria> TemplateCriterias { get; set; }
+        // Relation with Template Header
+        public virtual ICollection<TemplateHeader> TemplateHeaders { get; set; }
     }
 }

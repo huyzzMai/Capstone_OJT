@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers.OJTBatchController
 {
-    [Route("api/[controller]")]
+    [Route("api/ojtbatch")]
     [ApiController]
     public class OJTBatchController : ControllerBase
     {

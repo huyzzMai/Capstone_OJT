@@ -82,26 +82,26 @@ namespace DataAccessLayer.Repository.Implement
             return users;
         }
 
-        public async Task<List<UserCriteriaReport>> GetUserReportList(int batchid,List<User> user)
-        {
-            var userlist = user;
-            var reportuser= new List<UserCriteriaReport>();
-            var batch = await _unitOfWork.OJTBatchRepository.GetFirst(c=>c.Id==batchid && c.IsDeleted==false,"University");
-          foreach (var useritem in userlist)
-            {
-                var newreportuser = new UserCriteriaReport()
-                {
-                    Name = useritem.Name,
-                    Email= useritem.Email,
-                    Position= useritem.Position,
-                    RollNumber= useritem.RollNumber,
-                    Birthday= useritem.Birthday ?? default(DateTime),
-                    University=batch.University.Name,
-                    //TemplatePoint= await _unitOfWork.CriteriaRepository.GetPointListByUserId(useritem.Id)
-                };
-                reportuser.Add(newreportuser);
-            }
-            return reportuser;
-        }
+        //public async Task<List<UserCriteriaReport>> GetUserReportList(int batchid,List<User> user)
+        //{
+        //    var userlist = user;
+        //    var reportuser= new List<UserCriteriaReport>();
+        //    var batch = await _unitOfWork.OJTBatchRepository.GetFirst(c=>c.Id==batchid && c.IsDeleted==false,"University");
+        //  foreach (var useritem in userlist)
+        //    {
+        //        var newreportuser = new UserCriteriaReport()
+        //        {
+        //            Name = useritem.Name,
+        //            Email= useritem.Email,
+        //            Position= useritem.Position,
+        //            RollNumber= useritem.RollNumber,
+        //            Birthday= useritem.Birthday,
+        //            University=batch.University.Name,
+        //            //TemplatePoint= await _unitOfWork.CriteriaRepository.GetPointListByUserId(useritem.Id)
+        //        };
+        //        reportuser.Add(newreportuser);
+        //    }
+        //    return reportuser;
+        //}
     }
 }

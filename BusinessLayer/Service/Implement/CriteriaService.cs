@@ -19,16 +19,16 @@ namespace BusinessLayer.Service.Implement
          {
              _unitOfWork = unitOfWork;
          }    
-        public async Task<Criteria> CreateCriteria(CreateCriteriaRequest request)
-        {
-            var criteria= new Criteria();
-            criteria.Name = request.Name;
-            criteria.TotalPoint= request.TotalPoint;
-            criteria.CreatedAt=DateTime.Now;
-            //criteria.IsDeleted = false;
-            await _unitOfWork.CriteriaRepository.Add(criteria);
-            return criteria;
-        }
+        //public async Task<Criteria> CreateCriteria(CreateCriteriaRequest request)
+        //{
+        //    var criteria= new Criteria();
+        //    criteria.Name = request.Name;
+        //    criteria.TotalPoint= request.TotalPoint;
+        //    criteria.CreatedAt=DateTime.Now;
+        //    //criteria.IsDeleted = false;
+        //    await _unitOfWork.CriteriaRepository.Add(criteria);
+        //    return criteria;
+        //}
 
 
 

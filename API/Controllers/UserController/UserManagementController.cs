@@ -63,7 +63,7 @@ namespace API.Controllers.UserController
             }
         }
         [Authorize(Roles = "Admin")]
-        [HttpPost("getattendanceformfile")]
+        [HttpPost("data-of-file-attendance")]
         public async Task<IActionResult> UploadAttendanceFile(IFormFile file)
         {
             if (file == null || file.Length == 0)

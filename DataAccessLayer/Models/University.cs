@@ -34,8 +34,6 @@ namespace DataAccessLayer.Models
 
         public virtual ICollection<OJTBatch> OJTBatches { get; set; }
 
-        public virtual ICollection<Criteria> Criterias { get; set; }
-
-        //public virtual ICollection<Template> Templates { get; set; }
+        public virtual ICollection<Template> Templates { get; set; }
     }
 }
