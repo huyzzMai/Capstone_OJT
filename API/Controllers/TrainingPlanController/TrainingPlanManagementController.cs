@@ -8,6 +8,8 @@ using System;
 using BusinessLayer.Models.RequestModel.TrainingPLanRequest;
 using BusinessLayer.Models.RequestModel;
 using BusinessLayer.Utilities;
+using Microsoft.AspNetCore.SignalR;
+using API.Hubs;
 
 namespace API.Controllers.TrainingPlanController
 {
@@ -17,11 +19,13 @@ namespace API.Controllers.TrainingPlanController
     {
         private readonly ITrainingPlanService trainingService;
         private readonly IUserService userService;
+        private readonly IHubContext<SignalHub> _hubContext;
 
-        public TrainingPlanManagementController(ITrainingPlanService trainingService, IUserService userService)
+        public TrainingPlanManagementController(ITrainingPlanService trainingService, IUserService userService, IHubContext<SignalHub> hubContext)
         {
             this.trainingService = trainingService;
             this.userService = userService;
+            _hubContext = hubContext;
         }
 
         // API for all Role
@@ -124,6 +128,7 @@ namespace API.Controllers.TrainingPlanController
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await trainingService.CreateTrainingPlan(userId, request);
+                await _hubContext.Clients.All.SendAsync("");
                 return StatusCode(StatusCodes.Status201Created, "Training plan is created successfully");
             }
             catch (Exception ex)
