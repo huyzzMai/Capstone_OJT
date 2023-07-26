@@ -10,6 +10,7 @@ using BusinessLayer.Models.RequestModel;
 using BusinessLayer.Utilities;
 using Microsoft.AspNetCore.SignalR;
 using API.Hubs;
+using DataAccessLayer.Commons;
 
 namespace API.Controllers.TrainingPlanController
 {
@@ -128,7 +129,7 @@ namespace API.Controllers.TrainingPlanController
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await trainingService.CreateTrainingPlan(userId, request);
-                await _hubContext.Clients.All.SendAsync("");
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.CREATE);
                 return StatusCode(StatusCodes.Status201Created, "Training plan is created successfully");
             }
             catch (Exception ex)
