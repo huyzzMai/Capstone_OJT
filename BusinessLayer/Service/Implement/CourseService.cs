@@ -382,7 +382,7 @@ namespace BusinessLayer.Service.Implement
             }
         }             
 
-        public async Task UpadateCourse(int courseId, UpdateCourseRequest request)
+        public async Task UpdateCourse(int courseId, UpdateCourseRequest request)
         {
             try
             {

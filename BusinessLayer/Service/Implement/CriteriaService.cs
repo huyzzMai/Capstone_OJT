@@ -29,9 +29,5 @@ namespace BusinessLayer.Service.Implement
         //    await _unitOfWork.CriteriaRepository.Add(criteria);
         //    return criteria;
         //}
-
-
-
-
 }
 }

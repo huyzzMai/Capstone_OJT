@@ -1,6 +1,4 @@
-﻿using BusinessLayer.Models.RequestModel.TrainingPLanRequest;
-using BusinessLayer.Service.Implement;
-using BusinessLayer.Service.Interface;
+﻿using BusinessLayer.Service.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -35,7 +33,7 @@ namespace API.Controllers.CourseController
             {
               
                 await _service.CreateCourse(request);
-                await _hubContext.Clients.All.SendAsync(CommonEnums.COURSE_SIGNALR_MESSAGE.CREATED);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.COURSE_SIGNALR_MESSAGE.CREATED);
                 return StatusCode(StatusCodes.Status201Created, "Course is created successfully");
 
             }
@@ -55,8 +53,8 @@ namespace API.Controllers.CourseController
         {
             try
             {
-                await _service.UpadateCourse(id, request);
-                await _hubContext.Clients.All.SendAsync(CommonEnums.COURSE_SIGNALR_MESSAGE.UPDATED);
+                await _service.UpdateCourse(id, request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.COURSE_SIGNALR_MESSAGE.UPDATED);
                 return Ok("Course is updated successfully.");
             }
             catch (ApiException ex)
@@ -97,7 +95,7 @@ namespace API.Controllers.CourseController
             try
             {             
                 await _service.DeleteCourse(id);
-                await _hubContext.Clients.All.SendAsync(CommonEnums.COURSE_SIGNALR_MESSAGE.DELETED);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.COURSE_SIGNALR_MESSAGE.DELETED);
                 return Ok("Course is delete successfully.");
             }
             catch (ApiException ex)
