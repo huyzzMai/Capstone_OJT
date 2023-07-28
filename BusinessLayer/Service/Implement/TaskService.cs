@@ -1,17 +1,15 @@
 ﻿using BusinessLayer.Models.RequestModel;
 using BusinessLayer.Models.ResponseModel;
 using BusinessLayer.Models.ResponseModel.TaskResponse;
-using BusinessLayer.Models.ResponseModel.TrainingPlanResponse;
 using BusinessLayer.Service.Interface;
+using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
-using DocumentFormat.OpenXml.ExtendedProperties;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Threading.Tasks;
 using TrelloDotNet;
 
@@ -36,7 +34,7 @@ namespace BusinessLayer.Service.Implement
                 var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId);
                 if (user == null)
                 {
-                    throw new Exception("User not found!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
                 }
                 var trelloUserId = user.TrelloId;
                 var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
@@ -118,7 +116,7 @@ namespace BusinessLayer.Service.Implement
                 var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId);
                 if (user == null)
                 {
-                    throw new Exception("User not found!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
                 }
 
                 var tasks = await _unitOfWork.TaskRepository.GetListTaskAccomplishedOfTrainee(userId);
@@ -167,7 +165,7 @@ namespace BusinessLayer.Service.Implement
                 var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId);
                 if (user == null)
                 {
-                    throw new Exception("User not found!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
                 }
                 var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
                 var card = await client.GetCardAsync(taskId);
@@ -202,11 +200,11 @@ namespace BusinessLayer.Service.Implement
                 var task = await _unitOfWork.TaskRepository.GastTaskByIdAndStatusPending(taskId);
                 if (task == null)
                 {
-                    throw new Exception("Task not found or task not pending!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Task not found or task not pending!");
                 }
                 if (trainerId != task.User.UserReferenceId)
                 {
-                    throw new Exception("Not your trainee's task!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Not your trainee's task!");
                 }
 
                 task.Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.DONE;
@@ -225,11 +223,11 @@ namespace BusinessLayer.Service.Implement
                 var task = await _unitOfWork.TaskRepository.GastTaskByIdAndStatusPending(taskId);
                 if (task == null)
                 {
-                    throw new Exception("Task not found or task not pending!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Task not found or task not pending!");
                 }
                 if (trainerId != task.User.UserReferenceId)
                 {
-                    throw new Exception("Not your trainee's task!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Not your trainee's task!");
                 }
 
                 task.Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.FAILED;

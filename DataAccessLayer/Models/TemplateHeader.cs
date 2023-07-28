@@ -24,6 +24,8 @@ namespace DataAccessLayer.Models
 
         public bool? IsCriteria { get; set; }
 
+        public int? Order { get; set; } 
+
         public int? Status { get; set; }
 
         public DateTime? CreatedAt { get; set; }

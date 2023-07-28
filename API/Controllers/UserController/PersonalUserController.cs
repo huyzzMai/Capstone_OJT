@@ -1,9 +1,14 @@
-﻿using BusinessLayer.Models.RequestModel.UserRequest;
+﻿using API.Hubs;
+using BusinessLayer.Models.RequestModel.UserRequest;
 using BusinessLayer.Models.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
+using BusinessLayer.Utilities;
+using DataAccessLayer.Commons;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 
@@ -16,10 +21,12 @@ namespace API.Controllers.UserController
     public class PersonalUserController : ControllerBase
     {
         private readonly IUserService userService;
+        private readonly IHubContext<SignalHub> _hubContext;
 
-        public PersonalUserController(IUserService userService)
+        public PersonalUserController(IUserService userService, IHubContext<SignalHub> hubContext)
         {
             this.userService = userService;
+            _hubContext = hubContext;
         }
 
         [HttpGet]
@@ -36,7 +43,12 @@ namespace API.Controllers.UserController
                     Email = u.Email,
                     FullName = u.Name,
                     Birthday = u.Birthday,
+                    Gender = u.Gender ?? default(int),
                     PhoneNumber = u.PhoneNumber,
+                    Address = u.Address,    
+                    AvatarURL = u.AvatarURL,
+                    RollNumber = u.RollNumber,
+                    Position = u.Position ?? default(int)
                 };
 
                 return Ok(user);
@@ -60,15 +72,19 @@ namespace API.Controllers.UserController
 
                 if (u == null)
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError,
+                    return StatusCode(StatusCodes.Status404NotFound,
                     "Error retrieving data from the database.");
                 }
                 else
                 {
                     await userService.UpdateUserInformation(userId, model);
-                    //return Ok("Update successfully!");
+                    await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.USER_MESSAGE.UPDATE);
                     return StatusCode(StatusCodes.Status204NoContent);
                 }
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {

@@ -41,8 +41,7 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(500)")]
         public string AvatarURL { get; set; }
 
-        [Column(TypeName = "nvarchar(50)")]
-        public string Position { get; set; }
+        public int? Position { get; set; }
 
         public int? Role { get; set; }
 

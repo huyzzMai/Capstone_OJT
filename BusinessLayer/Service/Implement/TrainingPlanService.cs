@@ -18,6 +18,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using BusinessLayer.Utilities;
 
 namespace BusinessLayer.Service.Implement
 {
@@ -109,7 +110,7 @@ namespace BusinessLayer.Service.Implement
                     var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(userId, id);
                     if (check == null)
                     {
-                        throw new Exception("Training plan not found or You not the owner of this training plan !");
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found or You not the owner of this training plan !");
                     }
                     var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(id);
 
@@ -217,19 +218,19 @@ namespace BusinessLayer.Service.Implement
                 var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
                 if (trainee == null || trainee.UserReferenceId != trainerId)
                 {
-                    throw new Exception("Not found trainee or this is not your assiged trainee!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Not found trainee or this is not your assiged trainee!");
                 }
 
                 var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(trainerId, planId);
                 if (check == null)
                 {
-                    throw new Exception("Training plan not found or you not the owner of this training plan!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan not found or you not the owner of this training plan!");
                 }
 
                 var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndStatusActive(planId);
                 if (tp == null)
                 {
-                    throw new Exception("Invalid training plan!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Not found training plan!");
                 }
 
                 UserTrainingPlan utp = new()
@@ -300,12 +301,12 @@ namespace BusinessLayer.Service.Implement
                 var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(userId, planId);
                 if (check == null)
                 {
-                    throw new Exception("Training plan not found or You not the owner of this training plan !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan not found or You not the owner of this training plan !");
                 }
                 var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(planId);
                 if (tp == null)
                 {
-                    throw new Exception("Training plan not found !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
                 }
 
                 if (request.Name != null)
@@ -329,16 +330,16 @@ namespace BusinessLayer.Service.Implement
                 var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(userId, planId);
                 if (check == null)
                 {
-                    throw new Exception("Training plan not found or You not the owner of this training plan !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan not found or You not the owner of this training plan !");
                 }
                 var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(planId);
                 if (tp == null)
                 {
-                    throw new Exception("Training plan not found !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
                 }
                 if (tp.Status == CommonEnums.TRAINING_PLAN_STATUS.CLOSED)
                 {
-                    throw new Exception("Cannot deactivate closed training plan !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Cannot deactivate closed training plan !");
                 }
 
                 tp.Status = CommonEnums.TRAINING_PLAN_STATUS.CLOSED;
@@ -358,16 +359,16 @@ namespace BusinessLayer.Service.Implement
                 var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(userId, planId);
                 if (check == null)
                 {
-                    throw new Exception("Training plan not found or You not the owner of this training plan !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan not found or You not the owner of this training plan !");
                 }
                 var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(planId);
                 if (tp == null)
                 {
-                    throw new Exception("Training plan not found !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
                 }
                 if (tp.Status == CommonEnums.TRAINING_PLAN_STATUS.ACTIVE)
                 {
-                    throw new Exception("Cannot re-open active training plan !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Cannot re-open active training plan !");
                 }
 
                 tp.Status = CommonEnums.TRAINING_PLAN_STATUS.ACTIVE;
@@ -387,12 +388,12 @@ namespace BusinessLayer.Service.Implement
                 var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(userId, planId);
                 if (check == null)
                 {
-                    throw new Exception("Training plan not found or You not the owner of this training plan !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan not found or You not the owner of this training plan !");
                 }
                 var tpcheck = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(planId);
                 if (tpcheck == null)
                 {
-                    throw new Exception("Training plan not found !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
                 }
                 TrainingPlanDetail tpd = new()
                 {
@@ -420,12 +421,12 @@ namespace BusinessLayer.Service.Implement
                 var detail = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailByIdAndNotDeleted(detailId);
                 if (detail == null)
                 {
-                    throw new Exception("Training plan detail not found !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan detail not found !");
                 }
                 var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(userId, detail.TrainingPlanId ?? default(int));
                 if (check == null)
                 {
-                    throw new Exception("You are not the owner of this training plan detail !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "You are not the owner of this training plan detail !");
                 }
 
                 if (request.Name != null)
@@ -465,11 +466,11 @@ namespace BusinessLayer.Service.Implement
                 var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(id);
                 if (tp == null)
                 {
-                    throw new Exception("Training plan not found !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
                 }
                 else if (tp.Status != CommonEnums.TRAINING_PLAN_STATUS.PENDING)
                 {
-                    throw new Exception("Training plan is not on Pending status !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan is not on Pending status !");
                 }
 
                 tp.Status = CommonEnums.TRAINING_PLAN_STATUS.ACTIVE;
@@ -489,11 +490,11 @@ namespace BusinessLayer.Service.Implement
                 var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(id);
                 if (tp == null)
                 {
-                    throw new Exception("Training plan not found !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
                 }
                 else if (tp.Status != CommonEnums.TRAINING_PLAN_STATUS.PENDING)
                 {
-                    throw new Exception("Training plan is not on Pending status !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan is not on Pending status !");
                 }
 
                 tp.Status = CommonEnums.TRAINING_PLAN_STATUS.DENIED;
@@ -513,12 +514,12 @@ namespace BusinessLayer.Service.Implement
                 var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(trainerId, planId);
                 if (check == null)
                 {
-                    throw new Exception("Training plan not found or You not the owner of this training plan !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan not found or You not the owner of this training plan !");
                 }
                 var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(planId);
                 if (tp == null)
                 {
-                    throw new Exception("Training plan not found !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
                 }
 
                 tp.Status = CommonEnums.TRAINING_PLAN_STATUS.DELETED;
@@ -538,12 +539,12 @@ namespace BusinessLayer.Service.Implement
                 var detail = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailByIdAndNotDeleted(detailId);
                 if (detail == null)
                 {
-                    throw new Exception("Training plan detail not found !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan detail not found !");
                 }
                 var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(trainerId, detail.TrainingPlanId ?? default(int));
                 if (check == null)
                 {
-                    throw new Exception("You are not the owner of this training plan detail !");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "You are not the owner of this training plan detail !");
                 }
 
                 detail.Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.DELETED;

@@ -18,7 +18,7 @@ namespace BusinessLayer.Models.RequestModel.UserRequest
         public int Gender { get; set; }
         public string RollNumber { get; set; }
         public string AvatarUrl { get; set; }   
-        public string Position { get; set; }
+        public int Position { get; set; }
         public string TrelloId { get; set; }
     }
 }

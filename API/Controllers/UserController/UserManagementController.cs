@@ -1,13 +1,16 @@
-﻿using BusinessLayer.Models.RequestModel;
+﻿using API.Hubs;
+using BusinessLayer.Models.RequestModel;
 using BusinessLayer.Models.RequestModel.UserRequest;
 using BusinessLayer.Models.ResponseModel.ExcelResponse;
 using BusinessLayer.Service.Implement;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
+using DataAccessLayer.Commons;
 using DocumentFormat.OpenXml.Office2016.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -23,11 +26,13 @@ namespace API.Controllers.UserController
     {
         private readonly IUserService userService;
         private readonly IAttendanceService _attendanceService;
+        private readonly IHubContext<SignalHub> _hubContext;
 
-        public UserManagementController (IUserService userService, IAttendanceService attendanceService)
+        public UserManagementController (IUserService userService, IAttendanceService attendanceService, IHubContext<SignalHub> hubContext)
         {
             this.userService = userService;
             _attendanceService = attendanceService;
+            _hubContext = hubContext;   
         }
 
         [Authorize(Roles = "Admin")]
@@ -37,6 +42,7 @@ namespace API.Controllers.UserController
             try
             {
                 await userService.CreateUser(request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.USER_MESSAGE.CREATE);
                 return StatusCode(StatusCodes.Status201Created,
                     "Create account successfully.");
             }

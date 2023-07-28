@@ -1,9 +1,12 @@
-﻿using BusinessLayer.Models.RequestModel;
+﻿using API.Hubs;
+using BusinessLayer.Models.RequestModel;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
+using DataAccessLayer.Commons;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading.Tasks;
 
@@ -16,11 +19,13 @@ namespace API.Controllers.TaskController
     {
         private readonly ITaskService taskService;
         private readonly IUserService userService;
+        private readonly IHubContext<SignalHub> _hubContext;
 
-        public TrainerTaskController(ITaskService taskService, IUserService userService)
+        public TrainerTaskController(ITaskService taskService, IUserService userService, IHubContext<SignalHub> hubContext)
         {
             this.taskService = taskService;
             this.userService = userService;
+            _hubContext = hubContext;
         }
 
         [HttpGet()]
@@ -31,7 +36,11 @@ namespace API.Controllers.TaskController
                 paging = PagingUtil.checkDefaultPaging(paging);
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                return Ok();
+                return Ok(/*await taskService.*/);
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {
@@ -47,8 +56,12 @@ namespace API.Controllers.TaskController
             {
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await taskService.AcceptTraineeTask(userId, taskId);
-
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TASK_MESSAGE.UPDATE_PROCESS);
                 return Ok("Process task successfully.");
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {
@@ -64,8 +77,12 @@ namespace API.Controllers.TaskController
             {
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await taskService.RejectTraineeTask(userId, taskId);
-
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TASK_MESSAGE.UPDATE_PROCESS);
                 return Ok("Process task successfully.");
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {

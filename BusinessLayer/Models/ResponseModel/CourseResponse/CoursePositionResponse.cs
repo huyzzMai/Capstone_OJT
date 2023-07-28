@@ -9,7 +9,7 @@ namespace BusinessLayer.Models.ResponseModel.CourseResponse
     public class CoursePositionResponse
     {
         public int Id { get; set; }
-        public string Position { get; set; }
+        public int Position { get; set; }
         public bool? IsCompulsory { get; set; }
     }
 }

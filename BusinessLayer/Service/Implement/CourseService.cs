@@ -155,7 +155,7 @@ namespace BusinessLayer.Service.Implement
             try
             {
                 var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == userid && c.Status == CommonEnums.USER_STATUS.ACTIVE && c.Role == CommonEnums.ROLE.TRAINEE);
-                var listcour = await _unitOfWork.CourseRepository.Get(c => c.Status == CommonEnums.COURSE_STATUS.ACTIVE && c.CoursePositions.Any(c=>c.IsCompulsory==true && c.Position.Equals(user.Position.Trim())),"CoursePositions","CourseSkills");
+                var listcour = await _unitOfWork.CourseRepository.Get(c => c.Status == CommonEnums.COURSE_STATUS.ACTIVE && c.CoursePositions.Any(c=>c.IsCompulsory==true && c.Position.Equals(user.Position)),"CoursePositions","CourseSkills");
                 if (listcour == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND,"No courses found");
@@ -174,7 +174,7 @@ namespace BusinessLayer.Service.Implement
                         new CoursePositionResponse()
                         {
                             Id = cp.Id,
-                            Position = cp.Position,
+                            Position = cp.Position ?? default(int),
                             IsCompulsory = cp.IsCompulsory
                         }).ToList(),
                         courseSkills=c.CourseSkills.Select(cp =>
@@ -232,7 +232,7 @@ namespace BusinessLayer.Service.Implement
                         new CoursePositionResponse()
                         {
                             Id = cp.Id,
-                            Position = cp.Position,
+                            Position = cp.Position ?? default(int),
                             IsCompulsory = cp.IsCompulsory
                         }).ToList(),
                         courseSkills = c.CourseSkills.Select(cp =>
@@ -301,7 +301,7 @@ namespace BusinessLayer.Service.Implement
                         new CoursePositionResponse()
                         {
                             Id = cp.Id,
-                            Position = cp.Position,
+                            Position = cp.Position ?? default(int),
                             IsCompulsory = cp.IsCompulsory
                         }).ToList(),
                         courseSkills = c.CourseSkills.Select(cp =>

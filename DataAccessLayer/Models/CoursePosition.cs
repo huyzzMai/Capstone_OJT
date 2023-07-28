@@ -16,8 +16,7 @@ namespace DataAccessLayer.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Column(TypeName = "nvarchar(100)")]
-        public string Position { get; set; }
+        public int? Position { get; set; }
 
         public bool? IsCompulsory { get; set; }
 

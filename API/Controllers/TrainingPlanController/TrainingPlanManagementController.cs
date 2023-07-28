@@ -148,6 +148,7 @@ namespace API.Controllers.TrainingPlanController
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await trainingService.UpdateTrainingPlan(userId, id, request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
                 return Ok("Training plan is updated successfully.");
             }
             catch (Exception ex)
@@ -166,6 +167,7 @@ namespace API.Controllers.TrainingPlanController
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await trainingService.CreateTrainingPlanDetailForExistingTrainingPlan(userId, planId, request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
                 return StatusCode(StatusCodes.Status201Created, "Training plan detail is created successfully.");
             }
             catch (Exception ex)
@@ -184,6 +186,7 @@ namespace API.Controllers.TrainingPlanController
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await trainingService.UpdateTrainingPlanDetail(userId, id, request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
                 return Ok("Update training plan detail successfully.");
             }
             catch (Exception ex)
@@ -202,6 +205,7 @@ namespace API.Controllers.TrainingPlanController
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await trainingService.DeactivateTrainingPlan(userId, planId);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
                 return Ok("Training plan is deactivated.");
             }
             catch (Exception ex)
@@ -220,6 +224,7 @@ namespace API.Controllers.TrainingPlanController
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await trainingService.OpenDeactivatedTrainingPlan(userId, planId);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
                 return Ok("Training plan is re-opened.");
             }
             catch (Exception ex)
@@ -238,6 +243,7 @@ namespace API.Controllers.TrainingPlanController
                 // Get id of current log in user 
                 int trainerId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await trainingService.AssignTraineeToTrainingPlan(trainerId, traineeId, id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.ASSIGN);
                 return StatusCode(StatusCodes.Status201Created, "Assign trainee to training plan successfully.");
             }
             catch (Exception ex)
@@ -256,6 +262,7 @@ namespace API.Controllers.TrainingPlanController
                 // Get id of current log in user 
                 int trainerId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await trainingService.DeleteTrainingPlan(id, trainerId);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.DELETE);
                 return Ok("Training plan is deleted.");
             }
             catch (Exception ex)
@@ -273,7 +280,8 @@ namespace API.Controllers.TrainingPlanController
             {
                 // Get id of current log in user 
                 int trainerId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                await trainingService.DeleteTrainingPlanDetail(id, trainerId);  
+                await trainingService.DeleteTrainingPlanDetail(id, trainerId);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.DETAIL_DELETE);
                 return Ok("Training plan detail is deleted.");
             }
             catch (Exception ex)

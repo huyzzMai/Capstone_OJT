@@ -6,6 +6,7 @@ using BusinessLayer.Models.ResponseModel.AuthenticationResponse;
 using BusinessLayer.Models.ResponseModel.TaskResponse;
 using BusinessLayer.Models.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
+using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
@@ -304,6 +305,7 @@ namespace BusinessLayer.Service.Implement
                 PhoneNumber= user.PhoneNumber,
                 Role=user.Role,
                 RollNumber= user.RollNumber,
+                Position = user.Position,
                 TrelloId= user.TrelloId,
                 CreatedAt= user.CreatedAt,
                 UpdatedAt = user.UpdatedAt                
@@ -508,7 +510,7 @@ namespace BusinessLayer.Service.Implement
 
             if (u == null)
             {
-                throw new Exception("This user cannot be updated!");
+                throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "This user cannot be updated!");
             }
 
             #region Old method
