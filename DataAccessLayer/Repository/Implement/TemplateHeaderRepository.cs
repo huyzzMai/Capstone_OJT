@@ -13,9 +13,9 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Repository.Implement
 {
-    public class CriteriaRepository : GenericRepository<TemplateHeader>, ICriteriaRepository
+    public class TemplateHeaderRepository : GenericRepository<TemplateHeader>, ITemplateHeaderRepository
     {
-        public CriteriaRepository(OJTDbContext context, IUnitOfWork unitOfWork) : base(context,unitOfWork)
+        public TemplateHeaderRepository(OJTDbContext context, IUnitOfWork unitOfWork) : base(context,unitOfWork)
         {
         }
         //public async Task<List<TemplatePoint>> GetPointListByUserId(int id)

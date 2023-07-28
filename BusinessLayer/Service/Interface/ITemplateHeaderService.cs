@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Service.Interface
 {
-    public interface ICriteriaService
+    public interface ITemplateHeaderService
     {
         //Task<Criteria> CreateCriteria(CreateCriteriaRequest request);
     }

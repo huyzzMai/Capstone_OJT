@@ -18,9 +18,9 @@ namespace API.Controllers.CriteriaController
     [ApiController]
     public class CriteriaController : ControllerBase
     {
-        private readonly ICriteriaService _service;
+        private readonly ITemplateHeaderService _service;
 
-        public CriteriaController(ICriteriaService service)
+        public CriteriaController(ITemplateHeaderService service)
         {
             _service = service;
         }

@@ -10,7 +10,7 @@ namespace DataAccessLayer.Interface
     public interface IUnitOfWork
     {
         IUserRepository UserRepository { get; }
-        ICriteriaRepository CriteriaRepository { get; }
+        ITemplateHeaderRepository TemplateHeaderRepository { get; }
         ITrainingPlanRepository TrainingPlanRepository { get; } 
         ITrainingPlanDetailRepository TrainingPlanDetailRepository { get; } 
         IUserTrainingPlanRepository UserTrainingPlanRepository { get; }
