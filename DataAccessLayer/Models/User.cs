@@ -53,7 +53,8 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(40)")]
         public string TrelloId { get; set; }
 
-        //public bool? IsDeleted { get; set; }
+        [Column(TypeName = "nvarchar(MAX)")]
+        public string RefreshToken { get; set; }    
 
         public DateTime? CreatedAt { get; set; }
 

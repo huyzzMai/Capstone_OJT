@@ -21,8 +21,7 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(500)")]
         public string Message { get; set; }
 
-        [Column(TypeName = "nvarchar(100)")]
-        public string Type { get; set; }
+        public int? Type { get; set; }
 
         public bool? IsRead { get; set; }
 

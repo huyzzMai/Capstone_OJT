@@ -20,7 +20,8 @@ namespace DataAccessLayer.Models
 
         public double? TotalPoint { get; set; }
 
-        public string? MatchedAttribute { get; set; }  
+        [Column(TypeName = "nvarchar(100)")]
+        public string MatchedAttribute { get; set; }  
 
         public bool? IsCriteria { get; set; }
 

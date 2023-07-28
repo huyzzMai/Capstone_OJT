@@ -42,23 +42,6 @@ namespace BusinessLayer.Service.Implement
             _configuration = configuration;
         }
 
-        #region CreateToken
-        public LoginResponse CreateToken(Claim[] claims)
-        {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-
-            var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(_configuration["Jwt:Issuer"], _configuration["Jwt:Audience"], claims, expires: DateTime.UtcNow.AddDays(1), signingCredentials: signIn);
-
-            var result = new LoginResponse()
-            {
-                Token = token
-            };
-            return result;
-        }
-        #endregion
-
         #region Encrypt Password
         public string EncryptPassword(string plainText)
         {
@@ -197,6 +180,23 @@ namespace BusinessLayer.Service.Implement
             {
                 throw new Exception(ex.Message);
             }
+        }
+        #endregion
+
+        #region CreateToken
+        public LoginResponse CreateToken(Claim[] claims)
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+
+            var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(_configuration["Jwt:Issuer"], _configuration["Jwt:Audience"], claims, expires: DateTime.UtcNow.AddDays(1), signingCredentials: signIn);
+
+            var result = new LoginResponse()
+            {
+                Token = token
+            };
+            return result;
         }
         #endregion
 
