@@ -20,7 +20,7 @@ namespace DataAccessLayer.Base
 
         public IUserRepository UserRepository => new UserRepository(_context, this);
 
-        public ICriteriaRepository CriteriaRepository => new CriteriaRepository(_context, this);
+        public ITemplateHeaderRepository TemplateHeaderRepository => new TemplateHeaderRepository(_context, this);
 
         public ITrainingPlanRepository TrainingPlanRepository => new TrainingPlanRepository(_context, this);
 
