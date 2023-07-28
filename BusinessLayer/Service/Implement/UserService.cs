@@ -463,45 +463,52 @@ namespace BusinessLayer.Service.Implement
 
         public async Task CreateUser(CreateUserRequest request)
         {
-            var emailCheck = await _unitOfWork.UserRepository.GetUserByEmail(request.Email);
-            if (emailCheck != null)
+            try
             {
-                throw new Exception("Email has been used!");
+                var emailCheck = await _unitOfWork.UserRepository.GetUserByEmail(request.Email);
+                if (emailCheck != null)
+                {
+                    throw new Exception("Email has been used!");
+                }
+
+                String r = GenerateRamdomCode();
+                string pwd = "tn" + r;
+                string encryptPwd = EncryptPassword(pwd);
+
+                User user = new User()
+                {
+                    Role = request.Role,
+                    Name = request.FullName,
+                    Email = request.Email,
+                    Birthday = request.Birthday,
+                    PhoneNumber = request.PhoneNumber,
+                    Address = request.Address,
+                    Gender = request.Gender,
+                    RollNumber = request.RollNumber,
+                    AvatarURL = request.AvatarUrl,
+                    Password = encryptPwd,
+                    Position = request.Position,
+                    TrelloId = request.TrelloId,
+                    CreatedAt = DateTime.UtcNow.AddHours(7),
+                    Status = CommonEnums.USER_STATUS.ACTIVE
+                };
+
+                await _unitOfWork.UserRepository.Add(user);
+
+                //var rs = new CreateUserResponse
+                //{
+                //    Email = request.Email,
+                //    Password = pwd
+                //};
+                //return rs;
+
+                var sender = new MailSender();
+                sender.SendMailCreateAccount(user.Email, user.Name, user.Email, pwd);
             }
-
-            String r = GenerateRamdomCode();
-            string pwd = "tn" + r;
-            string encryptPwd = EncryptPassword(pwd);
-
-            User user = new User()
+            catch (Exception ex)
             {
-                Role = request.Role,
-                Name = request.FullName,
-                Email = request.Email,
-                Birthday = request.Birthday,    
-                PhoneNumber = request.PhoneNumber,
-                Address = request.Address,
-                Gender = request.Gender,    
-                RollNumber = request.RollNumber,
-                AvatarURL = request.AvatarUrl,
-                Password = encryptPwd,
-                Position = request.Position,    
-                TrelloId = request.TrelloId,
-                CreatedAt = DateTime.UtcNow.AddHours(7),
-                Status = CommonEnums.USER_STATUS.ACTIVE
-            };
-
-            await _unitOfWork.UserRepository.Add(user);
-
-            //var rs = new CreateUserResponse
-            //{
-            //    Email = request.Email,
-            //    Password = pwd
-            //};
-            //return rs;
-
-            var sender = new MailSender();
-            sender.SendMailCreateAccount(user.Email, user.Name, user.Email, pwd);
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task UpdateUserInformation(int id, UpdateUserInformationRequest model)
