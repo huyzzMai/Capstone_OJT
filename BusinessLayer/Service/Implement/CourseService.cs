@@ -337,6 +337,53 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
+        public async Task<CourseDetailResponse> GetDetailCoursebyId(int courseId)
+        {
+            try
+            {
+                var c = await _unitOfWork.CourseRepository.GetFirst(c=>c.Id==courseId&&c.Status==CommonEnums.COURSE_STATUS.ACTIVE, "CoursePositions","CourseSkills");
+                if(c==null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND,"Course not found");
+                }
+                var courdetail = new CourseDetailResponse()
+                {
+                    Id = c.Id,
+                    Description = c.Description,
+                    ImageURL = c.ImageURL,
+                    Link = c.Link,
+                    Name = c.Name,
+                    PlatformName = c.PlatformName,
+                    Status = c.Status,
+                    CreatedAt = c.CreatedAt,
+                    UpdatedAt = c.UpdatedAt,
+                    CoursePositions = c.CoursePositions.Select(cp =>
+                    new CoursePositionResponse()
+                    {
+                        Id = cp.Id,
+                        Position = cp.Position ?? default(int),
+                        IsCompulsory = cp.IsCompulsory
+                    }).ToList(),
+                    CourseSkills = c.CourseSkills.Select(cp =>
+                    new CourseSkillResponse()
+                    {
+                        SkillId = cp.SkillId,
+                        AfterwardLevel = cp.AfterwardLevel,
+                        RecommendedLevel = cp.RecommendedLevel
+                    }).ToList()
+                };
+                return courdetail;
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
         public async Task<BasePagingViewModel<CourseResponse>> GetEnrollCourse(int userid, PagingRequestModel paging)
         {
             try
