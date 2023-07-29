@@ -4,16 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using DataAccessLayer.Models;
-using DocumentFormat.OpenXml.Wordprocessing;
-using Newtonsoft.Json.Linq;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace API.Controllers
 {

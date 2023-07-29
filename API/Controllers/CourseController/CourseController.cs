@@ -68,6 +68,25 @@ namespace API.Controllers.CourseController
             }
         }
         [Authorize]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetDetailCourseById(int id)
+        {
+            try
+            {
+                var cour = await _service.GetDetailCoursebyId(id);
+                return Ok(cour);
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize]
         [HttpPost]
         [Route("course-participation")]
         public async Task<IActionResult> EnrollCourse(int courseid)

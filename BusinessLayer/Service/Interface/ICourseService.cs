@@ -2,6 +2,7 @@
 using BusinessLayer.Models.RequestModel.CourseRequest;
 using BusinessLayer.Models.ResponseModel;
 using BusinessLayer.Models.ResponseModel.CourseResponse;
+using DataAccessLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,5 +27,7 @@ namespace BusinessLayer.Service.Interface
 
         Task EnrollCourse(int userid, int courseId);       
         Task<BasePagingViewModel<CourseResponse>> GetEnrollCourse(int userid, PagingRequestModel paging);
+
+        Task<CourseDetailResponse> GetDetailCoursebyId(int courseId);
     }
 }
