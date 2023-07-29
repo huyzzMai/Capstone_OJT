@@ -50,6 +50,12 @@ namespace DataAccessLayer.Repository.Implement
             return user;
         }
 
+        public async Task<User> GetUserByRefTokenAndStatusActive(string token)
+        {
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == token && u.Status == CommonEnums.USER_STATUS.ACTIVE);
+            return user;
+        }
+
         public async Task<List<User>> GetTraineeList()
         {
             List<User> users = await _context.Users

@@ -184,17 +184,87 @@ namespace BusinessLayer.Service.Implement
         #endregion
 
         #region CreateToken
-        public LoginResponse CreateToken(Claim[] claims)
+
+        public async Task SaveUserRefToken(int userId, string refToken)
         {
+            try
+            {
+                var u = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId);
+                if (u == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
+                }
+                u.RefreshToken = refToken;
+                await _unitOfWork.UserRepository.Update(u);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);    
+            }
+        }
+
+        public async Task<bool> CheckExistUserRefToken(string refToken)
+        {
+            try
+            {
+                var u = await _unitOfWork.UserRepository.GetUserByRefTokenAndStatusActive(refToken);
+                if (u == null)
+                {
+                    return false;   
+                }
+                return true;    
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<User> GetUserByRefToken(string refToken)
+        {
+            try
+            {
+                var u = await _unitOfWork.UserRepository.GetUserByRefTokenAndStatusActive(refToken);
+                if (u == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
+                }
+                return u;   
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<TokenResponse> CreateToken(string userId, string role)
+        {
+            var claims = new[]
+            {
+                    new Claim(ClaimTypes.Role, role),
+                    new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                    new Claim(JwtRegisteredClaimNames.NameId, userId),
+                    new Claim("UserId", userId.ToString())
+            };
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var refKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:RefreshKey"]));
 
             var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var refSignIn = new SigningCredentials(refKey, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(_configuration["Jwt:Issuer"], _configuration["Jwt:Audience"], claims, expires: DateTime.UtcNow.AddDays(1), signingCredentials: signIn);
+            var token = new JwtSecurityToken(_configuration["Jwt:Issuer"], _configuration["Jwt:Audience"], 
+                                 claims, expires: DateTime.UtcNow.AddDays(1), signingCredentials: signIn);
+            var refToken = new JwtSecurityToken(_configuration["Jwt:Issuer"], _configuration["Jwt:Audience"],
+                                 claims, expires: DateTime.UtcNow.AddDays(1.25), signingCredentials: refSignIn);
 
-            var result = new LoginResponse()
+            var result = new TokenResponse()
             {
-                Token = token
+                Token = new JwtSecurityTokenHandler().WriteToken(token), 
+                RefreshToken = new JwtSecurityTokenHandler().WriteToken(refToken)
             };
             return result;
         }
@@ -205,73 +275,70 @@ namespace BusinessLayer.Service.Implement
             User u = await _unitOfWork.UserRepository.GetUserByEmailAndStatusActive(request.Email);
             if (u == null)
             {
-                throw new Exception("Email is wrong!");
+                throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Email is wrong!");
             }
             var decryptPass = DecryptPassword(u.Password);
 
             if (request.Password != decryptPass)
             {
-                throw new Exception("Wrong password!");
+                throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Wrong password!");
             }
 
             String userId = u.Id.ToString();
 
             if (u.Role == CommonEnums.ROLE.ADMIN)
             {
-                var claims = new[]
+                string role = "Admin";
+                //var result = CreateToken(userId, role);
+                //return result;
+                return new LoginResponse()
                 {
-                    new Claim(ClaimTypes.Role, "Admin"),
-                    new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                    new Claim(JwtRegisteredClaimNames.NameId, userId),
-                    new Claim("UserId", userId.ToString())
-                    };
-                var result = CreateToken(claims);
-                return result;
+                    UserId = userId,
+                    Role = role,    
+                };
             }
-            else if (u.Role == CommonEnums.ROLE.MANAGER)
-            {
-                var claims = new[]
-                    {
-                    new Claim(ClaimTypes.Role, "Manager"),
-                    new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                    new Claim(JwtRegisteredClaimNames.NameId, userId),
-                    new Claim("UserId", userId.ToString())
-                    };
-                var result = CreateToken(claims);
-                return result;
-            }
-            else if (u.Role == CommonEnums.ROLE.TRAINER)
-            {
-                var claims = new[]
-                    {
-                    new Claim(ClaimTypes.Role, "Trainer"),
-                    new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                    new Claim(JwtRegisteredClaimNames.NameId, userId),
-                    new Claim("UserId", userId.ToString())
-                    };
-                var result = CreateToken(claims);
-                return result;
-            }
-            else if (u.Role == CommonEnums.ROLE.TRAINEE)
-            {
-                var claims = new[]
-                    {
-                    new Claim(ClaimTypes.Role, "Trainee"),
-                    new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                    new Claim(JwtRegisteredClaimNames.NameId, userId),
-                    new Claim("UserId", userId.ToString())
-                    };
-                var result = CreateToken(claims);
-                return result;
-            }
+            //else if (u.Role == CommonEnums.ROLE.MANAGER)
+            //{
+            //    var claims = new[]
+            //        {
+            //        new Claim(ClaimTypes.Role, "Manager"),
+            //        new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
+            //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            //        new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+            //        new Claim(JwtRegisteredClaimNames.NameId, userId),
+            //        new Claim("UserId", userId.ToString())
+            //        };
+            //    var result = CreateToken(claims);
+            //    return result;
+            //}
+            //else if (u.Role == CommonEnums.ROLE.TRAINER)
+            //{
+            //    var claims = new[]
+            //        {
+            //        new Claim(ClaimTypes.Role, "Trainer"),
+            //        new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
+            //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            //        new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+            //        new Claim(JwtRegisteredClaimNames.NameId, userId),
+            //        new Claim("UserId", userId.ToString())
+            //        };
+            //    var result = CreateToken(claims);
+            //    return result;
+            //}
+            //else if (u.Role == CommonEnums.ROLE.TRAINEE)
+            //{
+            //    var claims = new[]
+            //        {
+            //        new Claim(ClaimTypes.Role, "Trainee"),
+            //        new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
+            //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            //        new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+            //        new Claim(JwtRegisteredClaimNames.NameId, userId),
+            //        new Claim("UserId", userId.ToString())
+            //        };
+            //    var result = CreateToken(claims);
+            //    return result;
+            //}
             return null;
         }
 

@@ -21,6 +21,8 @@ namespace DataAccessLayer.Repository.Interface
 
         Task<User> GetUserByResetCodeAndStatusActive(string token);
 
+        Task<User> GetUserByRefTokenAndStatusActive(string token); 
+
         Task<List<User>> GetTrainerList();
 
         Task<List<User>> GetTraineeList();

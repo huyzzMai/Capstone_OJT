@@ -16,6 +16,10 @@ namespace BusinessLayer.Service.Interface
     public interface IUserService
     {
         Task<LoginResponse> LoginUser(LoginRequest request);
+        Task<TokenResponse> CreateToken(string userId, string role);
+        Task SaveUserRefToken(int userId, string refToken);
+        Task<bool> CheckExistUserRefToken(string refToken);
+        Task<User> GetUserByRefToken(string refToken);
         Task SendTokenResetPassword(string email);
         Task VerifyResetCode(string token);
         Task ResetPassword(ResetPasswordRequest request);

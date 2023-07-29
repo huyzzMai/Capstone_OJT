@@ -6,6 +6,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using System;
 using BusinessLayer.Models.RequestModel.AuthenticationRequest;
+using BusinessLayer.Utilities;
+using BusinessLayer.Models.ResponseModel.AuthenticationResponse;
 
 namespace API.Controllers.AuthenticationController
 {
@@ -27,18 +29,36 @@ namespace API.Controllers.AuthenticationController
             try
             {
                 var response = await userService.LoginUser(request);
-                var token = response.Token;
-                if (token != null)
+
+                bool i = true;
+                var result = new TokenResponse();
+                // xài while check trùng refToken
+                while (i == true)
+                {
+                    var tokenResponse = await userService.CreateToken(response.UserId, response.Role);
+                    var check = await userService.CheckExistUserRefToken(tokenResponse.Token);
+                    result = tokenResponse;
+                    i = check;
+                }
+
+                await userService.SaveUserRefToken(Int32.Parse(response.UserId), result.RefreshToken);
+
+                var token = result.Token;
+                if (result.Token != null && result.RefreshToken != null)
                 {
                     //return Ok(new JwtSecurityTokenHandler().WriteToken(token));
 
                     return StatusCode(StatusCodes.Status201Created,
-                       new JwtSecurityTokenHandler().WriteToken(token));
+                    result);
                 }
                 else
                 {
                     return BadRequest("Invalid Credentials");
                 }
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {
