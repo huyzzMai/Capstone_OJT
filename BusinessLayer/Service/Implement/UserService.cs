@@ -246,7 +246,7 @@ namespace BusinessLayer.Service.Implement
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                     new Claim(JwtRegisteredClaimNames.NameId, userId),
-                    new Claim("UserId", userId.ToString())
+                    new Claim("UserId", userId)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
