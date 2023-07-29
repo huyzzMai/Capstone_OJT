@@ -3,7 +3,6 @@ using BusinessLayer.Models.RequestModel.AuthenticationRequest;
 using BusinessLayer.Models.RequestModel.UserRequest;
 using BusinessLayer.Models.ResponseModel;
 using BusinessLayer.Models.ResponseModel.AuthenticationResponse;
-using BusinessLayer.Models.ResponseModel.TaskResponse;
 using BusinessLayer.Models.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
@@ -322,48 +321,6 @@ namespace BusinessLayer.Service.Implement
                     Role = role,
                 };
             }
-            //else if (u.Role == CommonEnums.ROLE.MANAGER)
-            //{
-            //    var claims = new[]
-            //        {
-            //        new Claim(ClaimTypes.Role, "Manager"),
-            //        new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
-            //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            //        new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-            //        new Claim(JwtRegisteredClaimNames.NameId, userId),
-            //        new Claim("UserId", userId.ToString())
-            //        };
-            //    var result = CreateToken(claims);
-            //    return result;
-            //}
-            //else if (u.Role == CommonEnums.ROLE.TRAINER)
-            //{
-            //    var claims = new[]
-            //        {
-            //        new Claim(ClaimTypes.Role, "Trainer"),
-            //        new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
-            //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            //        new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-            //        new Claim(JwtRegisteredClaimNames.NameId, userId),
-            //        new Claim("UserId", userId.ToString())
-            //        };
-            //    var result = CreateToken(claims);
-            //    return result;
-            //}
-            //else if (u.Role == CommonEnums.ROLE.TRAINEE)
-            //{
-            //    var claims = new[]
-            //        {
-            //        new Claim(ClaimTypes.Role, "Trainee"),
-            //        new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
-            //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            //        new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-            //        new Claim(JwtRegisteredClaimNames.NameId, userId),
-            //        new Claim("UserId", userId.ToString())
-            //        };
-            //    var result = CreateToken(claims);
-            //    return result;
-            //}
             return null;
         }
 
@@ -627,23 +584,7 @@ namespace BusinessLayer.Service.Implement
             //{
             //    u.Name = model.FullName;
             //}
-            //if (model.Birthday == null)
-            //{
-            //    u.Birthday = u.Birthday;
-            //}
-            //else
-            //{
-            //    u.Birthday = model.Birthday;
-            //}
-
-            //if (model.PhoneNumber == null)
-            //{
-            //    u.PhoneNumber = u.PhoneNumber;
-            //}
-            //else
-            //{
-            //    u.PhoneNumber = model.PhoneNumber;
-            //}
+            
             #endregion
 
             if (model.FullName != null)
