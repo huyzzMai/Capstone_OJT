@@ -241,8 +241,8 @@ namespace DataAccessLayer.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<int?>("Type")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -564,10 +564,11 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataAccessLayer.Models.UserSkill", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<int>("SkillId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CurrentLevel")
                         .HasColumnType("int");
@@ -575,15 +576,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<int?>("InitLevel")
                         .HasColumnType("int");
 
-                    b.Property<int>("SkillId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SkillId");
+                    b.HasKey("SkillId", "UserId");
 
                     b.HasIndex("UserId");
 
