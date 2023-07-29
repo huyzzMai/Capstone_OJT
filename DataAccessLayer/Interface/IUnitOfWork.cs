@@ -28,5 +28,7 @@ namespace DataAccessLayer.Interface
         ICourseSkillRepository CourseSkillRepository { get; }
 
         ISkillRepository SkillRepository { get; }
+
+        INotificationRepository NotificationRepository { get; } 
     }
 }

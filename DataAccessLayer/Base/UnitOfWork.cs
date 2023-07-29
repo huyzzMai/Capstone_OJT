@@ -43,5 +43,7 @@ namespace DataAccessLayer.Base
         public ICourseSkillRepository CourseSkillRepository => new CourseSkillRepository(_context, this);
 
         public ISkillRepository SkillRepository => new SkillRepository(_context, this);
+
+        public INotificationRepository NotificationRepository => new NotificationRepository(_context, this);    
     }
 }
