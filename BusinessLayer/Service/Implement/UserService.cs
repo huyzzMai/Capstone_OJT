@@ -289,12 +289,37 @@ namespace BusinessLayer.Service.Implement
             if (u.Role == CommonEnums.ROLE.ADMIN)
             {
                 string role = "Admin";
-                //var result = CreateToken(userId, role);
-                //return result;
                 return new LoginResponse()
                 {
                     UserId = userId,
                     Role = role,    
+                };
+            }
+            else if (u.Role == CommonEnums.ROLE.MANAGER)
+            {
+                string role = "Manager";
+                return new LoginResponse()
+                {
+                    UserId = userId,
+                    Role = role,
+                };
+            }
+            else if (u.Role == CommonEnums.ROLE.TRAINER)
+            {
+                string role = "Trainer";
+                return new LoginResponse()
+                {
+                    UserId = userId,
+                    Role = role,
+                };
+            }
+            else if (u.Role == CommonEnums.ROLE.TRAINEE)
+            {
+                string role = "Trainee";
+                return new LoginResponse()
+                {
+                    UserId = userId,
+                    Role = role,
                 };
             }
             //else if (u.Role == CommonEnums.ROLE.MANAGER)
