@@ -36,8 +36,8 @@ namespace BusinessLayer.Service.Implement
                 "<body>\n" +
                 "\t<h2>KNS OJT Account</h2>\n" +
                 "\t<p>Dear " + username + " ,</p>\n" +
-                "\t<p>This is an email to let you know that you have an account in the KNS OJT System. The following information to log into our system is your email and password:.</p><br>\n" +
-                "\t<b>" + email + "</b>\n" +
+                "\t<p>This is an email to let you know that you have an account in the KNS OJT System. The following information to log into our system is your email and password :</p>\n" +
+                "\t<b>" + email + "</b><br>\n" +
                 "\t<b>" + password + "</b>\n" +
                 "\t<br>\n" +
                 "\t<p>Please do not share information in this email to anyone. You should reset the password as you please. Have a nice day!</p>\n" +
