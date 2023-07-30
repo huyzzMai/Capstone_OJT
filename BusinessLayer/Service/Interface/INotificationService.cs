@@ -9,8 +9,8 @@ namespace BusinessLayer.Service.Interface
 {
     public interface INotificationService
     {
-        Task CreateNotificaion(int userId);
+        Task CreateNotificaion(int userId, string title, string message, int type);
         Task<List<NotificationResponse>> GetNotificationListForUser(int userId);  
-        Task UpdateIsReadNotification(int userId);  
+        Task UpdateIsReadNotification(int notiId);  
     }
 }

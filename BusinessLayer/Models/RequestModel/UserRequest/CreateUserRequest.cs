@@ -27,5 +27,6 @@ namespace BusinessLayer.Models.RequestModel.UserRequest
             public string SkillName { get; set; }
             public int Type { get; set; }
         }
+        public List<CreateSkillRequest> createSkills { get; set; }
     }
 }

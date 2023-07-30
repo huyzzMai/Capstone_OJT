@@ -10,7 +10,7 @@ namespace DataAccessLayer.Repository.Interface
 {
     public interface INotificationRepository : IGenericRepository<Notification>
     {
-        Task<List<Notification>> GetListNotificaiton(int userId);
+        Task<List<Notification>> GetListNotificaitonByUser(int userId);
 
     }
 }
