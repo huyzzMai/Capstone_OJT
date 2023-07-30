@@ -32,7 +32,30 @@ namespace BusinessLayer.Service.Implement
                     return new ValidOJTBatchResponse()
                     {
                         Id =ojt.Id,
-                        Name = ojt.Name                     
+                        Name = ojt.Name  ,
+                        StartTime = ojt.StartTime,
+                        EndTime = ojt.EndTime
+                    };
+                }
+                ).ToList();
+            return res;
+        }
+        public async Task<IEnumerable<ValidOJTBatchResponse>> GetValidOJtListbyUniversityId(int id)
+        {
+            var list = await _unitOfWork.OJTBatchRepository.Get(c => c.IsDeleted == false && c.UniversityId == id);
+            if (list == null)
+            {
+                throw new Exception("Empty List OJTBatch");
+            }
+            IEnumerable<ValidOJTBatchResponse> res = list.Select(
+                ojt =>
+                {
+                    return new ValidOJTBatchResponse()
+                    {
+                        Id = ojt.Id,
+                        Name = ojt.Name,
+                        StartTime = ojt.StartTime,
+                        EndTime = ojt.EndTime
                     };
                 }
                 ).ToList();

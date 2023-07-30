@@ -22,11 +22,29 @@ namespace API.Controllers.OJTBatchController
 
         [Authorize]
         [HttpGet]
+        [Route("active-batch")]
         public async Task<IActionResult> GetValidOJTBatchInformation()
         {
             try
             {
               var list= await _ojtService.GetValidOJtList();
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("batches-of-university")]
+        public async Task<IActionResult> GetValidOJTBatchInformation(int id)
+        {
+            try
+            {
+                var list = await _ojtService.GetValidOJtListbyUniversityId(id);
                 return Ok(list);
             }
             catch (Exception ex)

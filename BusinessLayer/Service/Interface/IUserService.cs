@@ -34,5 +34,7 @@ namespace BusinessLayer.Service.Interface
         //Task<CreateUserResponse> CreateUser(CreateUserRequest request);
         Task CreateUser(CreateUserRequest request);
         Task UpdateUserInformation(int id, UpdateUserInformationRequest model);
+
+        Task <UserDetailResponse> GetUserDetail(int id);
     }
 }

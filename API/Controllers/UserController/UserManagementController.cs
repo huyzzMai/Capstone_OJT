@@ -53,7 +53,7 @@ namespace API.Controllers.UserController
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize/*(Roles = "Admin")*/]
         [HttpGet]
         public async Task<IActionResult> GetAccountList([FromQuery] PagingRequestModel paging,string searchTerm, int? role)
         {
@@ -66,6 +66,25 @@ namespace API.Controllers.UserController
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     ex.Message);
+            }
+        }
+        [Authorize/*(Roles = "Admin")*/]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAccountDetail(int id)
+        {
+            try
+            {
+                var user = await userService.GetUserDetail(id);
+                return Ok(user);
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
             }
         }
         [Authorize(Roles = "Admin")]

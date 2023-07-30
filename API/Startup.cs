@@ -4,6 +4,7 @@ using BusinessLayer.Service.Interface;
 using DataAccessLayer.Base;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
+using DataAccessLayer.Repository.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -62,6 +63,7 @@ namespace API
             services.AddScoped<ICertificateService, CertificateService>();
             services.AddScoped<ISkillService, SkillService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IUniversityService, UniversityService>();
             services.AddHttpClient();
 
 
