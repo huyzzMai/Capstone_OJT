@@ -25,7 +25,7 @@ namespace BusinessLayer.Service.Interface
         Task ResetPassword(ResetPasswordRequest request);
         Task<UserCommonResponse> GetCurrentUserById(int id);
         Task<BasePagingViewModel<TrainerResponse>> GetTrainerList(PagingRequestModel paging);
-        Task<BasePagingViewModel<UserListResponse>> GetUserList(PagingRequestModel paging);
+        Task<BasePagingViewModel<UserListResponse>> GetUserList(PagingRequestModel paging,string searchTerm,int? role);
         Task<BasePagingViewModel<TraineeResponse>> GetTraineeList(PagingRequestModel paging);
         Task<BasePagingViewModel<TraineeResponse>> GetTraineeListByTrainer(int id, PagingRequestModel paging);
         //Task AssignTraineeToTrainer(int trainerId, int traineeId);

@@ -88,12 +88,12 @@ namespace API.Controllers.SkillController
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetListSkill([FromQuery] PagingRequestModel paging,string searchTerm)
+        public async Task<IActionResult> GetListSkill([FromQuery] PagingRequestModel paging,string searchTerm,int? filterType)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                var list = await _service.GetSkillList(paging,searchTerm);
+                var list = await _service.GetSkillList(paging,searchTerm, filterType);
                 return Ok(list);
             }
             catch (ApiException ex)

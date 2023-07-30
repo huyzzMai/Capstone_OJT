@@ -576,7 +576,6 @@ namespace BusinessLayer.Service.Implement
             {
                 throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "This user cannot be updated!");
             }
-
             #region Old method
             //var check = await _unitOfWork.UserRepository.GetUserByEmailAndDeleteIsFalse(model.Email);
             //if (check != null)
@@ -624,15 +623,39 @@ namespace BusinessLayer.Service.Implement
             {
                 u.AvatarURL = model.AvatarURL;
             }
-
             u.UpdatedAt = DateTime.UtcNow.AddHours(7);
-
             await _unitOfWork.UserRepository.Update(u);
         }
-
-        public async Task<BasePagingViewModel<UserListResponse>> GetUserList(PagingRequestModel paging)
+        public List<User> SearchUsers(string searchTerm, int? role, List<User> courselist)
         {
-            var users = await _unitOfWork.UserRepository.Get(c=>c.Status == CommonEnums.USER_STATUS.ACTIVE && c.Role!= CommonEnums.ROLE.ADMIN);
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+            }
+
+            var query = courselist.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(c =>
+                    c.Name.ToLower().Contains(searchTerm) ||
+                    c.Address.ToLower().Contains(searchTerm) ||
+                     c.PhoneNumber.Equals(searchTerm)
+                );
+            }
+            if (role != null)
+            {
+                query = query.Where(c => c.Role == null);
+            }            
+            return query.ToList();
+        }
+        public async Task<BasePagingViewModel<UserListResponse>> GetUserList(PagingRequestModel paging, string searchTerm, int? role)
+        {
+            var users = await _unitOfWork.UserRepository.Get(c=>c.Status != CommonEnums.USER_STATUS.DELETED && c.Role!= CommonEnums.ROLE.ADMIN);
+            if (!string.IsNullOrEmpty(searchTerm) || role != null)
+            {
+                users = SearchUsers(searchTerm,role,users.ToList());
+            }
             List<UserListResponse> res = users.Select(
                 user =>
                 {
@@ -640,6 +663,13 @@ namespace BusinessLayer.Service.Implement
                     {
                         Id = user.Id,
                         FullName = user.Name,
+                        Address = user.Address,
+                        AvatarUrl= user.AvatarURL,
+                        Birthday = user.Birthday,
+                        Email = user.Email,
+                        Gender = user.Gender,
+                        PhoneNumber = user.PhoneNumber,
+                        Status= user.Status,
                         Role = user.Role
                     };
                 }
