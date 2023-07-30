@@ -21,12 +21,11 @@ namespace BusinessLayer.Models.RequestModel.UserRequest
         public int Position { get; set; }
         public string TrelloId { get; set; }
 
-        public class CreateSkillRequest
+        public class CreateUserSkillRequest
         {
             public int SkillId { get; set; }
-            public string SkillName { get; set; }
-            public int Type { get; set; }
+            public int InitLevel { get; set; }
         }
-        public List<CreateSkillRequest> createSkills { get; set; }
+        public List<CreateUserSkillRequest> CreateSkills { get; set; }
     }
 }

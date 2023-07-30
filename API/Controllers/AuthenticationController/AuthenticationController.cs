@@ -165,7 +165,7 @@ namespace API.Controllers.AuthenticationController
         }
 
         // After successfully verify reset code, go to this API
-        [HttpPost("reset-password")]
+        [HttpPut("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
             try

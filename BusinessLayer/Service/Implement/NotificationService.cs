@@ -33,8 +33,13 @@ namespace BusinessLayer.Service.Implement
                 }
                 var noti = new Notification()
                 {
-                    
+                    Title = title,
+                    Message = message,  
+                    Type = type,
+                    IsRead = false,
+                    CreatedAt = DateTime.UtcNow.AddHours(7)
                 };
+                await _unitOfWork.NotificationRepository.Add(noti);
             }
             catch (Exception ex)
             {
@@ -67,11 +72,17 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task UpdateIsReadNotification(int userId)
+        public async Task UpdateIsReadNotification(int notiId)
         {
             try
             {
-
+                var noti = await _unitOfWork.NotificationRepository.GetNotificationById(notiId);
+                if (noti == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "This notification not found!");
+                }
+                noti.IsRead = true; 
+                await _unitOfWork.NotificationRepository.Update(noti);
             }
             catch (Exception ex)
             {
