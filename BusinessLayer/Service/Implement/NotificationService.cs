@@ -72,11 +72,17 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task UpdateIsReadNotification(int userId)
+        public async Task UpdateIsReadNotification(int notiId)
         {
             try
             {
-
+                var noti = await _unitOfWork.NotificationRepository.GetNotificationById(notiId);
+                if (noti == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "This notification not found!");
+                }
+                noti.IsRead = true; 
+                await _unitOfWork.NotificationRepository.Update(noti);
             }
             catch (Exception ex)
             {
