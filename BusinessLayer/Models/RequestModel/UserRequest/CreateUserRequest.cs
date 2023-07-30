@@ -20,6 +20,7 @@ namespace BusinessLayer.Models.RequestModel.UserRequest
         public string AvatarUrl { get; set; }
         public int Position { get; set; }
         public string TrelloId { get; set; }
+        public int? BatchId { get; set; }    
 
         public class CreateUserSkillRequest
         {

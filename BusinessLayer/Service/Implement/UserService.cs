@@ -445,6 +445,27 @@ namespace BusinessLayer.Service.Implement
             return result;
         }
 
+        public async Task<TrainerResponse> GetTrainerDetail(int trainerId)
+        {
+            try
+            {
+                var trainer = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(trainerId);
+                TrainerResponse res = new()
+                {
+                    Id = trainer.Id,
+                    FullName = trainer.Name,
+                    Email = trainer.Email,
+                    AvatarURL = trainer.AvatarURL,
+                    Gender = trainer.Gender ?? default(int)
+                };
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<BasePagingViewModel<TraineeResponse>> GetTraineeList(PagingRequestModel paging)
         {
             var users = await _unitOfWork.UserRepository.GetTraineeList();
@@ -507,31 +528,52 @@ namespace BusinessLayer.Service.Implement
             return result;
         }
 
-        //public async Task AssignTraineeToTrainer (int trainerId, int traineeId)
-        //{
-        //    try
-        //    {
-        //        var trainer = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(trainerId);  
-        //        if (trainer.Role != CommonEnums.ROLE.TRAINER)
-        //        {
-        //            throw new Exception("Trainer not found!");
-        //        }
+        public async Task<TraineeResponse> GetTraineeDetail(int roleId, int traineeId)
+        {
+            try
+            {
+                var check = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(roleId);
+                if (check.Role == CommonEnums.ROLE.MANAGER)
+                {
+                    var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
+                    TraineeResponse res = new()
+                    {
+                        Id =trainee.Id, 
+                        FullName = trainee.Name,    
+                        Email = trainee.Email,  
+                        AvatarURL = trainee.AvatarURL,  
+                        Gender = trainee.Gender ?? default(int),
+                        Position = trainee.Position ?? default(int)
+                    };
+                    return res; 
+                }
+                else
+                {
+                    var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
 
-        //        var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
-        //        if (trainee.Role != CommonEnums.ROLE.TRAINEE)
-        //        {
-        //            throw new Exception("Trainee not found!");
-        //        }
+                    if (trainee.UserReferenceId != roleId)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Not your assigned trainee!");
+                    }
 
-        //        trainee.UserReferenceId = trainerId;
-        //        trainee.UpdatedAt = DateTime.Now;
-        //        await _unitOfWork.UserRepository.Update(trainee);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
+                    TraineeResponse res = new()
+                    {
+                        Id = trainee.Id,
+                        FullName = trainee.Name,
+                        Email = trainee.Email,
+                        AvatarURL = trainee.AvatarURL,
+                        Gender = trainee.Gender ?? default(int),
+                        Position = trainee.Position ?? default(int)
+                    };
+                    return res;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task AssignTraineeToTrainer(AssignTraineesRequest request)
         {
             try
@@ -539,7 +581,7 @@ namespace BusinessLayer.Service.Implement
                 var trainer = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(request.TrainerId);
                 if (trainer.Role != CommonEnums.ROLE.TRAINER)
                 {
-                    throw new Exception("Trainer not found!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Trainer not found!");
                 }
 
                 foreach (var item in request.Trainees)
@@ -547,7 +589,7 @@ namespace BusinessLayer.Service.Implement
                     var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(item.TraineeId);
                     if (trainee.Role != CommonEnums.ROLE.TRAINEE || trainee.UserReferenceId != null)
                     {
-                        throw new Exception("Trainee not available!");
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Trainee not available!");
                     }
 
                     trainee.UserReferenceId = request.TrainerId;
@@ -589,6 +631,7 @@ namespace BusinessLayer.Service.Implement
                     Password = encryptPwd,
                     Position = request.Position,
                     TrelloId = request.TrelloId,
+                    OJTBatchId = request.BatchId,
                     CreatedAt = DateTime.UtcNow.AddHours(7),
                     Status = CommonEnums.USER_STATUS.ACTIVE
                 };

@@ -11,5 +11,8 @@ namespace BusinessLayer.Models.ResponseModel.UserResponse
         public int Id { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
+        public int Position { get; set; }
+        public string AvatarURL { get; set; }
+        public int Gender { get; set; }
     }
 }

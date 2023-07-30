@@ -122,6 +122,25 @@ namespace API.Controllers.UserController
             }
         }
 
+        [Authorize(Roles = "Manager")]
+        [HttpGet("trainer/{trainerId}")]
+        public async Task<IActionResult> GetTrainerDetail(int trainerId)
+        {
+            try
+            {
+                return Ok(await userService.GetTrainerDetail(trainerId));
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
         [Authorize(Roles = "Admin,Manager")]
         [HttpGet("trainee")]
         public async Task<IActionResult> GetTraineeList([FromQuery] PagingRequestModel paging)
@@ -138,16 +157,39 @@ namespace API.Controllers.UserController
             }
         }
 
+        [Authorize(Roles = "Trainer,Manager")]
+        [HttpGet("trainee/{traineeId}")]
+        public async Task<IActionResult> GetTraineeDetail (int traineeId)
+        {
+            try
+            {
+                int id = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await userService.GetTraineeDetail(id, traineeId));
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
         [Authorize(Roles = "Manager")]
         [HttpPost("trainer/assign-trainees")]
         public async Task<IActionResult> AssignTraineeToTrainer([FromBody] AssignTraineesRequest request)
         {
             try
             {
-                //await userService.AssignTraineeToTrainer(trainerId, traineeId);
                 await userService.AssignTraineeToTrainer(request);
                 return StatusCode(StatusCodes.Status201Created,
                     "Assign successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
             }
             catch (Exception ex)
             {
