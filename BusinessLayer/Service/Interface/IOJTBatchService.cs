@@ -11,5 +11,7 @@ namespace BusinessLayer.Service.Interface
     public interface IOJTBatchService
     {
         Task<IEnumerable<ValidOJTBatchResponse>> GetValidOJtList();
+
+        Task<IEnumerable<ValidOJTBatchResponse>> GetValidOJtListbyUniversityId(int id);
     }
 }

@@ -30,5 +30,7 @@ namespace DataAccessLayer.Interface
         ISkillRepository SkillRepository { get; }
 
         INotificationRepository NotificationRepository { get; } 
+
+        IUniversityRepository UniversityRepository { get; }
     }
 }

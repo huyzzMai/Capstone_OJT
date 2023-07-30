@@ -645,7 +645,7 @@ namespace BusinessLayer.Service.Implement
             }
             if (role != null)
             {
-                query = query.Where(c => c.Role == null);
+                query = query.Where(c => c.Role == role);
             }            
             return query.ToList();
         }
@@ -664,7 +664,7 @@ namespace BusinessLayer.Service.Implement
                         Id = user.Id,
                         FullName = user.Name,
                         Address = user.Address,
-                        AvatarUrl= user.AvatarURL,
+                        AvatarURL= user.AvatarURL,
                         Birthday = user.Birthday,
                         Email = user.Email,
                         Gender = user.Gender,
@@ -689,6 +689,42 @@ namespace BusinessLayer.Service.Implement
                 Data = res
             };
             return result;
+        }
+
+        public async Task<UserDetailResponse> GetUserDetail(int id)
+        {
+           try
+            {
+                var user = await _unitOfWork.UserRepository.GetFirst(c=>c.Status!=CommonEnums.USER_STATUS.DELETED && c.Id==id);
+                if (user == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET,"User not found");
+                }
+                var userdetail = new UserDetailResponse()
+                {
+                    Id = id,
+                    Email = user.Email,
+                    Address = user.Address,
+                    Birthday = user.Birthday,
+                    FullName=user.Name,
+                    Gender= user.Gender,
+                    PhoneNumber= user.PhoneNumber,
+                    AvatarUrl= user.AvatarURL,
+                    CreatedAt= user.CreatedAt,
+                    UpdatedAt= user.UpdatedAt,
+                    Status = user.Status,
+                    Role = user.Role                   
+                };
+                return userdetail;
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
         }
     }
 }
