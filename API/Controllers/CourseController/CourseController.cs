@@ -30,12 +30,10 @@ namespace API.Controllers.CourseController
         public async Task<IActionResult> CreateCourse([FromBody] CreateCourseRequest request)
         {
             try
-            {
-              
+            {              
                 await _service.CreateCourse(request);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.COURSE_SIGNALR_MESSAGE.CREATED);
                 return StatusCode(StatusCodes.Status201Created, "Course is created successfully");
-
             }
             catch (ApiException ex)
             {
@@ -130,12 +128,12 @@ namespace API.Controllers.CourseController
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetListCourse([FromQuery] PagingRequestModel paging, string sortField, string sortOrder)
+        public async Task<IActionResult> GetListCourse([FromQuery] PagingRequestModel paging, string sortField, string sortOrder, string searchTerm)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                var list = await _service.GetCourseList(paging,sortField,sortOrder);
+                var list = await _service.GetCourseList(paging,sortField,sortOrder,searchTerm);
                 return Ok(list);
 
             }

@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Service.Implement
 {
-    public class SkillService:ISkillService
+    public class SkillService : ISkillService
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -58,13 +58,13 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var cour = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId && c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
-                if (cour == null)
+                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId && c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
+                if (skill == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Skill not found");
                 }
-                cour.Status = CommonEnums.SKILL_STATUS.DELETED;
-                await _unitOfWork.SkillRepository.Update(cour);
+                skill.Status = CommonEnums.SKILL_STATUS.DELETED;
+                await _unitOfWork.SkillRepository.Update(skill);
             }
             catch (ApiException ex)
             {
@@ -76,11 +76,58 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<BasePagingViewModel<SkillResponse>> GetSkillList(PagingRequestModel paging)
+        public async Task<SkillDetailResponse> GetSkillDetail(int skillId)
+        {
+            try
+            {
+                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId && c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
+                if (skill == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Skill not found");
+                }
+                var skilldetail= new SkillDetailResponse()
+                {
+                    Id = skillId,
+                    Name = skill.Name,
+                    Type = skill.Type,
+                    Status = skill.Status,
+                    CreatedAt = skill.CreatedAt,
+                    UpdatedAt = skill.UpdatedAt
+                };
+                return skilldetail;
+
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+        public List<Skill> SearchSkills(string? searchTerm, List<Skill> skilllist)
+        {
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+            }
+
+            var query = skilllist.AsQueryable();
+            query = query.Where(c =>
+                c.Name.ToLower().Contains(searchTerm)
+            );
+            return query.ToList();
+        }
+        public async Task<BasePagingViewModel<SkillResponse>> GetSkillList(PagingRequestModel paging, string searchTerm)
         {
             try
             {
                 var listskill = await _unitOfWork.SkillRepository.Get(c => c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    listskill = SearchSkills(searchTerm, listskill.ToList());
+                }
                 var listresponse = listskill.OrderByDescending(c => c.CreatedAt).Select(c =>
                 {
                     return new SkillResponse()
@@ -113,7 +160,6 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-
         public async Task UpdateSkill(int skillId, UpdateSkillRequest request)
         {
             try

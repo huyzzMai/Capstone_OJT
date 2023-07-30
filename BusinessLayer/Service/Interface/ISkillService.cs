@@ -14,6 +14,8 @@ namespace BusinessLayer.Service.Interface
 
         Task DeleteSkill(int skillId);
 
-        Task<BasePagingViewModel<SkillResponse>> GetSkillList(PagingRequestModel paging);
+        Task<BasePagingViewModel<SkillResponse>> GetSkillList(PagingRequestModel paging,string? searchTerm);
+
+        Task<SkillDetailResponse> GetSkillDetail(int skillId);
     }
 }
