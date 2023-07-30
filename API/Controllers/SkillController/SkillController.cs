@@ -88,13 +88,32 @@ namespace API.Controllers.SkillController
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetListSkill([FromQuery] PagingRequestModel paging)
+        public async Task<IActionResult> GetListSkill([FromQuery] PagingRequestModel paging,string searchTerm)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                var list = await _service.GetSkillList(paging);
+                var list = await _service.GetSkillList(paging,searchTerm);
                 return Ok(list);
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetSkillDetail(int id)
+        {
+            try
+            {
+               var skill= await _service.GetSkillDetail(id);
+                return Ok(skill);
             }
             catch (ApiException ex)
             {

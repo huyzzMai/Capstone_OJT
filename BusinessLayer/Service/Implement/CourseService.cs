@@ -9,6 +9,7 @@ using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
 using DocumentFormat.OpenXml.Office2016.Excel;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -208,17 +209,37 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
+        public List<Course> SearchCourses(string? searchTerm, List<Course> courselist)
+        {
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+            }
 
-        public async Task<BasePagingViewModel<CourseResponse>> GetCourseList(PagingRequestModel paging, string sortField, string sortOrder)
+            var query = courselist.AsQueryable();
+            query = query.Where(c =>
+                c.Name.ToLower().Contains(searchTerm) ||
+                c.PlatformName.ToLower().Contains(searchTerm) ||
+                c.CourseSkills.Any(cs => cs.Skill.Name.ToLower().Contains(searchTerm))
+            );
+
+            return query.ToList();
+        }
+
+        public async Task<BasePagingViewModel<CourseResponse>> GetCourseList(PagingRequestModel paging, string sortField, string sortOrder,string searchTerm)
         {
             try
             {
-                var listcour = await _unitOfWork.CourseRepository.Get(c => c.Status == CommonEnums.COURSE_STATUS.ACTIVE,"CoursePositions","CourseSkills");
+                var listcour = await _unitOfWork.CourseRepository.Get(c=>c.Status==CommonEnums.COURSE_STATUS.ACTIVE, "CoursePositions", "CourseSkills");
                 if (listcour == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
                 }
-                var listresponse = listcour.OrderByDescending(c=>c.CreatedAt).Select(c =>
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    listcour = SearchCourses(searchTerm, listcour.ToList());
+                }
+                    var listresponse = listcour.OrderByDescending(c=>c.CreatedAt).Select(c =>
                 {
                     return new CourseResponse()
                     {
@@ -239,6 +260,7 @@ namespace BusinessLayer.Service.Implement
                         new CourseSkillResponse()
                         {
                             SkillId = cp.SkillId,
+                            SkillName=cp.Skill.Name,
                             AfterwardLevel = cp.AfterwardLevel,
                             RecommendedLevel = cp.RecommendedLevel
                         }).ToList()
@@ -308,6 +330,7 @@ namespace BusinessLayer.Service.Implement
                         new CourseSkillResponse()
                         {
                             SkillId = cp.SkillId,
+                            SkillName=cp.Skill.Name,
                             AfterwardLevel = cp.AfterwardLevel,
                             RecommendedLevel = cp.RecommendedLevel
                         }).ToList()
@@ -341,7 +364,8 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var c = await _unitOfWork.CourseRepository.GetFirst(c=>c.Id==courseId&&c.Status==CommonEnums.COURSE_STATUS.ACTIVE, "CoursePositions","CourseSkills");
+                var c = await _unitOfWork.CourseRepository.GetFirst(c=>c.Status==CommonEnums.COURSE_STATUS.ACTIVE, "CoursePositions", "CourseSkills");
+                //var c = courlist.FirstOrDefault(c=>c.Id==courseId);
                 if(c==null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND,"Course not found");
@@ -368,6 +392,7 @@ namespace BusinessLayer.Service.Implement
                     new CourseSkillResponse()
                     {
                         SkillId = cp.SkillId,
+                        SkillName=cp.Skill.Name,
                         AfterwardLevel = cp.AfterwardLevel,
                         RecommendedLevel = cp.RecommendedLevel
                     }).ToList()
@@ -433,7 +458,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId && c.Status == CommonEnums.COURSE_STATUS.ACTIVE, "CoursePositions");
+                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId && c.Status == CommonEnums.COURSE_STATUS.ACTIVE);
                 if (cour == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
