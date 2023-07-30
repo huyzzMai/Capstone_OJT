@@ -33,8 +33,13 @@ namespace BusinessLayer.Service.Implement
                 }
                 var noti = new Notification()
                 {
-                    
+                    Title = title,
+                    Message = message,  
+                    Type = type,
+                    IsRead = false,
+                    CreatedAt = DateTime.UtcNow.AddHours(7)
                 };
+                await _unitOfWork.NotificationRepository.Add(noti);
             }
             catch (Exception ex)
             {
