@@ -106,27 +106,30 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-        public List<Skill> SearchSkills(string? searchTerm, List<Skill> skilllist)
+        public List<Skill> SearchSkills(string searchTerm,int? filterPosition,List<Skill> skilllist)
         {
+            var query = skilllist.AsQueryable();
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 searchTerm = searchTerm.ToLower();
-            }
-
-            var query = skilllist.AsQueryable();
-            query = query.Where(c =>
+                query = query.Where(c =>
                 c.Name.ToLower().Contains(searchTerm)
             );
+            }         
+            if (filterPosition != null)
+            {
+                query = query.Where(c => c.Type==filterPosition);
+            }          
             return query.ToList();
         }
-        public async Task<BasePagingViewModel<SkillResponse>> GetSkillList(PagingRequestModel paging, string searchTerm)
+        public async Task<BasePagingViewModel<SkillResponse>> GetSkillList(PagingRequestModel paging, string searchTerm,int? filterPosition)
         {
             try
             {
                 var listskill = await _unitOfWork.SkillRepository.Get(c => c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
-                if (!string.IsNullOrEmpty(searchTerm))
+                if (!string.IsNullOrEmpty(searchTerm)||filterPosition!=null)
                 {
-                    listskill = SearchSkills(searchTerm, listskill.ToList());
+                    listskill = SearchSkills(searchTerm,filterPosition ,listskill.ToList());
                 }
                 var listresponse = listskill.OrderByDescending(c => c.CreatedAt).Select(c =>
                 {
@@ -135,7 +138,7 @@ namespace BusinessLayer.Service.Implement
                         Id= c.Id,
                         Name= c.Name,
                         Status =c.Status,
-                        Type = c.Type ?? default(int)
+                        Type = c.Type
                     };
                 }).ToList();
                 int totalItem = listresponse.Count;

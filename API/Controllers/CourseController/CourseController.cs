@@ -128,12 +128,12 @@ namespace API.Controllers.CourseController
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetListCourse([FromQuery] PagingRequestModel paging, string sortField, string sortOrder, string searchTerm)
+        public async Task<IActionResult> GetListCourse([FromQuery] PagingRequestModel paging, string sortField, string sortOrder, string searchTerm, string filterSkill, int? filterPosition, int? filterStatus)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                var list = await _service.GetCourseList(paging,sortField,sortOrder,searchTerm);
+                var list = await _service.GetCourseList(paging,sortField,sortOrder,searchTerm,filterSkill,filterPosition,filterStatus);
                 return Ok(list);
 
             }

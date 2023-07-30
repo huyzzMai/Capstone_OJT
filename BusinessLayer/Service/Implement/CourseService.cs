@@ -209,7 +209,7 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-        public List<Course> SearchCourses(string? searchTerm, List<Course> courselist)
+        public List<Course> SearchCourses(string searchTerm, string filterskill, int? filterposition, int? filterstatus, List<Course> courselist)
         {
             if (!string.IsNullOrEmpty(searchTerm))
             {
@@ -217,27 +217,44 @@ namespace BusinessLayer.Service.Implement
             }
 
             var query = courselist.AsQueryable();
-            query = query.Where(c =>
-                c.Name.ToLower().Contains(searchTerm) ||
-                c.PlatformName.ToLower().Contains(searchTerm) ||
-                c.CourseSkills.Any(cs => cs.Skill.Name.ToLower().Contains(searchTerm))
-            );
 
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(c =>
+                    c.Name.ToLower().Contains(searchTerm) ||
+                    c.PlatformName.ToLower().Contains(searchTerm) ||
+                    c.CourseSkills.Any(cs => cs.Skill.Name.ToLower().Contains(searchTerm))
+                );
+            }
+            if (filterstatus!=null)
+            {               
+                    query = query.Where(c => c.Status == filterstatus);                
+            }
+            if (filterposition != null)
+            {
+                query = query.Where(c => c.CoursePositions.Any(c=>c.Position==filterposition));
+            }
+            if (!string.IsNullOrEmpty(filterskill))
+            {
+                filterskill = filterskill.ToLower();
+                query = query.Where(c =>
+                    c.CourseSkills.Any(cs => cs.Skill.Name.ToLower().Contains(filterskill))
+                );
+            }
             return query.ToList();
         }
-
-        public async Task<BasePagingViewModel<CourseResponse>> GetCourseList(PagingRequestModel paging, string sortField, string sortOrder,string searchTerm)
+        public async Task<BasePagingViewModel<CourseResponse>> GetCourseList(PagingRequestModel paging, string sortField, string sortOrder,string searchTerm, string filterskill, int? filterposition, int? filterstatus)
         {
             try
             {
-                var listcour = await _unitOfWork.CourseRepository.Get(c=>c.Status==CommonEnums.COURSE_STATUS.ACTIVE, "CoursePositions", "CourseSkills");
+                var listcour = await _unitOfWork.CourseRepository.Get(c=>c.Status!=CommonEnums.COURSE_STATUS.DELETED, "CoursePositions", "CourseSkills");
                 if (listcour == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
                 }
-                if (!string.IsNullOrEmpty(searchTerm))
+                if (!string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(filterskill) || filterposition!=null|| filterstatus!=null)
                 {
-                    listcour = SearchCourses(searchTerm, listcour.ToList());
+                    listcour = SearchCourses(searchTerm,filterskill,filterposition,filterstatus,listcour.ToList());
                 }
                     var listresponse = listcour.OrderByDescending(c=>c.CreatedAt).Select(c =>
                 {
@@ -364,7 +381,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var c = await _unitOfWork.CourseRepository.GetFirst(c=>c.Status==CommonEnums.COURSE_STATUS.ACTIVE, "CoursePositions", "CourseSkills");
+                var c = await _unitOfWork.CourseRepository.GetFirst(c=>c.Status!=CommonEnums.COURSE_STATUS.DELETED, "CoursePositions", "CourseSkills");
                 //var c = courlist.FirstOrDefault(c=>c.Id==courseId);
                 if(c==null)
                 {
@@ -458,7 +475,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId && c.Status == CommonEnums.COURSE_STATUS.ACTIVE);
+                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId && c.Status != CommonEnums.COURSE_STATUS.DELETED);
                 if (cour == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");

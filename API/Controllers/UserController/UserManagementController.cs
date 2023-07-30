@@ -55,12 +55,12 @@ namespace API.Controllers.UserController
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<IActionResult> GetAccountList([FromQuery] PagingRequestModel paging)
+        public async Task<IActionResult> GetAccountList([FromQuery] PagingRequestModel paging,string searchTerm, int? role)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                return Ok(await userService.GetUserList(paging));
+                return Ok(await userService.GetUserList(paging,searchTerm,role));
             }
             catch (Exception ex)
             {

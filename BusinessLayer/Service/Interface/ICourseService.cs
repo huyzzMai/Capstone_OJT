@@ -19,7 +19,7 @@ namespace BusinessLayer.Service.Interface
 
         Task DeleteCourse(int courseId);
 
-        Task<BasePagingViewModel<CourseResponse>> GetCourseList(PagingRequestModel paging, string sortField, string sortOrder,string? searchTerm);
+        Task<BasePagingViewModel<CourseResponse>> GetCourseList(PagingRequestModel paging, string sortField, string sortOrder,string searchTerm,string filterskill, int? filterposition,int? filterstatus);
 
         Task<BasePagingViewModel<CourseResponse>> GetCourserecommendListForUser(int userid,PagingRequestModel paging);
 
