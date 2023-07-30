@@ -28,7 +28,7 @@ namespace API.Controllers.TaskController
             _hubContext = hubContext;
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> GetListTaskPendingOfTrainee([FromQuery] PagingRequestModel paging)
         {
             try

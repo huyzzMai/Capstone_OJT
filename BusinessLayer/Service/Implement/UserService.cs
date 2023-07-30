@@ -542,14 +542,22 @@ namespace BusinessLayer.Service.Implement
                     Status = CommonEnums.USER_STATUS.ACTIVE
                 };
 
-                await _unitOfWork.UserRepository.Add(user);
+                ICollection<UserSkill> re = new List<UserSkill>();
+                foreach (var skillRequest in request.CreateSkills)
+                {
+                    UserSkill us = new()
+                    {
+                        SkillId = skillRequest.SkillId,
+                        InitLevel = skillRequest.InitLevel,
+                        CurrentLevel = skillRequest.InitLevel,
+                        UserId = user.Id
+                    };
+                    re.Add(us);
+                    //await _unitOfWork.UserSkillRepository.Add(us);
+                }
+                user.UserSkills = re;   
 
-                //var rs = new CreateUserResponse
-                //{
-                //    Email = request.Email,
-                //    Password = pwd
-                //};
-                //return rs;
+                await _unitOfWork.UserRepository.Add(user);
 
                 var sender = new MailSender();
                 sender.SendMailCreateAccount(user.Email, user.Name, user.Email, pwd);

@@ -42,5 +42,10 @@ namespace DataAccessLayer.Commons
             public const string UPDATE_FINISH = "Update Task Finished for Trainee";
             public const string UPDATE_PROCESS = "Update Task Processing for Trainer";
         }
+
+        public class NOTIFICATION_MESSAGE
+        {
+            public const string UPDATE_NOTI = "Update Notification Read. Reload notification list.";
+        }
     }
 }

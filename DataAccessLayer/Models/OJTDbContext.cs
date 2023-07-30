@@ -82,8 +82,8 @@ namespace DataAccessLayer.Models
             modelBuilder.Entity<CourseSkill>()
                 .HasKey(c => new { c.SkillId, c.CourseId });
 
-            //modelBuilder.Entity<UserSkill>()
-            //    .HasKey(c => new { c.SkillId, c.UserId });
+            modelBuilder.Entity<UserSkill>()
+                .HasKey(c => new { c.SkillId, c.UserId });
 
             //modelBuilder.Entity<TemplateCriteria>()
             //    .HasKey(c => new { c.TemplateId, c.CriteriaId });

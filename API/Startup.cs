@@ -4,8 +4,6 @@ using BusinessLayer.Service.Interface;
 using DataAccessLayer.Base;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
-using DataAccessLayer.Repository.Implement;
-using DataAccessLayer.Repository.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,8 +19,6 @@ using Microsoft.OpenApi.Models;
 using OfficeOpenXml;
 using Swashbuckle.AspNetCore.Filters;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -65,6 +61,7 @@ namespace API
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ICertificateService, CertificateService>();
             services.AddScoped<ISkillService, SkillService>();
+            services.AddScoped<INotificationService, NotificationService>();
             services.AddHttpClient();
 
 

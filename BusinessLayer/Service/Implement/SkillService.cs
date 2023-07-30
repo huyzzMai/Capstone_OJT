@@ -135,7 +135,7 @@ namespace BusinessLayer.Service.Implement
                         Id= c.Id,
                         Name= c.Name,
                         Status =c.Status,
-                        Type = c.Type
+                        Type = c.Type ?? default(int)
                     };
                 }).ToList();
                 int totalItem = listresponse.Count;
