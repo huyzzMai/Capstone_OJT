@@ -26,6 +26,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static BusinessLayer.Models.ResponseModel.UserResponse.PersonalUserResponse;
 
 namespace BusinessLayer.Service.Implement
 {
@@ -335,32 +336,82 @@ namespace BusinessLayer.Service.Implement
             return userId;
         }
 
+        public async Task<PersonalUserResponse> GetUserProfile(int id)
+        {
+            try
+            {
+                var user = await _unitOfWork.UserRepository.GetUserByIdWithSkillList(id);
+                if (user == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "This user cannot be found!");
+                }
+
+                PersonalUserResponse result = new()
+                {
+                    FullName = user.Name,
+                    Email = user.Email,
+                    Address = user.Address,
+                    AvatarURL = user.AvatarURL,
+                    Birthday = user.Birthday ?? default(DateTime),
+                    Gender = user.Gender ?? default(int),
+                    PhoneNumber = user.PhoneNumber,
+                    RollNumber = user.RollNumber,
+                    Position = user.Position,
+                };
+
+                var listSkill = new List<PersonalSkillResponse>();
+
+                foreach (var sa in user.UserSkills)
+                {
+                    var s = new PersonalSkillResponse();
+                    s.Name = sa.Skill.Name;
+                    s.Type = sa.Skill.Type;
+                    s.CurrentLevel = sa.CurrentLevel ?? default(int);
+                    listSkill.Add(s);
+                }
+                result.Skills = listSkill;  
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<UserCommonResponse> GetCurrentUserById(int id)
         {
-            var user = await _unitOfWork.UserRepository.GetFirst(c=>c.Id==id && c.Status == CommonEnums.USER_STATUS.ACTIVE);
-            if (user == null)
+            try
             {
-                throw new Exception("This user cannot be found!");
+                var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == id && c.Status == CommonEnums.USER_STATUS.ACTIVE);
+                if (user == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "This user cannot be found!");
+                }
+
+                UserCommonResponse usercommon = new UserCommonResponse()
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Email = user.Email,
+                    Address = user.Address,
+                    AvatarURL = user.AvatarURL,
+                    Birthday = user.Birthday ?? default(DateTime),
+                    Gender = user.Gender,
+                    PhoneNumber = user.PhoneNumber,
+                    Role = user.Role,
+                    RollNumber = user.RollNumber,
+                    Position = user.Position,
+                    TrelloId = user.TrelloId,
+                    CreatedAt = user.CreatedAt,
+                    UpdatedAt = user.UpdatedAt
+                };
+                return usercommon;
             }
-            UserCommonResponse usercommon = new UserCommonResponse()
+            catch (Exception ex)
             {
-                Id = user.Id,
-                Name = user.Name,
-                Email = user.Email,
-                Address = user.Address,
-                AvatarURL= user.AvatarURL,
-                Birthday= user.Birthday ?? default(DateTime),
-                Gender=user.Gender,
-                PhoneNumber= user.PhoneNumber,
-                Role=user.Role,
-                RollNumber= user.RollNumber,
-                Position = user.Position,
-                TrelloId= user.TrelloId,
-                CreatedAt= user.CreatedAt,
-                UpdatedAt = user.UpdatedAt                
-            };
-               
-            return usercommon;
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<BasePagingViewModel<TrainerResponse>> GetTrainerList(PagingRequestModel paging)
@@ -553,7 +604,6 @@ namespace BusinessLayer.Service.Implement
                         UserId = user.Id
                     };
                     re.Add(us);
-                    //await _unitOfWork.UserSkillRepository.Add(us);
                 }
                 user.UserSkills = re;   
 
@@ -574,7 +624,7 @@ namespace BusinessLayer.Service.Implement
 
             if (u == null)
             {
-                throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "This user cannot be updated!");
+                throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "This user cannot be found!");
             }
             #region Old method
             //var check = await _unitOfWork.UserRepository.GetUserByEmailAndDeleteIsFalse(model.Email);

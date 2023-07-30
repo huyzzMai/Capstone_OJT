@@ -23,6 +23,7 @@ namespace BusinessLayer.Service.Interface
         Task SendTokenResetPassword(string email);
         Task VerifyResetCode(string token);
         Task ResetPassword(ResetPasswordRequest request);
+        Task<PersonalUserResponse> GetUserProfile(int id);
         Task<UserCommonResponse> GetCurrentUserById(int id);
         Task<BasePagingViewModel<TrainerResponse>> GetTrainerList(PagingRequestModel paging);
         Task<BasePagingViewModel<UserListResponse>> GetUserList(PagingRequestModel paging,string searchTerm,int? role);
