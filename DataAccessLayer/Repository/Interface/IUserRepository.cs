@@ -25,7 +25,7 @@ namespace DataAccessLayer.Repository.Interface
 
         Task<User> GetUserByIdWithSkillList(int id);
 
-        Task<List<User>> GetTrainerList();
+        Task<List<User>> GetTrainerList(string keyword, int? position);
 
         Task<List<User>> GetTraineeList(string keyword, int? position);
 
