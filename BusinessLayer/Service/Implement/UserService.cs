@@ -626,32 +626,34 @@ namespace BusinessLayer.Service.Implement
             u.UpdatedAt = DateTime.UtcNow.AddHours(7);
             await _unitOfWork.UserRepository.Update(u);
         }
-        public List<User> SearchUsers(string searchTerm, int? role, List<User> courselist)
+        public List<User> SearchUsers(string searchTerm, int? role, List<User> userList)
         {
+            var query = userList.AsQueryable();
+
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 searchTerm = searchTerm.ToLower();
-            }
 
-            var query = courselist.AsQueryable();
-
-            if (!string.IsNullOrEmpty(searchTerm))
-            {
                 query = query.Where(c =>
-                    c.Name.ToLower().Contains(searchTerm) ||
-                    c.Address.ToLower().Contains(searchTerm) ||
-                     c.PhoneNumber.Equals(searchTerm)
-                );
+                    (c.Name != null && c.Name.ToLower().Equals(searchTerm)) ||
+                    (c.Address != null && c.Address.ToLower().Equals(searchTerm)) ||
+                   (c.Email != null && c.Email.ToLower().Equals(searchTerm)) ||
+                   (c.RollNumber != null && c.RollNumber.ToLower().Equals(searchTerm))
+               );
             }
+
             if (role != null)
             {
                 query = query.Where(c => c.Role == role);
-            }            
+            }
+
             return query.ToList();
         }
+
+
         public async Task<BasePagingViewModel<UserListResponse>> GetUserList(PagingRequestModel paging, string searchTerm, int? role)
         {
-            var users = await _unitOfWork.UserRepository.Get(c=>c.Status != CommonEnums.USER_STATUS.DELETED && c.Role!= CommonEnums.ROLE.ADMIN);
+            var users = await _unitOfWork.UserRepository.Get(c=>c.Status != CommonEnums.USER_STATUS.DELETED);
             if (!string.IsNullOrEmpty(searchTerm) || role != null)
             {
                 users = SearchUsers(searchTerm,role,users.ToList());
