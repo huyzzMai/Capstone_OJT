@@ -108,12 +108,12 @@ namespace API.Controllers.UserController
 
         [Authorize(Roles = "Admin,Manager")]
         [HttpGet("trainer")]
-        public async Task<IActionResult> GetTrainerList([FromQuery] PagingRequestModel paging)
+        public async Task<IActionResult> GetTrainerList([FromQuery] PagingRequestModel paging, [FromQuery] string keyword, [FromQuery] int? position)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                return Ok(await userService.GetTrainerList(paging));
+                return Ok(await userService.GetTrainerList(paging, keyword, position));
             }
             catch (Exception ex)
             {
@@ -143,12 +143,12 @@ namespace API.Controllers.UserController
 
         [Authorize(Roles = "Admin,Manager")]
         [HttpGet("trainee")]
-        public async Task<IActionResult> GetTraineeList([FromQuery] PagingRequestModel paging)
+        public async Task<IActionResult> GetTraineeList([FromQuery] PagingRequestModel paging, [FromQuery] string keyword, [FromQuery] int? position)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                return Ok(await userService.GetTraineeList(paging));
+                return Ok(await userService.GetTraineeList(paging, keyword, position));
             }
             catch (Exception ex)
             {

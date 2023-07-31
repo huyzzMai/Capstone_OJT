@@ -414,35 +414,46 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<BasePagingViewModel<TrainerResponse>> GetTrainerList(PagingRequestModel paging)
+        public async Task<BasePagingViewModel<TrainerResponse>> GetTrainerList(PagingRequestModel paging, string keyword, int? position)
         {
-            var users = await _unitOfWork.UserRepository.GetTrainerList();
-            List<TrainerResponse> res = users.Select(
-                user =>
-                {
-                    return new TrainerResponse()
-                    {
-                        Id = user.Id,
-                        FullName = user.Name,
-                        Email = user.Email
-                    };
-                }
-                ).ToList();
-
-           int totalItem = res.Count;
-
-            res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
-                    .Take(paging.PageSize).ToList();
-
-            var result = new BasePagingViewModel<TrainerResponse>()
+            try
             {
-                PageIndex = paging.PageIndex,
-                PageSize = paging.PageSize,
-                TotalItem = totalItem,
-                TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
-                Data = res
-            };
-            return result;
+                var users = await _unitOfWork.UserRepository.GetTrainerList();
+
+                List<TrainerResponse> res = users.Select(
+                    user =>
+                    {
+                        return new TrainerResponse()
+                        {
+                            Id = user.Id,
+                            FullName = user.Name,
+                            Email = user.Email,
+                            Gender = user.Gender ?? default(int),
+                            AvatarURL = user.AvatarURL,
+                            Position = user.Position ?? default(int)
+                        };
+                    }
+                    ).ToList();
+
+                int totalItem = res.Count;
+
+                res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                        .Take(paging.PageSize).ToList();
+
+                var result = new BasePagingViewModel<TrainerResponse>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = res
+                };
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<TrainerResponse> GetTrainerDetail(int trainerId)
@@ -455,8 +466,9 @@ namespace BusinessLayer.Service.Implement
                     Id = trainer.Id,
                     FullName = trainer.Name,
                     Email = trainer.Email,
+                    Gender = trainer.Gender ?? default(int),
                     AvatarURL = trainer.AvatarURL,
-                    Gender = trainer.Gender ?? default(int)
+                    Position = trainer.Position ?? default(int)
                 };
                 return res;
             }
@@ -466,9 +478,9 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<BasePagingViewModel<TraineeResponse>> GetTraineeList(PagingRequestModel paging)
+        public async Task<BasePagingViewModel<TraineeResponse>> GetTraineeList(PagingRequestModel paging, string keyword, int? position)
         {
-            var users = await _unitOfWork.UserRepository.GetTraineeList();
+            var users = await _unitOfWork.UserRepository.GetTraineeList(keyword, position);
             List<TraineeResponse> res = users.Select(
                 user =>
                 {
@@ -476,7 +488,10 @@ namespace BusinessLayer.Service.Implement
                     {
                         Id = user.Id,
                         FullName = user.Name,
-                        Email = user.Email
+                        Email = user.Email,
+                        Gender = user.Gender ?? default(int),
+                        AvatarURL = user.AvatarURL,
+                        Position = user.Position ?? default(int)
                     };
                 }
                 ).ToList();
@@ -507,7 +522,10 @@ namespace BusinessLayer.Service.Implement
                     {
                         Id = user.Id,
                         FullName = user.Name,
-                        Email = user.Email
+                        Email = user.Email,
+                        Gender = user.Gender ?? default(int),
+                        AvatarURL = user.AvatarURL,
+                        Position = user.Position ?? default(int)
                     };
                 }
                 ).ToList();

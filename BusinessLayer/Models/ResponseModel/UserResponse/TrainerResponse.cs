@@ -13,5 +13,6 @@ namespace BusinessLayer.Models.ResponseModel.UserResponse
         public string Email { get; set; }
         public string AvatarURL { get; set; }
         public int Gender { get; set; } 
+        public int Position { get; set;}
     }
 }

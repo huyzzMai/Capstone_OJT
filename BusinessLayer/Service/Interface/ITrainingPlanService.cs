@@ -16,7 +16,7 @@ namespace BusinessLayer.Service.Interface
     {
         Task<TrainingPlanResponse> GetTrainingPlanForAllRole(int userId, int id);
 
-        Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanList(PagingRequestModel paging);
+        Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanList(PagingRequestModel paging, string keyword);
 
         Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanListByOwner(int id, PagingRequestModel paging);
 

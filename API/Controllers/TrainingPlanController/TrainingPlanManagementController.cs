@@ -53,12 +53,12 @@ namespace API.Controllers.TrainingPlanController
 
         [Authorize(Roles = "Manager")]
         [HttpGet]
-        public async Task<IActionResult> GetTrainingPlanList([FromQuery] PagingRequestModel paging)
+        public async Task<IActionResult> GetTrainingPlanList([FromQuery] PagingRequestModel paging, [FromQuery] string keyword)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                return Ok(await trainingService.GetTrainingPlanList(paging));
+                return Ok(await trainingService.GetTrainingPlanList(paging, keyword));
             }
             catch (Exception ex)
             {
