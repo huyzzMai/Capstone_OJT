@@ -38,7 +38,18 @@ namespace DataAccessLayer.Repository.Implement
 
         public async Task<List<TrainingPlan>> GetTrainingPlanList()
         {
-            var list = await _context.TrainingPlans.Where(u => u.Status != CommonEnums.TRAINING_PLAN_STATUS.DELETED).ToListAsync();
+            var list = await _context.TrainingPlans.Where(u => u.Status != CommonEnums.TRAINING_PLAN_STATUS.DELETED)
+                .OrderByDescending(u => u.CreatedAt)
+                .ToListAsync();
+            return list;
+        }
+
+        public async Task<List<TrainingPlan>> GetTrainingPlanListSearchKeyword(string keyword)
+        {
+            var list = await _context.TrainingPlans
+                .Where(u => u.Status != CommonEnums.TRAINING_PLAN_STATUS.DELETED && u.Name.ToLower().Contains(keyword))
+                .OrderByDescending(u => u.CreatedAt)
+                .ToListAsync();
             return list;
         }
 

@@ -17,6 +17,8 @@ namespace DataAccessLayer.Repository.Interface
 
         Task<List<TrainingPlan>> GetTrainingPlanList();
 
+        Task<List<TrainingPlan>> GetTrainingPlanListSearchKeyword(string keyword);
+
         Task<List<TrainingPlan>> GetTrainingPlanListByOwnerId(int id);
 
         Task<UserTrainingPlan> GetUserTrainingPlanByIdAndIsOwner(int userId, int planId);

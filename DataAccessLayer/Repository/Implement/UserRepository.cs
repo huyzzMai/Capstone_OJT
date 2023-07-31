@@ -66,19 +66,79 @@ namespace DataAccessLayer.Repository.Implement
             return user;
         }
 
-        public async Task<List<User>> GetTraineeList()
+        public async Task<List<User>> GetTraineeList(string keyword, int? position)
         {
-            List<User> users = await _context.Users
+            List<User> users = new();
+            if (keyword == null && position == null)
+            {
+                users = await _context.Users
                 .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE)
+                .OrderByDescending(u => u.CreatedAt)
                 .ToListAsync();
+            }
+            else if (keyword == null)
+            {
+                users = await _context.Users
+                    .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE
+                                && u.Position == position)
+                    .OrderByDescending(u => u.CreatedAt)
+                    .ToListAsync();
+            }
+            else if (position == null)
+            {
+                users = await _context.Users
+                    .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE
+                                && (u.Name.ToLower().Contains(keyword) || u.Email.ToLower().Contains(keyword)))
+                    .OrderByDescending(u => u.CreatedAt)
+                    .ToListAsync();
+            }
+            else
+            {
+                users = await _context.Users
+                .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE
+                            && u.Position == position
+                            && (u.Name.ToLower().Contains(keyword) || u.Email.ToLower().Contains(keyword)))
+                .OrderByDescending(u => u.CreatedAt)
+                .ToListAsync();
+            }
             return users;
         }
 
-        public async Task<List<User>> GetTrainerList()
+        public async Task<List<User>> GetTrainerList(string keyword, int? position)
         {
-            List<User> users = await _context.Users
-                .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER)
-                .ToListAsync();
+            List<User> users = new();
+            if (keyword == null && position == null)
+            {
+                users = await _context.Users
+                    .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER)
+                    .OrderByDescending(u => u.CreatedAt)
+                    .ToListAsync();
+            }
+            else if (keyword == null)
+            {
+                users = await _context.Users
+                    .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER
+                         && u.Position == position)
+                    .OrderByDescending(u => u.CreatedAt)
+                    .ToListAsync();
+            }
+            else if (position == null)
+            {
+                users = await _context.Users
+                    .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER
+                         && (u.Name.ToLower().Contains(keyword) || u.Email.ToLower().Contains(keyword)))
+                    .OrderByDescending(u => u.CreatedAt)
+                    .ToListAsync();
+            }
+            else
+            {
+                users = await _context.Users
+                    .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER
+                          && u.Position == position
+                          && (u.Name.ToLower().Contains(keyword) || u.Email.ToLower().Contains(keyword)))
+                    .OrderByDescending(u => u.CreatedAt)
+                    .ToListAsync();
+            }
             return users;
         }
 

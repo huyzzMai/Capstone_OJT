@@ -149,10 +149,22 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanList(PagingRequestModel paging)
+        public async Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanList(PagingRequestModel paging, string keyword)
         {
-            var tplans = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanList();
-            List<TrainingPlanResponse> res = tplans.Select(
+            try
+            {
+                List<TrainingPlan> tplans = new List<TrainingPlan>();   
+                if (keyword == null)
+                {
+                    tplans = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanList();
+                }
+                else
+                {
+                    keyword = keyword.ToLower();
+                    tplans = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanListSearchKeyword(keyword);
+                }
+
+                List<TrainingPlanResponse> res = tplans.Select(
                 tplan =>
                 {
                     return new TrainingPlanResponse()
@@ -164,20 +176,25 @@ namespace BusinessLayer.Service.Implement
                 }
                 ).ToList();
 
-            int totalItem = res.Count;
+                int totalItem = res.Count;
 
-            res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
-                    .Take(paging.PageSize).ToList();
+                res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                        .Take(paging.PageSize).ToList();
 
-            var result = new BasePagingViewModel<TrainingPlanResponse>()
+                var result = new BasePagingViewModel<TrainingPlanResponse>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = res
+                };
+                return result;
+            }
+            catch (Exception e)
             {
-                PageIndex = paging.PageIndex,
-                PageSize = paging.PageSize,
-                TotalItem = totalItem,
-                TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
-                Data = res
-            };
-            return result;
+                throw new Exception(e.Message);
+            }
         }
 
         public async Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanListByOwner(int id, PagingRequestModel paging)
