@@ -418,7 +418,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var users = await _unitOfWork.UserRepository.GetTrainerList();
+                var users = await _unitOfWork.UserRepository.GetTrainerList(keyword, position);
 
                 List<TrainerResponse> res = users.Select(
                     user =>
