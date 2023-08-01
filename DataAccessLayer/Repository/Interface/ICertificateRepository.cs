@@ -10,5 +10,7 @@ namespace DataAccessLayer.Repository.Interface
 {
     public interface ICertificateRepository : IGenericRepository<Certificate>
     {
+        Task<Certificate> GetCertificateWithUserAndCourse(int userId, int couseId);
+        Task<List<Certificate>> GetListCertificateOfTraineeWithUserAndCourse(int userId);
     }
 }

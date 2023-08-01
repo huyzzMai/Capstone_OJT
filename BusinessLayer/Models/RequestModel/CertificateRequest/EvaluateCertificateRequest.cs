@@ -9,8 +9,8 @@ namespace BusinessLayer.Models.RequestModel.CertificateRequest
 {
     public class EvaluateCertificateRequest
     {
-        [Required]
-        public int Status { get; set; }
+        //[Required]
+        //public int Status { get; set; }
         [Required]
         public int CourseId { get; set; }
         [Required]

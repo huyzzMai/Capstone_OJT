@@ -7,6 +7,12 @@ using System.Threading.Tasks;
 using System;
 using BusinessLayer.Models.RequestModel.CertificateRequest;
 using System.Linq;
+using BusinessLayer.Utilities;
+using API.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using DataAccessLayer.Commons;
+using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Service.Implement;
 
 namespace API.Controllers.CetificateController
 {
@@ -15,19 +21,131 @@ namespace API.Controllers.CetificateController
     public class CertificateController : ControllerBase
     {
         private readonly ICertificateService _service;
-        public CertificateController(ICertificateService service)
+        private readonly IUserService userService;
+        private readonly IHubContext<SignalHub> _hubContext;
+
+        public CertificateController(ICertificateService service, IUserService userService, IHubContext<SignalHub> hubContext)
         {
             _service = service;
+            this.userService = userService;
+            _hubContext = hubContext;
         }
 
-        [Authorize]
-        [HttpPut("evaluation-certificate")]
-        public async Task<IActionResult> EvaluateCertificate([FromBody] EvaluateCertificateRequest request)
+        [Authorize(Roles = "Trainer")]
+        [HttpGet("trainer/{traineeId}")]
+        public async Task<IActionResult> GetListCertificatesOfTraineeForTrainer(int traineeId, [FromQuery] PagingRequestModel paging)
         {
             try
             {
-                await _service.EvaluateCertificate(request);
+                paging = PagingUtil.checkDefaultPaging(paging);
+                return Ok(await _service.GetListCertificateOfTrainee(traineeId, paging));
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainer")]
+        [HttpGet("trainer/{traineeId}/{courseId}")]
+        public async Task<IActionResult> GetCertificateOfTraineeForTrainer(int traineeId, int courseId)
+        {
+            try
+            {
+                int id = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await _service.GetCertificateOfTraineeForTrainer(id, traineeId, courseId));
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainee")]
+        [HttpGet]
+        public async Task<IActionResult> GetListCertificatesOfTrainee([FromQuery] PagingRequestModel paging)
+        {
+            try
+            {
+                paging = PagingUtil.checkDefaultPaging(paging);
+                int id = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await _service.GetListCertificateOfTrainee(id, paging));
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainee")]
+        [HttpGet("{courseId}")]
+        public async Task<IActionResult> GetCertificateOfTrainee(int courseId)
+        {
+            try
+            {
+                int id = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await _service.GetCertificateOfTrainee(id, courseId));
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainer")]
+        [HttpPut("trainer/valid-certificate")]
+        public async Task<IActionResult> AcceptCertificate([FromBody] EvaluateCertificateRequest request)
+        {
+            try
+            {
+                await _service.AcceptCertificate(request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.CERTIFICATE_MESSAGE.PROCESS_CERTIFICATE);
                 return Ok("Certificate evaluate successfully.");
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainer")]
+        [HttpPut("trainer/invalid-certificate")]
+        public async Task<IActionResult> DenyCertificate([FromBody] EvaluateCertificateRequest request)
+        {
+            try
+            {
+                await _service.DenyCertificate(request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.CERTIFICATE_MESSAGE.PROCESS_CERTIFICATE);
+                return Ok("Certificate evaluate successfully.");
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {
