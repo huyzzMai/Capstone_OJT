@@ -57,9 +57,9 @@ namespace API.Controllers.AuthenticationController
                     return BadRequest("Invalid Credentials");
                 }
             }
-            catch (ApiException e)
+            catch (ApiException ex)
             {
-                return StatusCode(e.StatusCode, e.Message);
+                return StatusCode(ex.StatusCode, ex.Message);
             }
             catch (Exception ex)
             {
