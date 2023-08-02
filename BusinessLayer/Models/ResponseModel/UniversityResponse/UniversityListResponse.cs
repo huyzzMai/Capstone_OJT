@@ -12,10 +12,18 @@ namespace BusinessLayer.Models.ResponseModel.UniversityResponse
 
         public string Name { get; set; }
 
+        public string Address { get; set; }
+
         public string ImgURL { get; set; }
 
         public int? Status { get; set; }
 
         public DateTime? JoinDate { get; set; }
+
+        public int TotalBatches { get; set; }
+
+        public int OjtTrainees { get; set;}
+
+        public int OjtActiveTrainees { get; set; }
     }
 }

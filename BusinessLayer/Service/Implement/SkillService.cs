@@ -37,7 +37,6 @@ namespace BusinessLayer.Service.Implement
                 var newskill = new Skill()
                 {
                     Name=request.Name,
-                    //Type=request.Type,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     Status = CommonEnums.SKILL_STATUS.ACTIVE
@@ -58,10 +57,20 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId && c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
+                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId && c.Status != CommonEnums.SKILL_STATUS.DELETED, "CourseSkills", "UserSkills");
                 if (skill == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Skill not found");
+                }
+                var ck = skill.CourseSkills.Any(c => c.Course.Status == CommonEnums.COURSE_STATUS.ACTIVE);
+                if(ck)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! There are some active course which use this skill");
+                }
+                var uk= skill.UserSkills.Any(c=>c.User.Status == CommonEnums.USER_STATUS.ACTIVE);
+                if(uk)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! There are some active user which use this skill");
                 }
                 skill.Status = CommonEnums.SKILL_STATUS.DELETED;
                 await _unitOfWork.SkillRepository.Update(skill);
@@ -80,7 +89,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId && c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
+                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId && c.Status != CommonEnums.SKILL_STATUS.DELETED);
                 if (skill == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Skill not found");
@@ -89,7 +98,6 @@ namespace BusinessLayer.Service.Implement
                 {
                     Id = skillId,
                     Name = skill.Name,
-                    //Type = skill.Type,
                     Status = skill.Status,
                     CreatedAt = skill.CreatedAt,
                     UpdatedAt = skill.UpdatedAt
@@ -106,7 +114,7 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-        public List<Skill> SearchSkills(string searchTerm,int? filterPosition,List<Skill> skilllist)
+        public List<Skill> SearchSkills(string searchTerm,int? filterStatus, List<Skill> skilllist)
         {
             var query = skilllist.AsQueryable();
             if (!string.IsNullOrEmpty(searchTerm))
@@ -116,9 +124,9 @@ namespace BusinessLayer.Service.Implement
                 c.Name.ToLower().Contains(searchTerm)
             );
             }         
-            if (filterPosition != null)
+            if (filterStatus != null)
             {
-                query = query.Where(c => c.Status==filterPosition);
+                query = query.Where(c => c.Status== filterStatus);
             }          
             return query.ToList();
         }
@@ -126,7 +134,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var listskill = await _unitOfWork.SkillRepository.Get(c => c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
+                var listskill = await _unitOfWork.SkillRepository.Get(c => c.Status != CommonEnums.SKILL_STATUS.DELETED);
                 if (!string.IsNullOrEmpty(searchTerm)|| filterStatus != null)
                 {
                     listskill = SearchSkills(searchTerm, filterStatus, listskill.ToList());
@@ -137,8 +145,7 @@ namespace BusinessLayer.Service.Implement
                     {
                         Id= c.Id,
                         Name= c.Name,
-                        Status =c.Status,
-                        //Type = c.Type
+                        Status =c.Status
                     };
                 }).ToList();
                 int totalItem = listresponse.Count;
@@ -179,7 +186,6 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Duplicate skill names");
                 }
                 skill.Name = request.Name;
-                //skill.Type= request.Type;
                 skill.Status = request.Status;
                 skill.UpdatedAt= DateTime.Now;
                 await _unitOfWork.SkillRepository.Update(skill);

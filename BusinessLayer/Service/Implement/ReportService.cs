@@ -161,7 +161,7 @@ namespace BusinessLayer.Service.Implement
 
 
 
-        public async Task<byte[]> ExportReportExcelFileFromUniversity(string index, byte[] excelStream, int templateid)
+        public async Task<byte[]> ExportReportExcelFileFromUniversity(byte[] excelStream, int templateid)
         {
             try
             {
@@ -171,7 +171,7 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Template not found");
                 }
                 var data = await GenerateData(template);
-                (int row, int col) = GetRowAndColumnFromCellIndex(index);
+                (int row, int col) = GetRowAndColumnFromCellIndex(template.StartCell);
                 var updatedExcelData = UpdateExcelFile(row, col, excelStream, data);
                 return updatedExcelData;
             }
