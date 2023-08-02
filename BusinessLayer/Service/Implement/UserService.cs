@@ -123,6 +123,21 @@ namespace BusinessLayer.Service.Implement
             return r;   
         }
 
+        public string GenerateRandomCharacter()
+        {
+            string alphabet = "abcdefghijklmnopqrstuvwxyz";
+            Random random = new Random();
+
+            int index1 = random.Next(0, alphabet.Length);
+            int index2 = random.Next(0, alphabet.Length);
+
+            char char1 = alphabet[index1];
+            char char2 = alphabet[index2];
+
+            string randomString = $"{char1}{char2}";
+            return randomString;
+        }
+
         public async Task SendTokenResetPassword(string email)
         {
             try
@@ -632,7 +647,7 @@ namespace BusinessLayer.Service.Implement
                 }
 
                 String r = GenerateRamdomCode();
-                string pwd = "tn" + r;
+                string pwd = GenerateRandomCharacter() + r;
                 string encryptPwd = EncryptPassword(pwd);
 
                 User user = new User()
@@ -653,21 +668,29 @@ namespace BusinessLayer.Service.Implement
                     CreatedAt = DateTime.UtcNow.AddHours(7),
                     Status = CommonEnums.USER_STATUS.ACTIVE
                 };
-
-                ICollection<UserSkill> re = new List<UserSkill>();
-                foreach (var skillRequest in request.CreateSkills)
+                
+                if (request.CreateSkills != null) 
                 {
-                    UserSkill us = new()
+                    ICollection<UserSkill> re = new List<UserSkill>();
+                    foreach (var skillRequest in request.CreateSkills)
                     {
-                        SkillId = skillRequest.SkillId,
-                        InitLevel = skillRequest.InitLevel,
-                        CurrentLevel = skillRequest.InitLevel,
-                        UserId = user.Id
-                    };
-                    re.Add(us);
+                        var check = await _unitOfWork.SkillRepository.GetFirst(s => s.Id == skillRequest.SkillId && s.Status == CommonEnums.SKILL_STATUS.ACTIVE);
+                        if (check == null)
+                        {
+                            throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Skill not found!");
+                        }
+                        UserSkill us = new()
+                        {
+                            SkillId = skillRequest.SkillId,
+                            InitLevel = skillRequest.InitLevel,
+                            CurrentLevel = skillRequest.InitLevel,
+                            UserId = user.Id
+                        };
+                        re.Add(us);
+                    }
+                    user.UserSkills = re;
                 }
-                user.UserSkills = re;   
-
+                  
                 await _unitOfWork.UserRepository.Add(user);
 
                 var sender = new MailSender();

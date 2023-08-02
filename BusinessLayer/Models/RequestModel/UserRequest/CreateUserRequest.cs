@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.Drawing;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,12 +10,20 @@ namespace BusinessLayer.Models.RequestModel.UserRequest
 {
     public class CreateUserRequest
     {
+        [Required]
         public int Role { get; set; }
+        [Required]
         public string FullName { get; set; }
+        [Required]
+        [EmailAddress]
         public string Email { get; set; }
+        [Required]
         public DateTime Birthday { get; set; }
+        [Required]
         public string PhoneNumber { get; set; }
+        [Required]
         public string Address { get; set; }
+        [Required]
         public int Gender { get; set; }
         public string RollNumber { get; set; }
         public string AvatarUrl { get; set; }
