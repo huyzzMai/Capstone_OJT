@@ -43,6 +43,12 @@ namespace DataAccessLayer.Commons
             public const string UPDATE_PROCESS = "Update Task Processing for Trainer";
         }
 
+        public class CERTIFICATE_MESSAGE
+        {
+            public const string PROCESS_CERTIFICATE = "Trainer process Trainee certificate. Trainee reload notificattion and get certificate.";
+            public const string UPDATE_PROCESS = "Update Task Processing for Trainer";
+        }
+
         public class NOTIFICATION_MESSAGE
         {
             public const string UPDATE_NOTI = "Update Notification Read. Reload notification list.";

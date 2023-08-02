@@ -42,9 +42,13 @@ namespace BusinessLayer.Service.Implement
                     var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanById(userId, id);
                     if (check == null)
                     {
-                        throw new Exception("Training plan not found or You are not assigned to this training plan !");
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Training plan not found or You are not assigned to this training plan !");
                     }
                     var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndStatusActive(id);
+                    if (tp == null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found!");
+                    }
 
                     List<TrainingPlanDetail> l = tp.TrainingPlanDetails.ToList();
                     var detailList = l
@@ -77,6 +81,10 @@ namespace BusinessLayer.Service.Implement
                 else if (user.Role == CommonEnums.ROLE.MANAGER)
                 {
                     var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(id);
+                    if (tp == null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found!");
+                    }
 
                     List<TrainingPlanDetail> l = tp.TrainingPlanDetails.ToList();
                     var detailList = l
@@ -113,6 +121,10 @@ namespace BusinessLayer.Service.Implement
                         throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found or You not the owner of this training plan !");
                     }
                     var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(id);
+                    if (tp == null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found!");
+                    }
 
                     List<TrainingPlanDetail> l = tp.TrainingPlanDetails.ToList();
                     var detailList = l

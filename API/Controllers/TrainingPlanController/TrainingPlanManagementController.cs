@@ -41,6 +41,10 @@ namespace API.Controllers.TrainingPlanController
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 return Ok(await trainingService.GetTrainingPlanForAllRole(userId, id));
             }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
@@ -76,6 +80,10 @@ namespace API.Controllers.TrainingPlanController
                 await trainingService.AcceptTrainingPlan(id);
                 return Ok("Training plan is accepted.");
             }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
@@ -91,6 +99,10 @@ namespace API.Controllers.TrainingPlanController
             {
                 await trainingService.DenyTrainingPlan(id);
                 return Ok("Training plan is denied.");
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {
@@ -151,6 +163,10 @@ namespace API.Controllers.TrainingPlanController
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
                 return Ok("Training plan is updated successfully.");
             }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
@@ -169,6 +185,10 @@ namespace API.Controllers.TrainingPlanController
                 await trainingService.CreateTrainingPlanDetailForExistingTrainingPlan(userId, planId, request);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
                 return StatusCode(StatusCodes.Status201Created, "Training plan detail is created successfully.");
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {
@@ -189,6 +209,10 @@ namespace API.Controllers.TrainingPlanController
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
                 return Ok("Update training plan detail successfully.");
             }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
@@ -207,6 +231,10 @@ namespace API.Controllers.TrainingPlanController
                 await trainingService.DeactivateTrainingPlan(userId, planId);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
                 return Ok("Training plan is deactivated.");
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {
@@ -227,6 +255,10 @@ namespace API.Controllers.TrainingPlanController
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
                 return Ok("Training plan is re-opened.");
             }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
@@ -245,6 +277,10 @@ namespace API.Controllers.TrainingPlanController
                 await trainingService.AssignTraineeToTrainingPlan(trainerId, traineeId, id);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.ASSIGN);
                 return StatusCode(StatusCodes.Status201Created, "Assign trainee to training plan successfully.");
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {
@@ -265,6 +301,10 @@ namespace API.Controllers.TrainingPlanController
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.DELETE);
                 return Ok("Training plan is deleted.");
             }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
@@ -283,6 +323,10 @@ namespace API.Controllers.TrainingPlanController
                 await trainingService.DeleteTrainingPlanDetail(id, trainerId);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.DETAIL_DELETE);
                 return Ok("Training plan detail is deleted.");
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {

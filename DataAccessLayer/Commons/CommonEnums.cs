@@ -94,6 +94,7 @@ namespace DataAccessLayer.Commons
             public const int ADVANCED = 4;
             public const int FLUENT = 5;
         }
+
         public class CERTIFICATE_STATUS
         {
             public const int DELETED = 1;
@@ -102,6 +103,7 @@ namespace DataAccessLayer.Commons
             public const int APPROVED = 4;
             public const int DENY = 5;
         }
+
         public class POSITION
         {
             public const int BACKEND_DEVELOPER = 1;
@@ -109,6 +111,12 @@ namespace DataAccessLayer.Commons
             public const int BUSINESS_ANALYST = 3;
             public const int DESIGN_UX_UI = 4;
             public const int TESTER = 5;
+        }
+
+        public class NOTIFICATION_TYPE
+        {
+            public const int CREATE = 1;
+            public const int UPDATE = 2;
         }
 
         public class  CLIENT_ERROR
