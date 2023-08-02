@@ -93,10 +93,15 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId && c.Status != CommonEnums.COURSE_STATUS.DELETED);
+                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId && c.Status != CommonEnums.COURSE_STATUS.DELETED, "Certificates");
                 if (cour == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Course not found");
+                }
+                var cercour = cour.Certificates.Any(c => c.Status == CommonEnums.CERTIFICATE_STATUS.PENDING);
+                if(cercour)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! Therer are some certificate which have not evaluate yet.");
                 }
                 cour.Status = CommonEnums.COURSE_STATUS.DELETED;
                 await _unitOfWork.CourseRepository.Update(cour);

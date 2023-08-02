@@ -1,15 +1,8 @@
 ﻿using BusinessLayer.Service.Interface;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
-using DataAccessLayer.Models;
-using System.Collections.Generic;
-using static DataAccessLayer.Commons.CommonEnums;
-using System.Linq;
-using DocumentFormat.OpenXml.Wordprocessing;
-using DocumentFormat.OpenXml.Vml.Office;
 using System.Net.Http;
 using System.IO;
 using BusinessLayer.Utilities;
@@ -30,7 +23,7 @@ namespace API.Controllers.ReportController
         }
       
         [HttpGet]
-        public async Task<IActionResult> GetExcelReportFile(string index, string url, int templateId)
+        public async Task<IActionResult> GetExcelReportFile(string url, int templateId)
         {
             try
             {
@@ -48,7 +41,7 @@ namespace API.Controllers.ReportController
                             excelData = memoryStream.ToArray();
                         }
 
-                        var updatedExcelData = await _service.ExportReportExcelFileFromUniversity(index, excelData, templateId);
+                        var updatedExcelData = await _service.ExportReportExcelFileFromUniversity(excelData, templateId);
                         return File(updatedExcelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ReportExcelFile.xlsx");
                     }
                 }

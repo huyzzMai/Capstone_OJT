@@ -10,6 +10,7 @@ using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
 using DataAccessLayer.Repository.Interface;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var uni = await _unitOfWork.UniversityRepository.GetFirst(c=>c.IsDeleted==false,"OJTBatches");
+                var uni = await _unitOfWork.UniversityRepository.GetFirst(c=>c.IsDeleted==false,"OJTBatches","");
                 if(uni==null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "University not found");
@@ -41,6 +42,7 @@ namespace BusinessLayer.Service.Implement
                     Id = Id,
                     ImgURL = uni.ImgURL,
                     Name = uni.Name,
+                    Address= uni.Address,
                     JoinDate = uni.JoinDate,
                     CreatedAt = uni.CreatedAt,
                     UpdatedAt = uni.UpdatedAt,
@@ -85,11 +87,37 @@ namespace BusinessLayer.Service.Implement
             }         
             return query.ToList();
         }
+        public int CountTotalUsersInUniversity(List<University> uni)
+        {
+            var university = uni              
+                .Select(u => new
+                {
+                    UniversityId = u.Id,
+                    TotalUsers = u.OJTBatches.SelectMany(b => b.Trainees)
+                                           .Count(user => user.Status !=CommonEnums.USER_STATUS.DELETED)
+                })
+                .FirstOrDefault();
+            return university?.TotalUsers ?? 0;
+        }
+        public int CountUsersWithStatusInUniversity(List<University> uni, int status)
+        {
+            var university = uni
+                .Select(u => new
+                {
+                    UniversityId = u.Id,
+                    TotalUsers = u.OJTBatches.SelectMany(b => b.Trainees)
+                                           .Count(user => user.Status == status)
+                })
+                .FirstOrDefault();
+
+            return university?.TotalUsers ?? 0;
+        }
         public async Task<BasePagingViewModel<UniversityListResponse>> GetUniversityList(PagingRequestModel paging, string searchTerm)
         {
             try
             {
-                var list = await _unitOfWork.UniversityRepository.Get(c=>c.IsDeleted==false);
+                var list = await _unitOfWork.UniversityRepository.Get(c=>c.IsDeleted==false,"OJTBatches");
+                var listuser = await _unitOfWork.UserRepository.Get(c=>c.Status != CommonEnums.USER_STATUS.DELETED);
                 if(list==null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND,"Empty list");
@@ -100,10 +128,14 @@ namespace BusinessLayer.Service.Implement
                     return new UniversityListResponse()
                     {
                         Id = c.Id,
-                        Name= c.Name,
-                        ImgURL= c.ImgURL,
-                        JoinDate= c.JoinDate,
-                        Status=c.Status                      
+                        Name = c.Name,
+                        Address = c.Address,
+                        ImgURL = c.ImgURL,
+                        JoinDate = c.JoinDate,
+                        Status = c.Status,
+                        TotalBatches = c.OJTBatches.Where(c => c.IsDeleted != false).ToList().Count,
+                        OjtTrainees = CountTotalUsersInUniversity(list.Where(cd=>cd.Id==c.Id).ToList()),
+                        OjtActiveTrainees= CountUsersWithStatusInUniversity(list.Where(cd => cd.Id == c.Id).ToList(), CommonEnums.USER_STATUS.ACTIVE)                       
                     };
                 }
                 ).ToList();              

@@ -16,6 +16,8 @@ namespace BusinessLayer.Models.ResponseModel.UniversityResponse
 
         public string Name { get; set; }
 
+        public string Address { get; set; }
+
         public string ImgURL { get; set; }
 
         public int? Status { get; set; }
