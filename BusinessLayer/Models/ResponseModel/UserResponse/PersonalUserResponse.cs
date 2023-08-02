@@ -21,7 +21,7 @@ namespace BusinessLayer.Models.ResponseModel.UserResponse
         public class PersonalSkillResponse
         {
             public string Name { get; set; }
-            public int Type { get; set; }
+            //public int Type { get; set; }
             public int CurrentLevel { get; set; }   
         }
         public List<PersonalSkillResponse> Skills { get; set; }

@@ -21,9 +21,8 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(MAX)")]
         public string Url { get; set; }
 
-        public int? DataStartColumn { get; set; }
-
-        public int? DataStartRow { get; set; }
+        [Column(TypeName = "nvarchar(5)")]
+        public string StartCell { get; set; }
 
         public int? Status { get; set; }
 

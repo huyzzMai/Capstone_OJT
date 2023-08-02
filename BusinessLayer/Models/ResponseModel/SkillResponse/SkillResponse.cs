@@ -12,7 +12,7 @@ namespace BusinessLayer.Models.ResponseModel.SkillResponse
 
         public string Name { get; set; }
 
-        public int Type { get; set; }
+        //public int Type { get; set; }
 
         public int? Status { get; set; }
     }

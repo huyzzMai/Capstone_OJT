@@ -11,8 +11,8 @@ namespace BusinessLayer.Models.RequestModel.SkillRequest
     {
         [Required]
         public string Name { get; set; }
-        [Required]
-        public int Type { get; set; }
+        //[Required]
+        //public int Type { get; set; }
         [Required]
         public int? Status { get; set; }
     }
