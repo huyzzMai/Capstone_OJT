@@ -746,10 +746,10 @@ namespace BusinessLayer.Service.Implement
                 searchTerm = searchTerm.ToLower();
 
                 query = query.Where(c =>
-                    (c.Name != null && c.Name.ToLower().Equals(searchTerm)) ||
-                    (c.Address != null && c.Address.ToLower().Equals(searchTerm)) ||
-                   (c.Email != null && c.Email.ToLower().Equals(searchTerm)) ||
-                   (c.RollNumber != null && c.RollNumber.ToLower().Equals(searchTerm))
+                    (c.Name != null && c.Name.ToLower().Contains(searchTerm)) ||
+                    (c.Address != null && c.Address.ToLower().Contains(searchTerm)) ||
+                   (c.Email != null && c.Email.ToLower().Contains(searchTerm)) ||
+                   (c.RollNumber != null && c.RollNumber.ToLower().Contains(searchTerm))
                );
             }
 
