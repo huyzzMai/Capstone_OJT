@@ -125,7 +125,27 @@ namespace API.Controllers.CourseController
                   e.Message);
             }
         }
-
+        [Authorize]
+        [HttpDelete]
+        [Route("deletion-courseskill")]
+        public async Task<IActionResult> DeleteCourseSkill(int courseId,int skillId)
+        {
+            try
+            {
+                await _service.DeleteCourseSkill(courseId,skillId);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.COURSE_SIGNALR_MESSAGE.DELETED);
+                return Ok("Course skill is delete successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetListCourse([FromQuery] PagingRequestModel paging, string sortField, string sortOrder, string searchTerm, string filterSkill, int? filterPosition, int? filterStatus)

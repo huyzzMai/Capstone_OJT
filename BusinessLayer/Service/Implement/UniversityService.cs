@@ -32,7 +32,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var uni = await _unitOfWork.UniversityRepository.GetFirst(c=>c.IsDeleted==false,"OJTBatches","");
+                var uni = await _unitOfWork.UniversityRepository.GetFirst(c=>c.IsDeleted==false,"OJTBatches");
                 if(uni==null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "University not found");

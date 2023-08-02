@@ -223,10 +223,10 @@ namespace BusinessLayer.Service.Implement
                 }
                 cer.Link = request.link;
                 cer.Status = CommonEnums.CERTIFICATE_STATUS.PENDING;
-                cer.SubmitDate = DateTime.Now;
+                cer.SubmitDate = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.CertificateRepository.Update(cer);
-                //await _notificationService.CreateNotificaion(user.UserReferenceId, "Certificate submit",
-                //    $"Trainne '{user.Name}' has submit certificate. Please evaluate", CommonEnums);
+                await _notificationService.CreateNotificaion(user.UserReferenceId ??default, "Certificate submit",
+                    $"Trainne '{user.Name}' has submit certificate. Please evaluate", CommonEnums.NOTIFICATION_TYPE.CREATE);
 
             }
             catch (Exception e)
@@ -255,7 +255,7 @@ namespace BusinessLayer.Service.Implement
                 }
                 cer.Link = request.link;
                 cer.Status = CommonEnums.CERTIFICATE_STATUS.PENDING;
-                cer.SubmitDate = DateTime.Now;
+                cer.SubmitDate = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.CertificateRepository.Update(cer);
             }
             catch (Exception e)

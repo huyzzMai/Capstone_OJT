@@ -37,8 +37,8 @@ namespace BusinessLayer.Service.Implement
                 var newskill = new Skill()
                 {
                     Name=request.Name,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow.AddHours(7),
+                    UpdatedAt = DateTime.UtcNow.AddHours(7),
                     Status = CommonEnums.SKILL_STATUS.ACTIVE
                 };
                 await _unitOfWork.SkillRepository.Add(newskill);
@@ -187,7 +187,7 @@ namespace BusinessLayer.Service.Implement
                 }
                 skill.Name = request.Name;
                 skill.Status = request.Status;
-                skill.UpdatedAt= DateTime.Now;
+                skill.UpdatedAt= DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.SkillRepository.Update(skill);
             }
             catch (ApiException ex)

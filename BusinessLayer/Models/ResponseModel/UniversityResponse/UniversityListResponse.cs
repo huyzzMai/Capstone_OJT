@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BusinessLayer.Utilities;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +20,8 @@ namespace BusinessLayer.Models.ResponseModel.UniversityResponse
         public string ImgURL { get; set; }
 
         public int? Status { get; set; }
-
+        [JsonProperty(PropertyName = "JoinDate")]
+        [JsonConverter(typeof(CustomDateTimeConverter))]
         public DateTime? JoinDate { get; set; }
 
         public int TotalBatches { get; set; }

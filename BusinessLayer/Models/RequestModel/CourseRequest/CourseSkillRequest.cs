@@ -12,8 +12,10 @@ namespace BusinessLayer.Models.RequestModel.CourseRequest
         [Required]
         public int SkillId { get; set; }
         [Required]
+        [Range(0,5)]
         public int? RecommendedLevel { get; set; }
         [Required]
+        [Range(0, 5)]
         public int? AfterwardLevel { get; set; }
     }
 }

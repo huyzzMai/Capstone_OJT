@@ -1,44 +1,34 @@
-﻿using BusinessLayer.Models.ResponseModel.CourseResponse;
-using BusinessLayer.Models.ResponseModel.OJTBatchResponse;
-using BusinessLayer.Utilities;
-using DataAccessLayer.Models;
+﻿using BusinessLayer.Utilities;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLayer.Models.ResponseModel.UniversityResponse
+namespace BusinessLayer.Models.ResponseModel.OJTBatchResponse
 {
-    public class UniversityDetailResponse
+    public class OjtBatchDetailResponse
     {
         public int Id { get; set; }
 
         public string Name { get; set; }
-
-        public string Address { get; set; }
-
-        public string ImgURL { get; set; }
-
-        public int? Status { get; set; }
-
-        [JsonProperty(PropertyName = "JoinDate")]
+        [JsonProperty(PropertyName = "StartTime")]
         [JsonConverter(typeof(CustomDateTimeConverter))]
-        public DateTime? JoinDate { get; set; }
+        public DateTime? StartTime { get; set; }
+        [JsonProperty(PropertyName = "EndTime")]
+        [JsonConverter(typeof(CustomDateTimeConverter))]
+        public DateTime? EndTime { get; set; }
 
         public bool? IsDeleted { get; set; }
-
         [JsonProperty(PropertyName = "CreatedAt")]
         [JsonConverter(typeof(CustomDateTimeConverter))]
         public DateTime? CreatedAt { get; set; }
-
         [JsonProperty(PropertyName = "UpdatedAt")]
         [JsonConverter(typeof(CustomDateTimeConverter))]
         public DateTime? UpdatedAt { get; set; }
 
-        public List<ValidOJTBatchResponse> validOJTBatchResponses { get; set; }
+        public int? UniversityId { get; set; }
     }
 }

@@ -53,5 +53,12 @@ namespace DataAccessLayer.Commons
         {
             public const string UPDATE_NOTI = "Update Notification Read. Reload notification list.";
         }
+
+        public class TEMPLATE_SIGNALR_MESSAGE
+        {
+            public const string CREATED = "New Template Created";
+            public const string UPDATED = "New Template Updated";
+            public const string DELETED = "New Template Deleted";
+        }
     }
 }
