@@ -27,6 +27,7 @@ namespace DataAccessLayer.Commons
         {
             public const int DELETED = 1;
             public const int ACTIVE = 2;
+            public const int INACTIVE = 3;
         }
 
         public class TRAINING_PLAN_STATUS
@@ -63,21 +64,26 @@ namespace DataAccessLayer.Commons
         {
             public const int DELETED = 1;
             public const int ACTIVE = 2;
-            public const int CLOSED = 3;
+            public const int INACTIVE = 3;
         }
-
+        public class TEMPLATEHEADER_STATUS
+        {
+            public const int DELETED = 1;
+            public const int ACTIVE = 2;
+            public const int INACTIVE = 3;
+        }
         public class COURSE_STATUS
         {
             public const int DELETED = 1;
             public const int ACTIVE = 2;
-            public const int CLOSED = 3;
+            public const int INACTIVE = 3;
         }
 
         public class SKILL_STATUS
         {
             public const int DELETED = 1;
             public const int ACTIVE = 2;
-            public const int CLOSED = 3;
+            public const int INACTIVE = 3;
         }
 
         public class SKILL_LEVEL

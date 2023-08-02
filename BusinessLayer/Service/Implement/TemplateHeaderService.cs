@@ -19,20 +19,7 @@ namespace BusinessLayer.Service.Implement
          {
              _unitOfWork = unitOfWork;
          }
-        public List<string> GetPropertyData(List<User> userList, string propertyName)
-        {
-            var propertyType = typeof(User).GetProperty(propertyName)?.PropertyType;
-
-            if (propertyType == null || propertyType != typeof(string))
-            {
-                throw new ArgumentException($"Property '{propertyName}' is not of type string in the User class.");
-            }
-
-            var values = userList.Select(user => user.GetType().GetProperty(propertyName)?.GetValue(user)?.ToString())
-                                 .Where(value => value != null)
-                                 .ToList();
-            return values;
-        }
+        
         //public async Task<Criteria> CreateCriteria(CreateCriteriaRequest request)
         //{
         //    var criteria= new Criteria();

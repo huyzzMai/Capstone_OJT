@@ -19,12 +19,12 @@ namespace BusinessLayer.Service.Implement
     public class CertificateService : ICertificateService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly INotificationService notificationService;
+        private readonly INotificationService _notificationService;
 
-        public CertificateService(IUnitOfWork unitOfWork, INotificationService notificationService)
+        public CertificateService(IUnitOfWork unitOfWork,INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
-            this.notificationService = notificationService;
+            _notificationService = notificationService;
         }
 
         public async Task<CertificateResponse> GetCertificateOfTrainee(int traineeId, int courseId)
@@ -156,7 +156,7 @@ namespace BusinessLayer.Service.Implement
 
                 await _unitOfWork.UserSkillRepository.UpdateUserSkillCurrentLevel(request.UserId, request.CourseId);
 
-                await notificationService.CreateNotificaion(request.UserId, "Certificate Verified",
+                await _notificationService.CreateNotificaion(request.UserId, "Certificate Verified",
                       "Your certificate has been approved by the Trainer.", CommonEnums.NOTIFICATION_TYPE.UPDATE);
             }
             catch (Exception e)
@@ -193,7 +193,7 @@ namespace BusinessLayer.Service.Implement
                 cer.Status = CommonEnums.CERTIFICATE_STATUS.DENY;
                 await _unitOfWork.CertificateRepository.Update(cer);
 
-                await notificationService.CreateNotificaion(request.UserId, "Certificate Denied",
+                await _notificationService.CreateNotificaion(request.UserId, "Certificate Denied",
                       "Your certificate has been denied by the Trainer.", CommonEnums.NOTIFICATION_TYPE.UPDATE);
             }
             catch (Exception e)
@@ -208,6 +208,7 @@ namespace BusinessLayer.Service.Implement
             {
                 var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == request.CourseId && c.Status == CommonEnums.COURSE_STATUS.ACTIVE, "CoursePositions");
                 var cer = await _unitOfWork.CertificateRepository.GetFirst(c => c.CourseId == request.CourseId && c.UserId == userid && c.Status == CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT);
+                var user= await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userid);
                 if (cer == null)
                 {
                     throw new Exception("Certificate is already submited or User did not enroll course");
@@ -224,6 +225,9 @@ namespace BusinessLayer.Service.Implement
                 cer.Status = CommonEnums.CERTIFICATE_STATUS.PENDING;
                 cer.SubmitDate = DateTime.Now;
                 await _unitOfWork.CertificateRepository.Update(cer);
+                //await _notificationService.CreateNotificaion(user.UserReferenceId, "Certificate submit",
+                //    $"Trainne '{user.Name}' has submit certificate. Please evaluate", CommonEnums);
+
             }
             catch (Exception e)
             {

@@ -47,5 +47,7 @@ namespace DataAccessLayer.Base
         public INotificationRepository NotificationRepository => new NotificationRepository(_context, this);
 
         public IUniversityRepository UniversityRepository => new UniversityRepository(_context, this);
+
+        public ITemplateRepository TemplateRepository => new TemplateRepository(_context, this);
     }
 }
