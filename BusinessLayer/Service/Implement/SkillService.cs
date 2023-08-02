@@ -37,7 +37,7 @@ namespace BusinessLayer.Service.Implement
                 var newskill = new Skill()
                 {
                     Name=request.Name,
-                    Type=request.Type,
+                    //Type=request.Type,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     Status = CommonEnums.SKILL_STATUS.ACTIVE
@@ -89,7 +89,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     Id = skillId,
                     Name = skill.Name,
-                    Type = skill.Type,
+                    //Type = skill.Type,
                     Status = skill.Status,
                     CreatedAt = skill.CreatedAt,
                     UpdatedAt = skill.UpdatedAt
@@ -138,7 +138,7 @@ namespace BusinessLayer.Service.Implement
                         Id= c.Id,
                         Name= c.Name,
                         Status =c.Status,
-                        Type = c.Type
+                        //Type = c.Type
                     };
                 }).ToList();
                 int totalItem = listresponse.Count;
@@ -179,7 +179,7 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Duplicate skill names");
                 }
                 skill.Name = request.Name;
-                skill.Type= request.Type;
+                //skill.Type= request.Type;
                 skill.Status = request.Status;
                 skill.UpdatedAt= DateTime.Now;
                 await _unitOfWork.SkillRepository.Update(skill);

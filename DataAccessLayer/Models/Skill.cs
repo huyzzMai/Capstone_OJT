@@ -18,7 +18,7 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(100)")]
         public string Name { get; set; }
        
-        public int Type { get; set; }
+        //public int Type { get; set; }
 
         public int? Status { get; set; }
 

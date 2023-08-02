@@ -365,7 +365,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     var s = new PersonalSkillResponse();
                     s.Name = sa.Skill.Name;
-                    s.Type = sa.Skill.Type;
+                    //s.Type = sa.Skill.Type;
                     s.CurrentLevel = sa.CurrentLevel ?? default(int);
                     listSkill.Add(s);
                 }
