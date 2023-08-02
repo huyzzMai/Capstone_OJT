@@ -26,7 +26,7 @@ namespace BusinessLayer.Service.Interface
         Task<PersonalUserResponse> GetUserProfile(int id);
         Task<UserCommonResponse> GetCurrentUserById(int id);
         Task<BasePagingViewModel<TrainerResponse>> GetTrainerList(PagingRequestModel paging, string keyword, int? position);
-        Task<BasePagingViewModel<UserListResponse>> GetUserList(PagingRequestModel paging,string searchTerm,int? role);
+        Task<BasePagingViewModel<UserListResponse>> GetUserList(PagingRequestModel paging,string searchTerm,int? role,int? filterStatus);
         Task<BasePagingViewModel<TraineeResponse>> GetTraineeList(PagingRequestModel paging, string keyword, int? position);
         Task<BasePagingViewModel<TraineeResponse>> GetTraineeListByTrainer(int id, PagingRequestModel paging);
         Task<TraineeResponse> GetTraineeDetail(int roleId, int traineeId);

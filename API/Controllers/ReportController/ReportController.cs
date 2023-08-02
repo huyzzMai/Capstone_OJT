@@ -1,15 +1,8 @@
 ﻿using BusinessLayer.Service.Interface;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
-using DataAccessLayer.Models;
-using System.Collections.Generic;
-using static DataAccessLayer.Commons.CommonEnums;
-using System.Linq;
-using DocumentFormat.OpenXml.Wordprocessing;
-using DocumentFormat.OpenXml.Vml.Office;
 using System.Net.Http;
 using System.IO;
 using BusinessLayer.Utilities;

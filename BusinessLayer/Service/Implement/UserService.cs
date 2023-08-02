@@ -737,7 +737,7 @@ namespace BusinessLayer.Service.Implement
             u.UpdatedAt = DateTime.UtcNow.AddHours(7);
             await _unitOfWork.UserRepository.Update(u);
         }
-        public List<User> SearchUsers(string searchTerm, int? role, List<User> userList)
+        public List<User> SearchUsers(string searchTerm, int? role,int? filterStatus,List<User> userList)
         {
             var query = userList.AsQueryable();
 
@@ -757,17 +757,21 @@ namespace BusinessLayer.Service.Implement
             {
                 query = query.Where(c => c.Role == role);
             }
+            if (filterStatus != null)
+            {
+                query = query.Where(c => c.Status == filterStatus);
+            }
 
             return query.ToList();
         }
 
 
-        public async Task<BasePagingViewModel<UserListResponse>> GetUserList(PagingRequestModel paging, string searchTerm, int? role)
+        public async Task<BasePagingViewModel<UserListResponse>> GetUserList(PagingRequestModel paging, string searchTerm, int? role, int? filterStatus)
         {
             var users = await _unitOfWork.UserRepository.Get(c=>c.Status != CommonEnums.USER_STATUS.DELETED);
-            if (!string.IsNullOrEmpty(searchTerm) || role != null)
+            if (!string.IsNullOrEmpty(searchTerm) || role != null || filterStatus !=null)
             {
-                users = SearchUsers(searchTerm,role,users.ToList());
+                users = SearchUsers(searchTerm,role,filterStatus,users.ToList());
             }
             List<UserListResponse> res = users.Select(
                 user =>

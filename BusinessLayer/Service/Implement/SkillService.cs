@@ -118,18 +118,18 @@ namespace BusinessLayer.Service.Implement
             }         
             if (filterPosition != null)
             {
-                query = query.Where(c => c.Type==filterPosition);
+                query = query.Where(c => c.Status==filterPosition);
             }          
             return query.ToList();
         }
-        public async Task<BasePagingViewModel<SkillResponse>> GetSkillList(PagingRequestModel paging, string searchTerm,int? filterPosition)
+        public async Task<BasePagingViewModel<SkillResponse>> GetSkillList(PagingRequestModel paging, string searchTerm,int? filterStatus)
         {
             try
             {
                 var listskill = await _unitOfWork.SkillRepository.Get(c => c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
-                if (!string.IsNullOrEmpty(searchTerm)||filterPosition!=null)
+                if (!string.IsNullOrEmpty(searchTerm)|| filterStatus != null)
                 {
-                    listskill = SearchSkills(searchTerm,filterPosition ,listskill.ToList());
+                    listskill = SearchSkills(searchTerm, filterStatus, listskill.ToList());
                 }
                 var listresponse = listskill.OrderByDescending(c => c.CreatedAt).Select(c =>
                 {
