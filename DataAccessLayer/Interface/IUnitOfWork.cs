@@ -32,5 +32,7 @@ namespace DataAccessLayer.Interface
         INotificationRepository NotificationRepository { get; } 
 
         IUniversityRepository UniversityRepository { get; }
+
+        ITemplateRepository TemplateRepository { get; }
     }
 }

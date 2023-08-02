@@ -17,7 +17,7 @@ namespace API.Controllers.OJTBatchController
 
         public OJTBatchController(IOJTBatchService ojtService)
         {
-           _ojtService= ojtService;
+            _ojtService = ojtService;
         }
 
         [Authorize]
@@ -27,7 +27,7 @@ namespace API.Controllers.OJTBatchController
         {
             try
             {
-              var list= await _ojtService.GetValidOJtList();
+                var list = await _ojtService.GetValidOJtList();
                 return Ok(list);
             }
             catch (Exception ex)

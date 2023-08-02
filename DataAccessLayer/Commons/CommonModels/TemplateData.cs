@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace DataAccessLayer.Commons.CommonModels
 {
     public class TemplateData
-    {      
-        public List<List<string>> data { get; set; }
+    {
+        List<List<string>> list;
     }
 }
