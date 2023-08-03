@@ -124,6 +124,7 @@ namespace DataAccessLayer.Repository.Implement
             }
             else if (position == null)
             {
+                keyword = keyword.ToLower();
                 users = await _context.Users
                     .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER
                          && (u.Name.ToLower().Contains(keyword) || u.Email.ToLower().Contains(keyword)))
@@ -132,6 +133,7 @@ namespace DataAccessLayer.Repository.Implement
             }
             else
             {
+                keyword = keyword.ToLower();
                 users = await _context.Users
                     .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER
                           && u.Position == position

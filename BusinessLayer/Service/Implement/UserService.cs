@@ -433,7 +433,6 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                keyword = keyword.ToLower();
                 var users = await _unitOfWork.UserRepository.GetTrainerList(keyword, position);
 
                 List<TrainerResponse> res = users.Select(
@@ -497,7 +496,6 @@ namespace BusinessLayer.Service.Implement
 
         public async Task<BasePagingViewModel<TraineeResponse>> GetTraineeList(PagingRequestModel paging, string keyword, int? position)
         {
-            keyword = keyword.ToLower();
             var users = await _unitOfWork.UserRepository.GetTraineeList(keyword, position);
             List<TraineeResponse> res = users.Select(
                 user =>
