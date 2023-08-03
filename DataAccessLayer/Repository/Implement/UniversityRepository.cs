@@ -21,7 +21,7 @@ namespace DataAccessLayer.Repository.Implement
             var result= await base.Get(expression, includeProperties);
             foreach (var item in result)
             {
-                item.OJTBatches = _unitOfWork.OJTBatchRepository.Get(c => c.Id == item.Id,"Trainees").Result.ToList();
+                item.OJTBatches = _unitOfWork.OJTBatchRepository.Get(c => c.UniversityId == item.Id,"Trainees").Result.ToList();
             }
             return result;
         }

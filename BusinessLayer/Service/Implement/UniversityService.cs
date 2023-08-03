@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Models.RequestModel.UniversityRequest;
 using BusinessLayer.Models.ResponseModel;
 using BusinessLayer.Models.ResponseModel.CourseResponse;
 using BusinessLayer.Models.ResponseModel.OJTBatchResponse;
@@ -19,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Service.Implement
 {
-    public class UniversityService: IUniversityService
+    public class UniversityService : IUniversityService
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -32,8 +33,8 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var uni = await _unitOfWork.UniversityRepository.GetFirst(c=>c.IsDeleted==false,"OJTBatches");
-                if(uni==null)
+                var uni = await _unitOfWork.UniversityRepository.GetFirst(c => c.IsDeleted == false && c.Id==Id, "OJTBatches");
+                if (uni == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "University not found");
                 }
@@ -42,11 +43,10 @@ namespace BusinessLayer.Service.Implement
                     Id = Id,
                     ImgURL = uni.ImgURL,
                     Name = uni.Name,
-                    Address= uni.Address,
+                    Address = uni.Address,
                     JoinDate = uni.JoinDate,
                     CreatedAt = uni.CreatedAt,
                     UpdatedAt = uni.UpdatedAt,
-                    IsDeleted = uni.IsDeleted,
                     Status = uni.Status,
                     validOJTBatchResponses = uni.OJTBatches.Select(cp =>
                         new ValidOJTBatchResponse()
@@ -54,7 +54,7 @@ namespace BusinessLayer.Service.Implement
                             Id = cp.Id,
                             Name = cp.Name,
                             StartTime = cp.StartTime,
-                            EndTime=cp.EndTime
+                            EndTime = cp.EndTime
                         }).ToList()
                 };
                 return uniresponse;
@@ -70,7 +70,7 @@ namespace BusinessLayer.Service.Implement
         }
 
 
-        public List<University> SearchUniversities(string searchTerm, List<University> unilist)
+        public List<University> SearchUniversities(string searchTerm,int? filterStatus,List<University> unilist)
         {
             if (!string.IsNullOrEmpty(searchTerm))
             {
@@ -84,17 +84,22 @@ namespace BusinessLayer.Service.Implement
                 query = query.Where(c =>
                     c.Name.ToLower().Contains(searchTerm)
                 );
-            }         
+            }
+            if(filterStatus != null)
+            {
+                query = query.Where(c =>c.Status==filterStatus
+               );
+            }
             return query.ToList();
         }
         public int CountTotalUsersInUniversity(List<University> uni)
         {
-            var university = uni              
+            var university = uni
                 .Select(u => new
                 {
                     UniversityId = u.Id,
                     TotalUsers = u.OJTBatches.SelectMany(b => b.Trainees)
-                                           .Count(user => user.Status !=CommonEnums.USER_STATUS.DELETED)
+                                           .Count(user => user.Status != CommonEnums.USER_STATUS.DELETED)
                 })
                 .FirstOrDefault();
             return university?.TotalUsers ?? 0;
@@ -112,18 +117,21 @@ namespace BusinessLayer.Service.Implement
 
             return university?.TotalUsers ?? 0;
         }
-        public async Task<BasePagingViewModel<UniversityListResponse>> GetUniversityList(PagingRequestModel paging, string searchTerm)
+        public async Task<BasePagingViewModel<UniversityListResponse>> GetUniversityList(PagingRequestModel paging, string searchTerm, int? filterStatus)
         {
             try
             {
-                var list = await _unitOfWork.UniversityRepository.Get(c=>c.IsDeleted==false,"OJTBatches");
-                var listuser = await _unitOfWork.UserRepository.Get(c=>c.Status != CommonEnums.USER_STATUS.DELETED);
-                if(list==null)
+                var list = await _unitOfWork.UniversityRepository.Get(c => c.IsDeleted == false, "OJTBatches");
+                var listuser = await _unitOfWork.UserRepository.Get(c => c.Status != CommonEnums.USER_STATUS.DELETED);
+                if (list == null)
                 {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND,"Empty list");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Empty list");
                 }
-                list= SearchUniversities(searchTerm,list.ToList());
-                var listresponse= list.OrderByDescending(c => c.CreatedAt).Select(c =>
+                if(!string.IsNullOrEmpty(searchTerm) || filterStatus != null)
+                {
+                    list = SearchUniversities(searchTerm, filterStatus, list.ToList());
+                }             
+                var listresponse = list.OrderByDescending(c => c.CreatedAt).Select(c =>
                 {
                     return new UniversityListResponse()
                     {
@@ -134,11 +142,11 @@ namespace BusinessLayer.Service.Implement
                         JoinDate = c.JoinDate,
                         Status = c.Status,
                         TotalBatches = c.OJTBatches.Where(c => c.IsDeleted != false).ToList().Count,
-                        OjtTrainees = CountTotalUsersInUniversity(list.Where(cd=>cd.Id==c.Id).ToList()),
-                        OjtActiveTrainees= CountUsersWithStatusInUniversity(list.Where(cd => cd.Id == c.Id).ToList(), CommonEnums.USER_STATUS.ACTIVE)                       
+                        OjtTrainees = CountTotalUsersInUniversity(list.Where(cd => cd.Id == c.Id).ToList()),
+                        OjtActiveTrainees = CountUsersWithStatusInUniversity(list.Where(cd => cd.Id == c.Id).ToList(), CommonEnums.USER_STATUS.ACTIVE)
                     };
                 }
-                ).ToList();              
+                ).ToList();
                 int totalItem = listresponse.Count;
                 listresponse = listresponse.Skip((paging.PageIndex - 1) * paging.PageSize)
                    .Take(paging.PageSize).ToList();
@@ -151,6 +159,101 @@ namespace BusinessLayer.Service.Implement
                     Data = listresponse
                 };
                 return result;
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task UpdateUniversity(int universityId, UpdateUniversityRequest request)
+        {
+            try
+            {
+                var uni = await _unitOfWork.UniversityRepository.GetFirst(c => c.Id == universityId && c.Status != CommonEnums.UNIVERSITY_STATUS.DELETED);
+                if (uni == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "University not found");
+                }
+                if (uni.Name.ToLower() != request.Name.ToLower())
+                {
+                    var ok = await _unitOfWork.UniversityRepository.Get(c => c.Status != CommonEnums.UNIVERSITY_STATUS.DELETED);
+                    var check = ok.Any(c => c.Name.ToLower() == request.Name.ToLower());
+                    if (check)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Name university already in use");
+                    }
+                }               
+                uni.Name = request.Name;
+                uni.Address = request.Address;
+                uni.ImgURL = request.ImgURL;
+                uni.JoinDate = request.JoinDate;
+                uni.Status = request.Status;
+                uni.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                await _unitOfWork.UniversityRepository.Update(uni);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task DeleteUniversity(int universityId)
+        {
+            try
+            {
+                var uni = await _unitOfWork.UniversityRepository.GetFirst(c => c.Id == universityId && c.Status != CommonEnums.UNIVERSITY_STATUS.DELETED, "OJTBatches");
+                if (uni == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "University not found");
+                }
+                var check = uni.OJTBatches.Any(c => c.IsDeleted == false);
+                if (check)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "University still have some active batches");
+                }
+                uni.Status = CommonEnums.UNIVERSITY_STATUS.DELETED;
+                await _unitOfWork.UniversityRepository.Update(uni);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task CreateUniversuty(CreateUniversityRequest request)
+        {
+            try
+            {
+                var ok = await _unitOfWork.UniversityRepository.Get(c => c.Status != CommonEnums.UNIVERSITY_STATUS.DELETED);
+                var check = ok.Any(c => c.Name.ToLower() == request.Name.ToLower());
+                if (check)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Name university already in use");
+                }
+                var updateuni = new University()
+                {                  
+                    Name = request.Name,
+                    Address = request.Address,
+                    ImgURL = request.ImgURL,
+                    JoinDate = request.JoinDate,
+                    Status = CommonEnums.UNIVERSITY_STATUS.ACTIVE,
+                    UpdatedAt = DateTime.UtcNow.AddHours(7),
+                    CreatedAt = DateTime.UtcNow.AddHours(7)                   
+                };
+                await _unitOfWork.UniversityRepository.Add(updateuni);
             }
             catch (ApiException ex)
             {

@@ -53,7 +53,7 @@ namespace API.Controllers.UserController
             }
         }
 
-        [Authorize/*(Roles = "Admin")*/]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAccountList([FromQuery] PagingRequestModel paging,string searchTerm, int? role,int? filterStatus)
         {
@@ -68,7 +68,7 @@ namespace API.Controllers.UserController
                     ex.Message);
             }
         }
-        [Authorize/*(Roles = "Admin")*/]
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAccountDetail(int id)
         {
