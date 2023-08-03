@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BusinessLayer.Utilities;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,6 +24,9 @@ namespace BusinessLayer.Models.ResponseModel.UserResponse
 
         public int? OJTBatchId { get; set; }
 
+
+        [JsonProperty(PropertyName = "Birthday")]
+        [JsonConverter(typeof(CustomDateTimeConverter))]
         public DateTime? Birthday { get; set; }
         public int? Status { get; set; }
         public int? Role { get; set; }

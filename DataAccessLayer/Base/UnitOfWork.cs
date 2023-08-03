@@ -49,5 +49,7 @@ namespace DataAccessLayer.Base
         public IUniversityRepository UniversityRepository => new UniversityRepository(_context, this);
 
         public ITemplateRepository TemplateRepository => new TemplateRepository(_context, this);
+
+        public IUserCriteriaRepository UserCriteriaRepository => new UserCriteriaRepository(_context, this);
     }
 }

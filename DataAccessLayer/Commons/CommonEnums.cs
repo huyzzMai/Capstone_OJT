@@ -125,7 +125,13 @@ namespace DataAccessLayer.Commons
             public const int UNAUTHORIZED = 401;
             public const int NOT_FOUND = 404;
             public const int CONFLICT = 409;
-        }      
+        }
+        public class UNIVERSITY_STATUS
+        {
+            public const int DELETED = 1;
+            public const int ACTIVE = 2;
+            public const int INACTIVE = 3;
+        }
     }      
 }
 

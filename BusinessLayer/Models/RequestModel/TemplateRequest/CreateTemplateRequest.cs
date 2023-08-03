@@ -1,0 +1,25 @@
+﻿using BusinessLayer.Models.RequestModel.TemplateHeaderRequest;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessLayer.Models.RequestModel.TemplateRequest
+{
+    public class CreateTemplateRequest
+    {
+        [Required]
+        public string Name { get; set; }
+        [Required]
+        public string Url { get; set; }
+        [Required]
+        public string StartCell { get; set; }
+        [Required]
+        public int? UniversityId { get; set; }
+
+        public List<CreateTemplateHeaderRequest> TemplateHeaders { get; set; }
+
+    }
+}

@@ -64,6 +64,7 @@ namespace API
             services.AddScoped<ISkillService, SkillService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IUniversityService, UniversityService>();
+            services.AddScoped<ITemplateService, TemplateService>();
             services.AddHttpClient();
 
 

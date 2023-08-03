@@ -34,5 +34,7 @@ namespace DataAccessLayer.Interface
         IUniversityRepository UniversityRepository { get; }
 
         ITemplateRepository TemplateRepository { get; }
+
+        IUserCriteriaRepository UserCriteriaRepository { get; } 
     }
 }

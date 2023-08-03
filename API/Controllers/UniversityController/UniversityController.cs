@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using System;
+using BusinessLayer.Models.RequestModel.UniversityRequest;
+using DataAccessLayer.Commons;
 
 namespace API.Controllers.UniversityController
 {
@@ -24,13 +26,32 @@ namespace API.Controllers.UniversityController
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetListUniversity([FromQuery] PagingRequestModel paging, string searchTerm)
+        public async Task<IActionResult> GetListUniversity([FromQuery] PagingRequestModel paging, string searchTerm,int? filterStaus)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                var list = await _service.GetUniversityList(paging, searchTerm);
+                var list = await _service.GetUniversityList(paging, searchTerm,filterStaus);
                 return Ok(list);
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> CreateUniversity([FromQuery]CreateUniversityRequest request)
+        {
+            try
+            {
+                await _service.CreateUniversuty(request);
+                return StatusCode(StatusCodes.Status201Created, "University is created successfully");
             }
             catch (ApiException ex)
             {
@@ -61,5 +82,46 @@ namespace API.Controllers.UniversityController
                   e.Message);
             }
         }
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUniversity(int id, [FromBody] UpdateUniversityRequest request)
+        {
+            try
+            {
+                await _service.UpdateUniversity(id, request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.UNIVERSITY_SIGNALR_MESSAGE.UPDATED);
+                return Ok("University is updated successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUniversity(int id)
+        {
+            try
+            {
+                await _service.DeleteUniversity(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.UNIVERSITY_SIGNALR_MESSAGE.DELETED);
+                return Ok("University is deleted successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+
     }
 }

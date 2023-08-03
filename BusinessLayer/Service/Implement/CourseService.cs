@@ -8,6 +8,7 @@ using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Office2016.Excel;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -34,11 +35,24 @@ namespace BusinessLayer.Service.Implement
                 {
                     var skillId = courseSkillRequest.SkillId;
                     var skill = await _unitOfWork.SkillRepository.GetFirst(s => s.Id == skillId);
-
+                    if (courseSkillRequest.AfterwardLevel < courseSkillRequest.RecommendedLevel)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Afterward Level can not smaller than Recommended Level");
+                    }
                     if (skill == null)
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, $"Skill with SkillId '{skillId}' not found.");
                     }
+                }
+                var dupName = await _unitOfWork.CourseRepository.GetFirst(c => c.Name == request.Name && c.Status != CommonEnums.COURSE_STATUS.DELETED);
+                if (dupName != null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Name already in use");
+                }
+                var dupLink = await _unitOfWork.CourseRepository.GetFirst(c => c.Link == request.Link && c.Status != CommonEnums.COURSE_STATUS.DELETED);
+                if (dupLink != null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Link already in use");
                 }
                 var newcourse = new Course()
                 {
@@ -47,14 +61,13 @@ namespace BusinessLayer.Service.Implement
                     Description = request.Description,
                     Link = request.Link,
                     ImageURL = request.ImageURL,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow.AddHours(7),
+                    UpdatedAt = DateTime.UtcNow.AddHours(7),
                     Status = CommonEnums.COURSE_STATUS.ACTIVE
                 };
                 await _unitOfWork.CourseRepository.Add(newcourse);
                 foreach (var i in request.CourseSkills)
                 {
-
                     var newskill = new CourseSkill()
                     {
                         CourseId = newcourse.Id,
@@ -71,8 +84,8 @@ namespace BusinessLayer.Service.Implement
                         Position = i.Position,
                         IsCompulsory = i.IsCompulsory,
                         IsDeleted = false,
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now,
+                        CreatedAt = DateTime.UtcNow.AddHours(7),
+                        UpdatedAt = DateTime.UtcNow.AddHours(7),
                         CourseId = newcourse.Id
                     };
                     await _unitOfWork.CoursePositionRepository.Add(newcp);
@@ -98,13 +111,14 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Course not found");
                 }
-                var cercour = cour.Certificates.Any(c => c.Status == CommonEnums.CERTIFICATE_STATUS.PENDING);
-                if(cercour)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! Therer are some certificate which have not evaluate yet.");
-                }
                 cour.Status = CommonEnums.COURSE_STATUS.DELETED;
                 await _unitOfWork.CourseRepository.Update(cour);
+                var cercour = cour.Certificates.Where(c => c.Status != CommonEnums.CERTIFICATE_STATUS.DELETED);
+                foreach (var cert in cercour)
+                {
+                    cert.Status = CommonEnums.CERTIFICATE_STATUS.DELETED;
+                    await _unitOfWork.CertificateRepository.Update(cert);
+                }
             }
             catch (ApiException ex)
             {
@@ -137,7 +151,7 @@ namespace BusinessLayer.Service.Implement
                 var newcer = new Certificate()
                 {
                     Status = CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT,
-                    EnrollDate = DateTime.Now,
+                    EnrollDate = DateTime.UtcNow.AddHours(7),
                     CourseId = courseId,
                     UserId = userid,
                 };
@@ -259,7 +273,6 @@ namespace BusinessLayer.Service.Implement
                 {
                     listcour = SearchCourses(searchTerm, filterskill, filterposition, filterstatus, listcour.ToList());
                 }
-               
                 var listresponse = listcour.OrderByDescending(c => c.CreatedAt).Select(c =>
             {
                 return new CourseResponse()
@@ -270,8 +283,8 @@ namespace BusinessLayer.Service.Implement
                     Name = c.Name,
                     PlatformName = c.PlatformName,
                     ImageURL = c.ImageURL,
-                    TotalEnrollment=c.Certificates.Count,
-                    TotalActiveEnrollment=c.Certificates.Where(c => c.Status!=CommonEnums.CERTIFICATE_STATUS.DELETED).Count(),
+                    TotalEnrollment = c.Certificates.Count,
+                    TotalActiveEnrollment = c.Certificates.Where(c => c.Status != CommonEnums.CERTIFICATE_STATUS.DELETED).Count(),
                     coursePositions = c.CoursePositions.Select(cp =>
                     new CoursePositionResponse()
                     {
@@ -485,14 +498,51 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
                 }
-                cour.Name = request.Name ?? cour.Name;
-                cour.PlatformName = request.PlatformName ?? cour.PlatformName;
-                cour.Description = request.Description ?? cour.Description;
-                cour.ImageURL = request.ImageURL ?? cour.ImageURL;
-                cour.Link = request.Link ?? cour.Link;
-                cour.UpdatedAt = DateTime.Now;
-                cour.Status = request.Status ?? cour.Status;
+                if (request.Name.ToLower() != cour.Name.ToLower())
+                {
+                    var dupName = await _unitOfWork.CourseRepository.GetFirst(c => c.Name == request.Name && c.Status != CommonEnums.COURSE_STATUS.DELETED);
+                    if (dupName != null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Name already in use");
+                    }
+                }
+                if (request.Link != cour.Link)
+                {
+                    var dupName = await _unitOfWork.CourseRepository.GetFirst(c => c.Link == request.Link && c.Status != CommonEnums.COURSE_STATUS.DELETED);
+                    if (dupName != null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Link already in use");
+                    }
+                }
+                cour.Name = request.Name;
+                cour.PlatformName = request.PlatformName;
+                cour.Description = request.Description;
+                cour.ImageURL = request.ImageURL;
+                cour.Link = request.Link;
+                cour.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                cour.Status = request.Status;
                 await _unitOfWork.CourseRepository.Update(cour);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task DeleteCourseSkill(int courseId, int skillid)
+        {
+            try
+            {
+                var cour = await _unitOfWork.CourseSkillRepository.GetFirst(c => c.CourseId == courseId && c.SkillId == skillid);
+                if (cour == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "No courses skill found");
+                }
+                await _unitOfWork.CourseSkillRepository.Delete(cour);
             }
             catch (ApiException ex)
             {

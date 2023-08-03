@@ -17,6 +17,8 @@ namespace BusinessLayer.Service.Interface
 
         Task UpdateCourse(int courseId, UpdateCourseRequest request);
 
+        Task DeleteCourseSkill(int courseId, int skillid);
+
         Task DeleteCourse(int courseId);
 
         Task<BasePagingViewModel<CourseResponse>> GetCourseList(PagingRequestModel paging, string sortField, string sortOrder,string searchTerm,string filterskill, int? filterposition,int? filterstatus);
