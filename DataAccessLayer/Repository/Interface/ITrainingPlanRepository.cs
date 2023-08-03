@@ -13,6 +13,8 @@ namespace DataAccessLayer.Repository.Interface
 
         Task<TrainingPlan> GetTrainingPLanByIdAndNotDeleted(int id);
 
+        Task<User> GetOwnerByTrainingPlanId(int id);
+
         Task<TrainingPlan> GetTrainingPLanByIdAndStatusActive(int id);
 
         Task<List<TrainingPlan>> GetTrainingPlanList();
@@ -20,6 +22,8 @@ namespace DataAccessLayer.Repository.Interface
         Task<List<TrainingPlan>> GetTrainingPlanListSearchKeyword(string keyword);
 
         Task<List<TrainingPlan>> GetTrainingPlanListByOwnerId(int id);
+
+        Task<List<TrainingPlan>> GetTrainingPlanListByOwnerSearchKeyword(int id, string keyword);
 
         Task<UserTrainingPlan> GetUserTrainingPlanByIdAndIsOwner(int userId, int planId);
 

@@ -433,6 +433,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
+                keyword = keyword.ToLower();
                 var users = await _unitOfWork.UserRepository.GetTrainerList(keyword, position);
 
                 List<TrainerResponse> res = users.Select(
@@ -483,7 +484,8 @@ namespace BusinessLayer.Service.Implement
                     Email = trainer.Email,
                     Gender = trainer.Gender ?? default(int),
                     AvatarURL = trainer.AvatarURL,
-                    Position = trainer.Position ?? default(int)
+                    Position = trainer.Position ?? default(int),
+                    Status = trainer.Status
                 };
                 return res;
             }
@@ -495,6 +497,7 @@ namespace BusinessLayer.Service.Implement
 
         public async Task<BasePagingViewModel<TraineeResponse>> GetTraineeList(PagingRequestModel paging, string keyword, int? position)
         {
+            keyword = keyword.ToLower();
             var users = await _unitOfWork.UserRepository.GetTraineeList(keyword, position);
             List<TraineeResponse> res = users.Select(
                 user =>
@@ -576,7 +579,8 @@ namespace BusinessLayer.Service.Implement
                         Email = trainee.Email,  
                         AvatarURL = trainee.AvatarURL,  
                         Gender = trainee.Gender ?? default(int),
-                        Position = trainee.Position ?? default(int)
+                        Position = trainee.Position ?? default(int),
+                        Stauts = trainee.Status
                     };
                     return res; 
                 }
@@ -643,7 +647,7 @@ namespace BusinessLayer.Service.Implement
                 var emailCheck = await _unitOfWork.UserRepository.GetUserByEmail(request.Email);
                 if (emailCheck != null)
                 {
-                    throw new Exception("Email has been used!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Email has been used!");
                 }
 
                 String r = GenerateRamdomCode();

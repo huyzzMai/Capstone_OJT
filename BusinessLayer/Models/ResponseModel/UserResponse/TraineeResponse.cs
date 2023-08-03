@@ -14,5 +14,6 @@ namespace BusinessLayer.Models.ResponseModel.UserResponse
         public int Position { get; set; }
         public string AvatarURL { get; set; }
         public int Gender { get; set; }
+        public int? Stauts { get; set; }
     }
 }

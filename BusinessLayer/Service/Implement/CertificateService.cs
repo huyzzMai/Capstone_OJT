@@ -21,7 +21,7 @@ namespace BusinessLayer.Service.Implement
         private readonly IUnitOfWork _unitOfWork;
         private readonly INotificationService _notificationService;
 
-        public CertificateService(IUnitOfWork unitOfWork,INotificationService notificationService)
+        public CertificateService(IUnitOfWork unitOfWork, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _notificationService = notificationService;

@@ -16,9 +16,13 @@ namespace BusinessLayer.Service.Interface
     {
         Task<TrainingPlanResponse> GetTrainingPlanForAllRole(int userId, int id);
 
-        Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanList(PagingRequestModel paging, string keyword);
+        Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanList(PagingRequestModel paging, string keyword, int? status);
 
-        Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanListByOwner(int id, PagingRequestModel paging);
+        Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanListByOwner(int id, PagingRequestModel paging, string keyword, int? status);
+
+        //Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanListPending(PagingRequestModel paging, string keyword);
+
+        //Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanListDeniedForOwner(int trainerId, PagingRequestModel paging, string keyword);
 
         Task CreateTrainingPlan(int userId, CreateTrainingPlanRequest request);
 
@@ -32,7 +36,7 @@ namespace BusinessLayer.Service.Interface
 
         Task DenyTrainingPlan(int id);
 
-        Task CreateTrainingPlanDetailForExistingTrainingPlan(int userId, int planId, CreateTrainingPlanDetailRequest request);
+        Task CreateTrainingPlanDetailForExistingTrainingPlan(int userId, int planId, List<CreateTrainingPlanDetailRequest> request);
 
         Task UpdateTrainingPlanDetail(int userId, int detailId, CreateTrainingPlanDetailRequest request);
 
