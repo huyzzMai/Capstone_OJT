@@ -61,6 +61,12 @@ namespace DataAccessLayer.Commons
             public const string UPDATED = "New Template Updated";
             public const string DELETED = "New Template Deleted";
         }
+        public class TEMPLATEHEADER_SIGNALR_MESSAGE
+        {
+            public const string CREATED = "New Template Header Created";
+            public const string UPDATED = "New Template Header Updated";
+            public const string DELETED = "New Template Header Deleted";
+        }
         public class UNIVERSITY_SIGNALR_MESSAGE
         {
             public const string CREATED = "New University Created";

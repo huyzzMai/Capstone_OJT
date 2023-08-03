@@ -1,4 +1,6 @@
-﻿using BusinessLayer.Models.RequestModel.OjtBatchRequest;
+﻿using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Models.RequestModel.OjtBatchRequest;
+using BusinessLayer.Models.ResponseModel;
 using BusinessLayer.Models.ResponseModel.OJTBatchResponse;
 using BusinessLayer.Models.ResponseModel.UserResponse;
 using System;
@@ -15,8 +17,8 @@ namespace BusinessLayer.Service.Interface
 
         Task<OjtBatchDetailResponse> GetDetailOjtBatch(int batchId);
 
-        Task<IEnumerable<ValidOJTBatchResponse>> GetValidOJtList();
+        Task<BasePagingViewModel<ValidOJTBatchResponse>> GetValidOJtList(PagingRequestModel paging);
 
-        Task<IEnumerable<ValidOJTBatchResponse>> GetValidOJtListbyUniversityId(int id);
+        Task<BasePagingViewModel<ValidOJTBatchResponse>> GetValidOJtListbyUniversityId(int id, PagingRequestModel paging);
     }
 }

@@ -206,7 +206,8 @@ namespace BusinessLayer.Service.Implement
                 }
                 ).ToList();
                 int totalItem = listresponse.Count;
-
+                listresponse = listresponse.Skip((paging.PageIndex - 1) * paging.PageSize)
+                  .Take(paging.PageSize).ToList();
                 var result = new BasePagingViewModel<CourseResponse>()
                 {
                     PageIndex = paging.PageIndex,

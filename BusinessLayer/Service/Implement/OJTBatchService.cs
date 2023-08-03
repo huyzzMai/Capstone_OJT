@@ -1,4 +1,7 @@
-﻿using BusinessLayer.Models.RequestModel.OjtBatchRequest;
+﻿using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Models.RequestModel.OjtBatchRequest;
+using BusinessLayer.Models.ResponseModel.CourseResponse;
+using BusinessLayer.Models.ResponseModel;
 using BusinessLayer.Models.ResponseModel.OJTBatchResponse;
 using BusinessLayer.Models.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
@@ -85,7 +88,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<IEnumerable<ValidOJTBatchResponse>> GetValidOJtList()
+        public async Task<BasePagingViewModel<ValidOJTBatchResponse>> GetValidOJtList(PagingRequestModel paging)
         {
             try
             {
@@ -94,7 +97,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Empty List OJTBatch");
                 }
-                IEnumerable<ValidOJTBatchResponse> res = list.Select(
+                var res = list.Select(
                     ojt =>
                     {
                         return new ValidOJTBatchResponse()
@@ -106,7 +109,18 @@ namespace BusinessLayer.Service.Implement
                         };
                     }
                     ).ToList();
-                return res;
+                int totalItem = res.Count;
+                res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                   .Take(paging.PageSize).ToList();
+                var result = new BasePagingViewModel<ValidOJTBatchResponse>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = res
+                };
+                return result;
             }
             catch (ApiException ex)
             {
@@ -117,7 +131,7 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-        public async Task<IEnumerable<ValidOJTBatchResponse>> GetValidOJtListbyUniversityId(int id)
+        public async Task<BasePagingViewModel<ValidOJTBatchResponse>> GetValidOJtListbyUniversityId(int id, PagingRequestModel paging)
         {
             try
             {
@@ -126,7 +140,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Empty List OJTBatch");
                 }
-                IEnumerable<ValidOJTBatchResponse> res = list.Select(
+                var res = list.Select(
                     ojt =>
                     {
                         return new ValidOJTBatchResponse()
@@ -138,7 +152,18 @@ namespace BusinessLayer.Service.Implement
                         };
                     }
                     ).ToList();
-                return res;
+                int totalItem = res.Count;
+                res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                   .Take(paging.PageSize).ToList();
+                var result = new BasePagingViewModel<ValidOJTBatchResponse>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = res
+                };
+                return result;
             }
             catch (ApiException ex)
             {

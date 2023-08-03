@@ -11,6 +11,7 @@ using BusinessLayer.Models.RequestModel.OjtBatchRequest;
 using API.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using DataAccessLayer.Commons;
+using BusinessLayer.Models.RequestModel;
 
 namespace API.Controllers.OJTBatchController
 {
@@ -29,11 +30,12 @@ namespace API.Controllers.OJTBatchController
         [Authorize]
         [HttpGet]
         [Route("ongoing-batches")]
-        public async Task<IActionResult> GetValidOJTBatchInformation()
+        public async Task<IActionResult> GetValidOJTBatchInformation([FromQuery] PagingRequestModel paging)
         {
             try
             {
-                var list = await _ojtService.GetValidOJtList();
+                paging = PagingUtil.checkDefaultPaging(paging);
+                var list = await _ojtService.GetValidOJtList(paging);
                 return Ok(list);
             }
             catch (ApiException ex)
@@ -87,11 +89,12 @@ namespace API.Controllers.OJTBatchController
         [Authorize]
         [HttpGet]
         [Route("batches-of-university")]
-        public async Task<IActionResult> GetValidOJTBatchInformation(int universityid)
+        public async Task<IActionResult> GetValidOJTBatchInformation(int universityid, [FromQuery] PagingRequestModel paging)
         {
             try
             {
-                var list = await _ojtService.GetValidOJtListbyUniversityId(universityid);
+                paging = PagingUtil.checkDefaultPaging(paging);
+                var list = await _ojtService.GetValidOJtListbyUniversityId(universityid,paging);
                 return Ok(list);
             }
             catch (ApiException ex)
