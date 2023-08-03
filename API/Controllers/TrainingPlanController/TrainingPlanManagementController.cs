@@ -11,6 +11,8 @@ using BusinessLayer.Utilities;
 using Microsoft.AspNetCore.SignalR;
 using API.Hubs;
 using DataAccessLayer.Commons;
+using System.Collections.Generic;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace API.Controllers.TrainingPlanController
 {
@@ -57,12 +59,16 @@ namespace API.Controllers.TrainingPlanController
 
         [Authorize(Roles = "Manager")]
         [HttpGet]
-        public async Task<IActionResult> GetTrainingPlanList([FromQuery] PagingRequestModel paging, [FromQuery] string keyword)
+        public async Task<IActionResult> GetTrainingPlanList([FromQuery] PagingRequestModel paging, [FromQuery] string nameSearch, [FromQuery] int? status)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                return Ok(await trainingService.GetTrainingPlanList(paging, keyword));
+                return Ok(await trainingService.GetTrainingPlanList(paging, nameSearch, status));
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {
@@ -71,6 +77,22 @@ namespace API.Controllers.TrainingPlanController
             }
         }
 
+        //[Authorize(Roles = "Manager")]
+        //[HttpGet("pending-training-plans")]
+        //public async Task<IActionResult> GetTrainingPlanListPending([FromQuery] PagingRequestModel paging, [FromQuery] string nameSearch, [FromQuery] int? status)
+        //{
+        //    try
+        //    {
+        //        paging = PagingUtil.checkDefaultPaging(paging);
+        //        return Ok(await trainingService.GetTrainingPlanListPending(paging, nameSearch, status));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            ex.Message);
+        //    }
+        //}
+
         [Authorize(Roles = "Manager")]
         [HttpPut("verification-accept/{id}")]
         public async Task<IActionResult> AcceptTrainingPlan(int id)
@@ -78,6 +100,7 @@ namespace API.Controllers.TrainingPlanController
             try
             {
                 await trainingService.AcceptTrainingPlan(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.PROCESS);
                 return Ok("Training plan is accepted.");
             }
             catch (ApiException e)
@@ -98,6 +121,7 @@ namespace API.Controllers.TrainingPlanController
             try
             {
                 await trainingService.DenyTrainingPlan(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.PROCESS);
                 return Ok("Training plan is denied.");
             }
             catch (ApiException e)
@@ -116,14 +140,18 @@ namespace API.Controllers.TrainingPlanController
 
         [Authorize(Roles = "Trainer")]
         [HttpGet("owner")]
-        public async Task<IActionResult> GetTrainingPlanListOfOwner([FromQuery] PagingRequestModel paging)
+        public async Task<IActionResult> GetTrainingPlanListOfOwner([FromQuery] PagingRequestModel paging, [FromQuery] string nameSearch, [FromQuery] int? status)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                return Ok(await trainingService.GetTrainingPlanListByOwner(userId, paging));
+                return Ok(await trainingService.GetTrainingPlanListByOwner(userId, paging, nameSearch, status));
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {
@@ -176,7 +204,7 @@ namespace API.Controllers.TrainingPlanController
 
         [Authorize(Roles = "Trainer")]
         [HttpPost("detail/{planId}")]
-        public async Task<IActionResult> CreateTrainingPlanDetailForExistingTrainingPlan(int planId, [FromBody] CreateTrainingPlanDetailRequest request)
+        public async Task<IActionResult> CreateTrainingPlanDetailForExistingTrainingPlan(int planId, [FromBody] List<CreateTrainingPlanDetailRequest> request)
         {
             try
             {

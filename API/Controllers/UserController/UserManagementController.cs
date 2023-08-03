@@ -46,6 +46,10 @@ namespace API.Controllers.UserController
                 return StatusCode(StatusCodes.Status201Created,
                     "Create account successfully.");
             }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,

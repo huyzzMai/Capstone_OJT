@@ -27,6 +27,15 @@ namespace DataAccessLayer.Repository.Implement
             return tp;
         }
 
+        public async Task<User> GetOwnerByTrainingPlanId(int id)
+        {
+            var utp = await _context.UserTrainingPlans
+                .Where(u => u.TrainingPlanId == id && u.IsOwner == true)
+                .Select(u => u.User)
+                .FirstOrDefaultAsync();
+            return utp;
+        }
+
         public async Task<TrainingPlan> GetTrainingPLanByIdAndStatusActive(int id)
         {
             var tp = await _context.TrainingPlans
@@ -59,6 +68,18 @@ namespace DataAccessLayer.Repository.Implement
                 .Where(u => u.UserId == id && u.IsOwner == true)
                 .Select(u => u.TrainingPlan)
                 .Where(u => u.Status != CommonEnums.TRAINING_PLAN_STATUS.DELETED)
+                .OrderByDescending(u => u.CreatedAt)
+                .ToListAsync();
+            return list;
+        }
+
+        public async Task<List<TrainingPlan>> GetTrainingPlanListByOwnerSearchKeyword(int id, string keyword)
+        {
+            var list = await _context.UserTrainingPlans
+                .Where(u => u.UserId == id && u.IsOwner == true)
+                .Select(u => u.TrainingPlan)
+                .Where(u => u.Status != CommonEnums.TRAINING_PLAN_STATUS.DELETED && u.Name.ToLower().Contains(keyword))
+                .OrderByDescending(u => u.CreatedAt)
                 .ToListAsync();
             return list;
         }

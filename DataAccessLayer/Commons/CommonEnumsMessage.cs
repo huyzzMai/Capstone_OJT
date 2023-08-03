@@ -35,6 +35,7 @@ namespace DataAccessLayer.Commons
             public const string DELETE = "Training Plan Deleted";
             public const string DETAIL_DELETE = "Detail of training plan Deleted";
             public const string ASSIGN = "Training plan assigned to trainee";
+            public const string PROCESS = "Training plan has been process. Please reload get training plan and get notification for user.";
         }
 
         public class TASK_MESSAGE
