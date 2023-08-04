@@ -94,7 +94,7 @@ namespace API
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("clientURL")
+                    builder.WithOrigins("https://ojt-management-system.onrender.com")
                            .AllowAnyHeader()
                            .AllowAnyMethod()
                            .AllowCredentials();

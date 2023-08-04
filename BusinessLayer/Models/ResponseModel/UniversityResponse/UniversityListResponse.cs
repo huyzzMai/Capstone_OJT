@@ -20,9 +20,8 @@ namespace BusinessLayer.Models.ResponseModel.UniversityResponse
         public string ImgURL { get; set; }
 
         public int? Status { get; set; }
-        [JsonProperty(PropertyName = "JoinDate")]
-        [JsonConverter(typeof(CustomDateTimeConverter))]
-        public DateTime? JoinDate { get; set; }
+       
+        public string JoinDate { get; set; }
 
         public int TotalBatches { get; set; }
 

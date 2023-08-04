@@ -1,4 +1,6 @@
-﻿using BusinessLayer.Models.ResponseModel.ExcelResponse;
+﻿using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Models.ResponseModel;
+using BusinessLayer.Models.ResponseModel.ExcelResponse;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -10,8 +12,8 @@ namespace BusinessLayer.Service.Interface
 {
     public interface IAttendanceService
     {
-        Task<IEnumerable<AttendanceUser>> ProcessAttendanceFile(string filePath);
+        Task<List<AttendanceUserResponse>> ProcessAttendanceFile(IFormFile file);
 
-        Task<string> SaveTempFile(IFormFile file);
+        //Task<string> SaveTempFile(IFormFile file);
     }
 }

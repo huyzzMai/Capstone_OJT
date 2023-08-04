@@ -13,11 +13,7 @@ namespace BusinessLayer.Models.ResponseModel.CertificateResponse
     {
         public string CourseName { get; set; }
         public string UserName { get; set; }
-        [JsonProperty(PropertyName = "EnrollDate")]
-        [JsonConverter(typeof(CustomDateTimeConverter))]
         public DateTime EnrollDate { get; set; }
-        [JsonProperty(PropertyName = "SubmitDate")]
-        [JsonConverter(typeof(CustomDateTimeConverter))]
         public DateTime SubmitDate { get; set; }    
         public string LinkCertificate { get; set; }
         public int Status { get; set; }     

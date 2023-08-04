@@ -90,26 +90,7 @@ namespace API.Controllers.UserController
                 return StatusCode(StatusCodes.Status500InternalServerError,
                   e.Message);
             }
-        }
-        [Authorize(Roles = "Admin")]
-        [HttpPost("data-of-file-attendance")]
-        public async Task<IActionResult> UploadAttendanceFile(IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-                return BadRequest("No file uploaded.");
-
-            try
-            {
-                var filePath = await _attendanceService.SaveTempFile(file); // Save the file temporarily on the server
-                var attendanceData = await _attendanceService.ProcessAttendanceFile(filePath); // Pass the file path to the service
-                return Ok(attendanceData);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
+        }      
         [Authorize(Roles = "Admin,Manager")]
         [HttpGet("trainer")]
         public async Task<IActionResult> GetTrainerList([FromQuery] PagingRequestModel paging, [FromQuery] string keyword, [FromQuery] int? position)
