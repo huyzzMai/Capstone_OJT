@@ -69,11 +69,11 @@ namespace BusinessLayer.Service.Implement
                 {
                  Id = batch.Id,
                  Name = batch.Name,
-                 StartTime= batch.StartTime,
-                 EndTime= batch.EndTime,
+                 StartTime= DateTimeService.ConvertToDateString(batch.StartTime),
+                 EndTime= DateTimeService.ConvertToDateString(batch.EndTime),
                  UniversityId= batch.UniversityId,
-                 CreatedAt= batch.CreatedAt,
-                 UpdatedAt= batch.UpdatedAt,
+                 CreatedAt= DateTimeService.ConvertToDateString(batch.CreatedAt),
+                 UpdatedAt= DateTimeService.ConvertToDateString(batch.UpdatedAt),
                  IsDeleted= batch.IsDeleted
                 };
                 return batchresponse;
@@ -104,8 +104,8 @@ namespace BusinessLayer.Service.Implement
                         {
                             Id = ojt.Id,
                             Name = ojt.Name,
-                            StartTime = ojt.StartTime,
-                            EndTime = ojt.EndTime
+                            StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
+                            EndTime = DateTimeService.ConvertToDateString(ojt.EndTime)
                         };
                     }
                     ).ToList();
@@ -147,8 +147,8 @@ namespace BusinessLayer.Service.Implement
                         {
                             Id = ojt.Id,
                             Name = ojt.Name,
-                            StartTime = ojt.StartTime,
-                            EndTime = ojt.EndTime
+                            StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
+                            EndTime = DateTimeService.ConvertToDateString(ojt.EndTime)
                         };
                     }
                     ).ToList();

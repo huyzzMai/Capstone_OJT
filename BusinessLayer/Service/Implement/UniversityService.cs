@@ -44,17 +44,17 @@ namespace BusinessLayer.Service.Implement
                     ImgURL = uni.ImgURL,
                     Name = uni.Name,
                     Address = uni.Address,
-                    JoinDate = uni.JoinDate,
-                    CreatedAt = uni.CreatedAt,
-                    UpdatedAt = uni.UpdatedAt,
+                    JoinDate = DateTimeService.ConvertToDateString(uni.JoinDate),
+                    CreatedAt = DateTimeService.ConvertToDateString(uni.CreatedAt),
+                    UpdatedAt = DateTimeService.ConvertToDateString(uni.UpdatedAt),
                     Status = uni.Status,
                     validOJTBatchResponses = uni.OJTBatches.Select(cp =>
                         new ValidOJTBatchResponse()
                         {
                             Id = cp.Id,
                             Name = cp.Name,
-                            StartTime = cp.StartTime,
-                            EndTime = cp.EndTime
+                            StartTime = DateTimeService.ConvertToDateString(cp.StartTime),
+                            EndTime = DateTimeService.ConvertToDateString(cp.EndTime)
                         }).ToList()
                 };
                 return uniresponse;
@@ -139,7 +139,7 @@ namespace BusinessLayer.Service.Implement
                         Name = c.Name,
                         Address = c.Address,
                         ImgURL = c.ImgURL,
-                        JoinDate = c.JoinDate,
+                        JoinDate = DateTimeService.ConvertToDateString(c.JoinDate),
                         Status = c.Status,
                         TotalBatches = c.OJTBatches.Where(c => c.IsDeleted != false).ToList().Count,
                         OjtTrainees = CountTotalUsersInUniversity(list.Where(cd => cd.Id == c.Id).ToList()),

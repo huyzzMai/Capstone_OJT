@@ -411,15 +411,15 @@ namespace BusinessLayer.Service.Implement
                     Email = user.Email,
                     Address = user.Address,
                     AvatarURL = user.AvatarURL,
-                    Birthday = user.Birthday ?? default(DateTime),
+                    Birthday = DateTimeService.ConvertToDateString(user.Birthday),
                     Gender = user.Gender,
                     PhoneNumber = user.PhoneNumber,
                     Role = user.Role,
                     RollNumber = user.RollNumber,
                     Position = user.Position,
                     TrelloId = user.TrelloId,
-                    CreatedAt = user.CreatedAt,
-                    UpdatedAt = user.UpdatedAt
+                    CreatedAt = DateTimeService.ConvertToDateString(user.CreatedAt),
+                    UpdatedAt = DateTimeService.ConvertToDateString(user.UpdatedAt)
                 };
                 return usercommon;
             }
@@ -807,7 +807,7 @@ namespace BusinessLayer.Service.Implement
                         FullName = user.Name,
                         Address = user.Address,
                         AvatarURL= user.AvatarURL,
-                        Birthday = user.Birthday,
+                        Birthday = DateTimeService.ConvertToDateString(user.Birthday),
                         Email = user.Email,
                         Gender = user.Gender,
                         PhoneNumber = user.PhoneNumber,

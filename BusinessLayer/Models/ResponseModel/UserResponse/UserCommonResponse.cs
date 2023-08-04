@@ -24,9 +24,8 @@ namespace BusinessLayer.Models.ResponseModel.UserResponse
         public string PhoneNumber { get; set; }
 
         public string Address { get; set; }
-        [JsonProperty(PropertyName = "Birthday")]
-        [JsonConverter(typeof(CustomDateTimeConverter))]
-        public DateTime Birthday { get; set; }
+        
+        public string Birthday { get; set; }
 
         public string AvatarURL { get; set; }
 
@@ -35,11 +34,9 @@ namespace BusinessLayer.Models.ResponseModel.UserResponse
         public int? Role { get; set; }
 
         public string TrelloId { get; set; }
-        [JsonProperty(PropertyName = "CreatedAt")]
-        [JsonConverter(typeof(CustomDateTimeConverter))]
-        public DateTime? CreatedAt { get; set; }
-        [JsonProperty(PropertyName = "UpdatedAt")]
-        [JsonConverter(typeof(CustomDateTimeConverter))]
-        public DateTime? UpdatedAt { get; set; }
+      
+        public string CreatedAt { get; set; }
+       
+        public string UpdatedAt { get; set; }
     }
 }

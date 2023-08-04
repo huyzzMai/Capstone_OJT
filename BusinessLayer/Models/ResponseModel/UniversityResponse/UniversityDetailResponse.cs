@@ -25,19 +25,16 @@ namespace BusinessLayer.Models.ResponseModel.UniversityResponse
 
         public int? Status { get; set; }
 
-        [JsonProperty(PropertyName = "JoinDate")]
-        [JsonConverter(typeof(CustomDateTimeConverter))]
-        public DateTime? JoinDate { get; set; }
+        
+        public string JoinDate { get; set; }
 
         public bool? IsDeleted { get; set; }
 
-        [JsonProperty(PropertyName = "CreatedAt")]
-        [JsonConverter(typeof(CustomDateTimeConverter))]
-        public DateTime? CreatedAt { get; set; }
+       
+        public string CreatedAt { get; set; }
 
-        [JsonProperty(PropertyName = "UpdatedAt")]
-        [JsonConverter(typeof(CustomDateTimeConverter))]
-        public DateTime? UpdatedAt { get; set; }
+        
+        public string UpdatedAt { get; set; }
 
         public List<ValidOJTBatchResponse> validOJTBatchResponses { get; set; }
     }

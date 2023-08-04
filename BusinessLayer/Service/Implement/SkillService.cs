@@ -99,8 +99,8 @@ namespace BusinessLayer.Service.Implement
                     Id = skillId,
                     Name = skill.Name,
                     Status = skill.Status,
-                    CreatedAt = skill.CreatedAt,
-                    UpdatedAt = skill.UpdatedAt
+                    CreatedAt = DateTimeService.ConvertToDateString(skill.CreatedAt),
+                    UpdatedAt = DateTimeService.ConvertToDateString(skill.UpdatedAt)
                 };
                 return skilldetail;
 

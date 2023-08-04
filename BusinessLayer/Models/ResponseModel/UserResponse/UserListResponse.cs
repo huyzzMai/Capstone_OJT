@@ -24,10 +24,7 @@ namespace BusinessLayer.Models.ResponseModel.UserResponse
 
         public int? OJTBatchId { get; set; }
 
-
-        [JsonProperty(PropertyName = "Birthday")]
-        [JsonConverter(typeof(CustomDateTimeConverter))]
-        public DateTime? Birthday { get; set; }
+        public string Birthday { get; set; }
         public int? Status { get; set; }
         public int? Role { get; set; }
 

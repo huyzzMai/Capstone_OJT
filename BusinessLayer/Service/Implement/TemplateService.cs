@@ -161,8 +161,8 @@ namespace BusinessLayer.Service.Implement
                     StartCell = temp.StartCell,
                     Status = temp.Status,
                     UniversityId = temp.UniversityId,
-                    UpdatedAt = temp.UpdatedAt,
-                    CreatedAt = temp.CreatedAt,
+                    UpdatedAt = DateTimeService.ConvertToDateString(temp.UpdatedAt),
+                    CreatedAt = DateTimeService.ConvertToDateString(temp.CreatedAt),
                     Url = temp.Url,
                     templateHeaders = temp.TemplateHeaders.Select(cp =>
                         new TemplateHeaderResponse()

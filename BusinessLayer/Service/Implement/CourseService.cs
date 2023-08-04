@@ -415,8 +415,8 @@ namespace BusinessLayer.Service.Implement
                     Name = c.Name,
                     PlatformName = c.PlatformName,
                     Status = c.Status,
-                    CreatedAt = c.CreatedAt,
-                    UpdatedAt = c.UpdatedAt,
+                    CreatedAt = DateTimeService.ConvertToDateString(c.CreatedAt),
+                    UpdatedAt = DateTimeService.ConvertToDateString(c.UpdatedAt),
                     CoursePositions = c.CoursePositions.Select(cp =>
                     new CoursePositionResponse()
                     {
