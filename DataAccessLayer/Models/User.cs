@@ -41,7 +41,11 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(500)")]
         public string AvatarURL { get; set; }
 
-        public int? Position { get; set; }
+        //public int? Position { get; set; }
+        //Relation with Position
+        public int? PositionId { get; set; }
+        [ForeignKey("PositionId")]
+        public Position Position { get; set; }
 
         public int? Role { get; set; }
 

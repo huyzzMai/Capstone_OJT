@@ -34,6 +34,8 @@ namespace DataAccessLayer.Models
         [ForeignKey("UniversityId")]
         public University University { get; set; }
 
+        public virtual ICollection<OJTBatch> OJTBatches { get; set; }   
+
         // Relation with Template Header
         public virtual ICollection<TemplateHeader> TemplateHeaders { get; set; }
     }
