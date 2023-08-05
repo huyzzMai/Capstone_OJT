@@ -24,12 +24,12 @@ namespace BusinessLayer.Models.ResponseModel.UserResponse
         public string PhoneNumber { get; set; }
         public string Address { get; set; }
         
-        public DateTime? Birthday { get; set; }
+        public string Birthday { get; set; }
         public int? Status { get; set; }
         public int? Role { get; set; }
         
-        public DateTime? CreatedAt { get; set; }
+        public string CreatedAt { get; set; }
         
-        public DateTime? UpdatedAt { get; set; }
+        public string UpdatedAt { get; set; }
     }
 }

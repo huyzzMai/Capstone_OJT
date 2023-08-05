@@ -34,7 +34,7 @@ namespace BusinessLayer.Service.Implement
                 foreach (var courseSkillRequest in request.CourseSkills)
                 {
                     var skillId = courseSkillRequest.SkillId;
-                    var skill = await _unitOfWork.SkillRepository.GetFirst(s => s.Id == skillId);
+                    var skill = await _unitOfWork.SkillRepository.GetFirst(s => s.Id == skillId);                      
                     if (courseSkillRequest.AfterwardLevel < courseSkillRequest.RecommendedLevel)
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Afterward Level can not smaller than Recommended Level");
@@ -42,6 +42,15 @@ namespace BusinessLayer.Service.Implement
                     if (skill == null)
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, $"Skill with SkillId '{skillId}' not found.");
+                    }
+                }
+                foreach (var coursePositionRequest in request.CoursePosition)
+                {
+                    var positionId = coursePositionRequest.PositionId;
+                    var position = await _unitOfWork.SkillRepository.GetFirst(s => s.Id == positionId);                    
+                    if (position == null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, $"Position with positionId '{positionId}' not found.");
                     }
                 }
                 var dupName = await _unitOfWork.CourseRepository.GetFirst(c => c.Name == request.Name && c.Status != CommonEnums.COURSE_STATUS.DELETED);
@@ -81,11 +90,8 @@ namespace BusinessLayer.Service.Implement
                 {
                     var newcp = new CoursePosition()
                     {
-                        Position = i.Position,
-                        IsCompulsory = i.IsCompulsory,
-                        IsDeleted = false,
-                        CreatedAt = DateTime.UtcNow.AddHours(7),
-                        UpdatedAt = DateTime.UtcNow.AddHours(7),
+                        PositionId = i.PositionId,
+                        IsCompulsory = i.IsCompulsory,                                             
                         CourseId = newcourse.Id
                     };
                     await _unitOfWork.CoursePositionRepository.Add(newcp);
@@ -191,14 +197,16 @@ namespace BusinessLayer.Service.Implement
                         coursePositions = c.CoursePositions.Select(cp =>
                         new CoursePositionResponse()
                         {
-                            Id = cp.Id,
-                            Position = cp.Position ?? default(int),
+                            PositionId = cp.PositionId,
+                            PositionName = cp.Position.Name,
                             IsCompulsory = cp.IsCompulsory
+
                         }).ToList(),
                         courseSkills = c.CourseSkills.Select(cp =>
                         new CourseSkillResponse()
                         {
                             SkillId = cp.SkillId,
+                            SkillName=cp.Skill.Name,
                             AfterwardLevel = cp.AfterwardLevel,
                             RecommendedLevel = cp.RecommendedLevel
                         }).ToList()
@@ -227,7 +235,7 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-        public List<Course> SearchCourses(string searchTerm, string filterskill, int? filterposition, int? filterstatus, List<Course> courselist)
+        public List<Course> SearchCourses(string searchTerm, int? filterskill, int? filterposition, int? filterstatus, List<Course> courselist)
         {
             if (!string.IsNullOrEmpty(searchTerm))
             {
@@ -250,18 +258,15 @@ namespace BusinessLayer.Service.Implement
             }
             if (filterposition != null)
             {
-                query = query.Where(c => c.CoursePositions.Any(c => c.Position == filterposition));
+                query = query.Where(c => c.CoursePositions.Any(c => c.PositionId == filterposition));
             }
-            if (!string.IsNullOrEmpty(filterskill))
+            if (filterskill != null)
             {
-                filterskill = filterskill.ToLower();
-                query = query.Where(c =>
-                    c.CourseSkills.Any(cs => cs.Skill.Name.ToLower().Contains(filterskill))
-                );
+                query = query.Where(c => c.CourseSkills.Any(c => c.SkillId == filterskill));
             }
             return query.ToList();
         }
-        public async Task<BasePagingViewModel<CourseResponse>> GetCourseList(PagingRequestModel paging, string sortField, string sortOrder, string searchTerm, string filterskill, int? filterposition, int? filterstatus)
+        public async Task<BasePagingViewModel<CourseResponse>> GetCourseList(PagingRequestModel paging, string sortField, string sortOrder, string searchTerm, int? filterskill, int? filterposition, int? filterstatus)
         {
             try
             {
@@ -270,7 +275,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
                 }
-                if (!string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(filterskill) || filterposition != null || filterstatus != null)
+                if (!string.IsNullOrEmpty(searchTerm) || filterskill != null || filterposition != null || filterstatus != null)
                 {
                     listcour = SearchCourses(searchTerm, filterskill, filterposition, filterstatus, listcour.ToList());
                 }
@@ -289,9 +294,10 @@ namespace BusinessLayer.Service.Implement
                     coursePositions = c.CoursePositions.Select(cp =>
                     new CoursePositionResponse()
                     {
-                        Id = cp.Id,
-                        Position = cp.Position ?? default(int),
+                        PositionId = cp.Id,
+                        PositionName=cp.Position.Name,
                         IsCompulsory = cp.IsCompulsory
+
                     }).ToList(),
                     courseSkills = c.CourseSkills.Select(cp =>
                     new CourseSkillResponse()
@@ -359,9 +365,10 @@ namespace BusinessLayer.Service.Implement
                         coursePositions = c.CoursePositions.Select(cp =>
                         new CoursePositionResponse()
                         {
-                            Id = cp.Id,
-                            Position = cp.Position ?? default(int),
+                            PositionId = cp.Id,
+                            PositionName = cp.Position.Name,
                             IsCompulsory = cp.IsCompulsory
+
                         }).ToList(),
                         courseSkills = c.CourseSkills.Select(cp =>
                         new CourseSkillResponse()
@@ -370,6 +377,7 @@ namespace BusinessLayer.Service.Implement
                             SkillName = cp.Skill.Name,
                             AfterwardLevel = cp.AfterwardLevel,
                             RecommendedLevel = cp.RecommendedLevel
+
                         }).ToList()
                     };
                 }
@@ -420,9 +428,10 @@ namespace BusinessLayer.Service.Implement
                     CoursePositions = c.CoursePositions.Select(cp =>
                     new CoursePositionResponse()
                     {
-                        Id = cp.Id,
-                        Position = cp.Position ?? default(int),
+                        PositionId = cp.Id,
+                        PositionName = cp.Position.Name,
                         IsCompulsory = cp.IsCompulsory
+
                     }).ToList(),
                     CourseSkills = c.CourseSkills.Select(cp =>
                     new CourseSkillResponse()

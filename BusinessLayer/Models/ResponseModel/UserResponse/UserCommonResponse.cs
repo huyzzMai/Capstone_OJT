@@ -28,9 +28,7 @@ namespace BusinessLayer.Models.ResponseModel.UserResponse
         public string Birthday { get; set; }
 
         public string AvatarURL { get; set; }
-
-        public int? Position { get; set; }  
-
+  
         public int? Role { get; set; }
 
         public string TrelloId { get; set; }
