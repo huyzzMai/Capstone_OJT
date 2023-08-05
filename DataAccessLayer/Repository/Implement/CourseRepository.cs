@@ -24,6 +24,7 @@ namespace DataAccessLayer.Repository.Implement
             foreach (var item in result)
             {
                 item.CourseSkills = _unitOfWork.CourseSkillRepository.Get(c => c.CourseId == item.Id, includeProperties: "Skill").Result.ToList();
+                item.CoursePositions = _unitOfWork.CoursePositionRepository.Get(c => c.CourseId == item.Id, includeProperties: "Position").Result.ToList();
             }
             return result;
         }              
@@ -41,11 +42,10 @@ namespace DataAccessLayer.Repository.Implement
                 .Where(course => course.CourseSkills
                     .Any(cs => userSkills.Any(userSkill =>
                         cs.SkillId == userSkill.SkillId &&
-                        cs.RecommendedLevel == userSkill.CurrentLevel)) && course.CoursePositions.Any(cp => cp.Position.Equals(user.Position)))
+                        cs.RecommendedLevel == userSkill.CurrentLevel))
+                    && course.CoursePositions.Any(cp =>cp.PositionId==user.PositionId))
                 .ToList();
             return filteredCourses;
         }
-
-
     }
 }

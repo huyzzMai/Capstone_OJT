@@ -46,7 +46,7 @@ namespace API.Controllers.UniversityController
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateUniversity([FromQuery]CreateUniversityRequest request)
+        public async Task<IActionResult> CreateUniversity([FromBody] CreateUniversityRequest request)
         {
             try
             {

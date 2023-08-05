@@ -10,7 +10,7 @@ namespace BusinessLayer.Models.RequestModel.CourseRequest
     public class CoursePositionRequest
     {
         [Required]
-        public int Position { get; set; }
+        public int PositionId { get; set; }
         [Required]
         public bool? IsCompulsory { get; set; }
     }

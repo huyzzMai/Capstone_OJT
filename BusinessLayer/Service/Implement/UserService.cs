@@ -847,13 +847,13 @@ namespace BusinessLayer.Service.Implement
                     Id = id,
                     Email = user.Email,
                     Address = user.Address,
-                    Birthday = user.Birthday,
+                    Birthday = DateTimeService.ConvertToDateString(user.Birthday),
                     FullName=user.Name,
                     Gender= user.Gender,
                     PhoneNumber= user.PhoneNumber,
                     AvatarUrl= user.AvatarURL,
-                    CreatedAt= user.CreatedAt,
-                    UpdatedAt= user.UpdatedAt,
+                    CreatedAt= DateTimeService.ConvertToDateString(user.CreatedAt),
+                    UpdatedAt= DateTimeService.ConvertToDateString(user.UpdatedAt),
                     Status = user.Status,
                     Role = user.Role                   
                 };
