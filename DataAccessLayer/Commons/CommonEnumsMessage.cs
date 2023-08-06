@@ -73,5 +73,12 @@ namespace DataAccessLayer.Commons
             public const string UPDATED = "New University Updated";
             public const string DELETED = "New University Deleted";
         }
+
+        public class POSITION_SIGNALR_MESSAGE
+        {
+            public const string CREATED = "New Position Created";
+            public const string UPDATED = "New Position Updated";
+            public const string DELETED = "New Position Deleted";
+        }
     }
 }

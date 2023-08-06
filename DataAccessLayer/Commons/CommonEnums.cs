@@ -104,13 +104,11 @@ namespace DataAccessLayer.Commons
             public const int DENY = 5;
         }
 
-        public class POSITION
+        public class POSITION_STATUS
         {
-            public const int BACKEND_DEVELOPER = 1;
-            public const int FRONTEND_DEVELOPER = 2;
-            public const int BUSINESS_ANALYST = 3;
-            public const int DESIGN_UX_UI = 4;
-            public const int TESTER = 5;
+            public const int DELETED = 1;
+            public const int ACTIVE = 2;
+            public const int INACTIVE = 3;
         }
 
         public class NOTIFICATION_TYPE

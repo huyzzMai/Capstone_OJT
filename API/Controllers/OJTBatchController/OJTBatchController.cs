@@ -12,6 +12,7 @@ using API.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using DataAccessLayer.Commons;
 using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Models.RequestModel.CourseRequest;
 
 namespace API.Controllers.OJTBatchController
 {
@@ -67,6 +68,45 @@ namespace API.Controllers.OJTBatchController
                   e.Message);
             }
         }
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateOjtBatch(int id, [FromBody] UpdateOjtBatchRequest request)
+        {
+            try
+            {
+                await _ojtService.UpdateOjtBatch(id, request);              
+                return Ok("Ojt batch is updated successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteOjtBacth(int id)
+        {
+            try
+            {
+                await _ojtService.DeleteOjtBatch(id);
+                return Ok("Ojt batch is delete successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateOJTBatchInformation([FromBody]CreateOjtBatchRequest request)

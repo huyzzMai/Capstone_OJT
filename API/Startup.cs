@@ -65,6 +65,7 @@ namespace API
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IUniversityService, UniversityService>();
             services.AddScoped<ITemplateService, TemplateService>();
+            services.AddScoped<IPositionService, PositionService>();
             services.AddHttpClient();
 
 

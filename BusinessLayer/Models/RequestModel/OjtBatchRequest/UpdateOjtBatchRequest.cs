@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Models.RequestModel.OjtBatchRequest
 {
-    public class CreateOjtBatchRequest
+    public class UpdateOjtBatchRequest
     {
         [Required]
         public string Name { get; set; }
@@ -16,8 +16,10 @@ namespace BusinessLayer.Models.RequestModel.OjtBatchRequest
         [Required]
         public DateTime? EndTime { get; set; }
         [Required]
+        public int? TemplateId { get; set; }
+        [Required]
         public int? UniversityId { get; set; }
         [Required]
-        public int? TemplateId { get; set; }
+        public bool? IsDeleted { get; set; }
     }
 }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLayer.Models.ResponseModel.SkillResponse
+namespace BusinessLayer.Models.ResponseModel.PositionResponse
 {
-    public class SkillResponse
+    public class ListPostionResponse
     {
         public int Id { get; set; }
 
