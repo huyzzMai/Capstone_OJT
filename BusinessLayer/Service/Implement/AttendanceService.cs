@@ -97,11 +97,16 @@ namespace BusinessLayer.Service.Implement
                     {
                         continue;
                     }
+                    var totaltime = double.Parse(worksheet.Cells[row, 11].Value?.ToString());
+                    if(totaltime <=0 || totaltime == null)
+                    {
+                        continue;
+                    }
                     var model = new Attendance()
                     {
                         UserId = user.Id,
                         PresentDate = DateTime.FromOADate(double.Parse(worksheet.Cells[row, 1].Value?.ToString())),
-                        TotalTime = DateTimeService.ConvertToTimeSpan(double.Parse(worksheet.Cells[row, 11].Value?.ToString()))
+                        TotalTime = DateTimeService.ConvertToTimeSpan(totaltime)
                     };                   
                     attendances.Add(model);
                 }
@@ -136,32 +141,5 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-        //public async Task<string> SaveTempFile(IFormFile file)
-        //{
-        //    try
-        //    {
-        //        var tempFileName = Path.GetTempFileName();
-        //        var filePath = Path.ChangeExtension(tempFileName, Path.GetExtension(file.FileName));
-        //        if(filePath==null)
-        //        {
-        //            throw new  ApiException(CommonEnums.CLIENT_ERROR.CONFLICT,"Set file path fail");
-        //        }
-        //        using (var stream = new FileStream(filePath, FileMode.Create))
-        //        {
-        //            await file.CopyToAsync(stream);
-        //        }
-        //        return filePath;
-        //    }
-        //    catch (ApiException ex)
-        //    {
-        //        throw ex;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        throw new Exception(e.Message);
-        //    }            
-        //}
-
-
     }
 }

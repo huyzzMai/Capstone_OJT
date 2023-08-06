@@ -17,6 +17,10 @@ namespace BusinessLayer.Service.Interface
 
         Task<OjtBatchDetailResponse> GetDetailOjtBatch(int batchId);
 
+        Task UpdateOjtBatch(int id,UpdateOjtBatchRequest request);
+
+        Task DeleteOjtBatch(int id);
+
         Task<BasePagingViewModel<ValidOJTBatchResponse>> GetValidOJtList(PagingRequestModel paging);
 
         Task<BasePagingViewModel<ValidOJTBatchResponse>> GetValidOJtListbyUniversityId(int id, PagingRequestModel paging);

@@ -34,6 +34,12 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT,"Skill already exists");
                 }
+                var skillcheck = await _unitOfWork.SkillRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower() && c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
+
+                if (skillcheck != null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Duplicate skill names");
+                }
                 var newskill = new Skill()
                 {
                     Name=request.Name,
@@ -144,8 +150,7 @@ namespace BusinessLayer.Service.Implement
                     return new SkillResponse()
                     {
                         Id= c.Id,
-                        Name= c.Name,
-                        Status =c.Status
+                        Name= c.Name
                     };
                 }).ToList();
                 int totalItem = listresponse.Count;

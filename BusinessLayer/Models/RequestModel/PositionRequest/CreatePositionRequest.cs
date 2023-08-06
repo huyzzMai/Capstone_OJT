@@ -4,13 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLayer.Models.ResponseModel.SkillResponse
+namespace BusinessLayer.Models.RequestModel.PositionRequest
 {
-    public class SkillResponse
+    public class CreatePositionRequest
     {
-        public int Id { get; set; }
-
         public string Name { get; set; }
-
     }
 }

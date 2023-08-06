@@ -18,8 +18,11 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(100)")]
         public string Name { get; set; }
 
-        public int? Status { get; set; } 
-        
+        public int? Status { get; set; }
+        public DateTime? CreatedAt { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
+
         public virtual ICollection<User> Users { get; set; }    
 
         public virtual ICollection<CoursePosition> CoursePositions { get; set; }    
