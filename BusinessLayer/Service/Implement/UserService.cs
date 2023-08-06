@@ -26,7 +26,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using static BusinessLayer.Models.ResponseModel.UserResponse.PersonalUserResponse;
+//using static BusinessLayer.Models.ResponseModel.UserResponse.PersonalUserResponse;
 
 namespace BusinessLayer.Service.Implement
 {
@@ -371,14 +371,14 @@ namespace BusinessLayer.Service.Implement
                     Gender = user.Gender ?? default(int),
                     PhoneNumber = user.PhoneNumber,
                     RollNumber = user.RollNumber,
-                    Position = user.Position,
+                    PositionName = user.Position.Name,
                 };
 
-                var listSkill = new List<PersonalSkillResponse>();
+                var listSkill = new List<PersonalUserResponse.PersonalSkillResponse>();
 
                 foreach (var sa in user.UserSkills)
                 {
-                    var s = new PersonalSkillResponse();
+                    var s = new PersonalUserResponse.PersonalSkillResponse();
                     s.Name = sa.Skill.Name;
                     //s.Type = sa.Skill.Type;
                     s.CurrentLevel = sa.CurrentLevel ?? default(int);
@@ -416,7 +416,7 @@ namespace BusinessLayer.Service.Implement
                     PhoneNumber = user.PhoneNumber,
                     Role = user.Role,
                     RollNumber = user.RollNumber,
-                    Position = user.Position,
+                    //Position = user.Position,
                     TrelloId = user.TrelloId,
                     CreatedAt = DateTimeService.ConvertToDateString(user.CreatedAt),
                     UpdatedAt = DateTimeService.ConvertToDateString(user.UpdatedAt)
@@ -445,7 +445,7 @@ namespace BusinessLayer.Service.Implement
                             Email = user.Email,
                             Gender = user.Gender ?? default(int),
                             AvatarURL = user.AvatarURL,
-                            Position = user.Position ?? default(int)
+                            PositionName = user.Position.Name
                         };
                     }
                     ).ToList();
@@ -483,7 +483,7 @@ namespace BusinessLayer.Service.Implement
                     Email = trainer.Email,
                     Gender = trainer.Gender ?? default(int),
                     AvatarURL = trainer.AvatarURL,
-                    Position = trainer.Position ?? default(int),
+                    PositionName = trainer.Position.Name,
                     Status = trainer.Status
                 };
                 return res;
@@ -507,7 +507,7 @@ namespace BusinessLayer.Service.Implement
                         Email = user.Email,
                         Gender = user.Gender ?? default(int),
                         AvatarURL = user.AvatarURL,
-                        Position = user.Position ?? default(int)
+                        PositionName = user.Position.Name
                     };
                 }
                 ).ToList();
@@ -541,7 +541,7 @@ namespace BusinessLayer.Service.Implement
                         Email = user.Email,
                         Gender = user.Gender ?? default(int),
                         AvatarURL = user.AvatarURL,
-                        Position = user.Position ?? default(int)
+                        PositionName = user.Position.Name
                     };
                 }
                 ).ToList();
@@ -577,7 +577,7 @@ namespace BusinessLayer.Service.Implement
                         Email = trainee.Email,  
                         AvatarURL = trainee.AvatarURL,  
                         Gender = trainee.Gender ?? default(int),
-                        Position = trainee.Position ?? default(int),
+                        PositionName = trainee.Position.Name,
                         Stauts = trainee.Status
                     };
                     return res; 
@@ -598,7 +598,7 @@ namespace BusinessLayer.Service.Implement
                         Email = trainee.Email,
                         AvatarURL = trainee.AvatarURL,
                         Gender = trainee.Gender ?? default(int),
-                        Position = trainee.Position ?? default(int)
+                        PositionName = trainee.Position.Name
                     };
                     return res;
                 }
@@ -664,7 +664,7 @@ namespace BusinessLayer.Service.Implement
                     RollNumber = request.RollNumber,
                     AvatarURL = request.AvatarUrl,
                     Password = encryptPwd,
-                    Position = request.Position,
+                    PositionId = request.Position,
                     TrelloId = request.TrelloId,
                     OJTBatchId = request.BatchId,
                     CreatedAt = DateTime.UtcNow.AddHours(7),

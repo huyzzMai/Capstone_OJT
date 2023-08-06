@@ -46,7 +46,10 @@ namespace DataAccessLayer.Repository.Implement
 
         public async Task<User> GetUserByResetCodeAndStatusActive(string token)
         {
-            User user = await _context.Users.FirstOrDefaultAsync(u => u.ResetPassordCode == token && u.Status == CommonEnums.USER_STATUS.ACTIVE);
+            User user = await _context.Users
+                .Where(u => u.ResetPassordCode == token && u.Status == CommonEnums.USER_STATUS.ACTIVE)
+                .Include(u => u.Position)
+                .FirstOrDefaultAsync();
             return user;
         }
 
@@ -62,17 +65,19 @@ namespace DataAccessLayer.Repository.Implement
                         .Where(u => u.Id == id && u.Status == CommonEnums.USER_STATUS.ACTIVE) 
                         .Include(u => u.UserSkills)
                         .ThenInclude(u => u.Skill)
+                        .Include(u => u.Position)
                         .FirstOrDefaultAsync();
             return user;
         }
 
-        public async Task<List<User>> GetTraineeList(string keyword, int? position)
+        public async Task<List<User>> GetTraineeList(string keyword, int? positionId)
         {
             List<User> users = new();
-            if (keyword == null && position == null)
+            if (keyword == null && positionId == null)
             {
                 users = await _context.Users
                 .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE)
+                .Include(u => u.Position)
                 .OrderByDescending(u => u.CreatedAt)
                 .ToListAsync();
             }
@@ -80,15 +85,17 @@ namespace DataAccessLayer.Repository.Implement
             {
                 users = await _context.Users
                     .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE
-                                && u.Position == position)
+                                && u.PositionId == positionId)
+                    .Include(u => u.Position)
                     .OrderByDescending(u => u.CreatedAt)
                     .ToListAsync();
             }
-            else if (position == null)
+            else if (positionId == null)
             {
                 users = await _context.Users
                     .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE
                                 && (u.Name.ToLower().Contains(keyword) || u.Email.ToLower().Contains(keyword)))
+                    .Include(u => u.Position)
                     .OrderByDescending(u => u.CreatedAt)
                     .ToListAsync();
             }
@@ -96,21 +103,23 @@ namespace DataAccessLayer.Repository.Implement
             {
                 users = await _context.Users
                 .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE
-                            && u.Position == position
+                            && u.PositionId == positionId
                             && (u.Name.ToLower().Contains(keyword) || u.Email.ToLower().Contains(keyword)))
+                .Include(u => u.Position)
                 .OrderByDescending(u => u.CreatedAt)
                 .ToListAsync();
             }
             return users;
         }
 
-        public async Task<List<User>> GetTrainerList(string keyword, int? position)
+        public async Task<List<User>> GetTrainerList(string keyword, int? positionId)
         {
             List<User> users = new();
-            if (keyword == null && position == null)
+            if (keyword == null && positionId == null)
             {
                 users = await _context.Users
                     .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER)
+                    .Include(u => u.Position)
                     .OrderByDescending(u => u.CreatedAt)
                     .ToListAsync();
             }
@@ -118,16 +127,18 @@ namespace DataAccessLayer.Repository.Implement
             {
                 users = await _context.Users
                     .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER
-                         && u.Position == position)
+                         && u.PositionId == positionId)
+                    .Include(u => u.Position)
                     .OrderByDescending(u => u.CreatedAt)
                     .ToListAsync();
             }
-            else if (position == null)
+            else if (positionId == null)
             {
                 keyword = keyword.ToLower();
                 users = await _context.Users
                     .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER
                          && (u.Name.ToLower().Contains(keyword) || u.Email.ToLower().Contains(keyword)))
+                    .Include(u => u.Position)
                     .OrderByDescending(u => u.CreatedAt)
                     .ToListAsync();
             }
@@ -136,8 +147,9 @@ namespace DataAccessLayer.Repository.Implement
                 keyword = keyword.ToLower();
                 users = await _context.Users
                     .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER
-                          && u.Position == position
+                          && u.PositionId == positionId
                           && (u.Name.ToLower().Contains(keyword) || u.Email.ToLower().Contains(keyword)))
+                    .Include(u => u.Position)
                     .OrderByDescending(u => u.CreatedAt)
                     .ToListAsync();
             }
@@ -148,6 +160,7 @@ namespace DataAccessLayer.Repository.Implement
         {
             List<User> users = await _context.Users
                 .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE && u.UserReferenceId==id)
+                .Include(u => u.Position)
                 .ToListAsync();
             return users;
         }
