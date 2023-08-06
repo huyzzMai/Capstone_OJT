@@ -53,5 +53,7 @@ namespace DataAccessLayer.Base
         public IUserCriteriaRepository UserCriteriaRepository => new UserCriteriaRepository(_context, this);
 
         public IAttendanceRepository AttendanceRepository => new AttendanceRepository(_context, this);
+
+        public IPositionRepository PositionRepository => new PositionRepository(_context, this);    
     }
 }

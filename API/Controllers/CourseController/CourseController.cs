@@ -148,7 +148,7 @@ namespace API.Controllers.CourseController
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetListCourse([FromQuery] PagingRequestModel paging, string sortField, string sortOrder, string searchTerm, string filterSkill, int? filterPosition, int? filterStatus)
+        public async Task<IActionResult> GetListCourse([FromQuery] PagingRequestModel paging, string sortField, string sortOrder, string searchTerm, int? filterSkill, int? filterPosition, int? filterStatus)
         {
             try
             {

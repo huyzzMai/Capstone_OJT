@@ -8,8 +8,8 @@ namespace BusinessLayer.Models.ResponseModel.CourseResponse
 {
     public class CoursePositionResponse
     {
-        public int Id { get; set; }
-        public int Position { get; set; }
+        public int? PositionId { get; set; }
+        public string PositionName { get; set; }
         public bool? IsCompulsory { get; set; }
     }
 }

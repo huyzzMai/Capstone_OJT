@@ -38,5 +38,7 @@ namespace DataAccessLayer.Interface
         IUserCriteriaRepository UserCriteriaRepository { get; } 
 
         IAttendanceRepository AttendanceRepository { get; }
+
+        IPositionRepository PositionRepository { get; }
     }
 }

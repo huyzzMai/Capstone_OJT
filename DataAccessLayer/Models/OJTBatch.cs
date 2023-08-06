@@ -33,6 +33,12 @@ namespace DataAccessLayer.Models
         [ForeignKey("UniversityId")]
         public University University { get; set; }
 
+        public int? TemplateId { get; set; }
+        [ForeignKey("TemplateId")]
+        public Template Template { get; set; }
+
         public virtual ICollection<User> Trainees { get; set; }
+
+        public virtual ICollection<CourseBatch> CourseBatches { get; set; }
     }
 }
