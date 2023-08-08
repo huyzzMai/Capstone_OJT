@@ -12,5 +12,7 @@ namespace BusinessLayer.Models.ResponseModel.PositionResponse
 
         public string Name { get; set; }
 
+        public int? Status { get; set; }
+
     }
 }
