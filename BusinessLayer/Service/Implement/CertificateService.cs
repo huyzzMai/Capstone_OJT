@@ -40,7 +40,7 @@ namespace BusinessLayer.Service.Implement
                 CertificateResponse res = new()
                 {
                     CourseName = certificate.Course.Name,
-                    UserName = certificate.User.Name,
+                    UserName = certificate.User.FirstName,
                     EnrollDate = certificate.EnrollDate ?? default,
                     SubmitDate = certificate.SubmitDate ?? default,    
                     LinkCertificate = certificate.Link,  
@@ -71,7 +71,7 @@ namespace BusinessLayer.Service.Implement
                 CertificateResponse res = new()
                 {
                     CourseName = certificate.Course.Name,
-                    UserName = certificate.User.Name,
+                    UserName = certificate.User.FirstName,
                     EnrollDate = certificate.EnrollDate ?? default,
                     SubmitDate = certificate.SubmitDate ?? default,
                     LinkCertificate = certificate.Link,
@@ -96,7 +96,7 @@ namespace BusinessLayer.Service.Implement
                         return new CertificateResponse()
                         {
                             CourseName = item.Course.Name,
-                            UserName = item.User.Name,
+                            UserName = item.User.FirstName,
                             EnrollDate = item.EnrollDate ?? default,
                             SubmitDate = item.SubmitDate ?? default,
                             LinkCertificate = item.Link,
@@ -226,7 +226,7 @@ namespace BusinessLayer.Service.Implement
                 cer.SubmitDate = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.CertificateRepository.Update(cer);
                 await _notificationService.CreateNotificaion(user.UserReferenceId ??default, "Certificate submit",
-                    $"Trainne '{user.Name}' has submit certificate. Please evaluate", CommonEnums.NOTIFICATION_TYPE.CREATE);
+                    $"Trainee '{user.FirstName}' has submit certificate. Please evaluate", CommonEnums.NOTIFICATION_TYPE.CREATE);
 
             }
             catch (Exception e)

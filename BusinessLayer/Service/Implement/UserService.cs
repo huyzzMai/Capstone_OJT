@@ -161,7 +161,7 @@ namespace BusinessLayer.Service.Implement
                 await _unitOfWork.UserRepository.Update(u);
 
                 var sender = new MailSender();
-                sender.Send(email, u.Name, r);
+                sender.Send(email, u.FirstName, r);
             }catch(Exception ex)
             {
                 throw new Exception(ex.Message);
@@ -363,7 +363,8 @@ namespace BusinessLayer.Service.Implement
 
                 PersonalUserResponse result = new()
                 {
-                    FullName = user.Name,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,   
                     Email = user.Email,
                     Address = user.Address,
                     AvatarURL = user.AvatarURL,
@@ -371,8 +372,12 @@ namespace BusinessLayer.Service.Implement
                     Gender = user.Gender ?? default(int),
                     PhoneNumber = user.PhoneNumber,
                     RollNumber = user.RollNumber,
-                    PositionName = user.Position.Name,
                 };
+
+                if (user.Position != null)
+                {
+                    result.PositionName = user.Position.Name;
+                }
 
                 var listSkill = new List<PersonalUserResponse.PersonalSkillResponse>();
 
@@ -407,7 +412,8 @@ namespace BusinessLayer.Service.Implement
                 UserCommonResponse usercommon = new UserCommonResponse()
                 {
                     Id = user.Id,
-                    Name = user.Name,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
                     Email = user.Email,
                     Address = user.Address,
                     AvatarURL = user.AvatarURL,
@@ -441,7 +447,8 @@ namespace BusinessLayer.Service.Implement
                         return new TrainerResponse()
                         {
                             Id = user.Id,
-                            FullName = user.Name,
+                            FirstName = user.FirstName,
+                            LastName = user.LastName,
                             Email = user.Email,
                             Gender = user.Gender ?? default(int),
                             AvatarURL = user.AvatarURL,
@@ -479,7 +486,8 @@ namespace BusinessLayer.Service.Implement
                 TrainerResponse res = new()
                 {
                     Id = trainer.Id,
-                    FullName = trainer.Name,
+                    FirstName = trainer.FirstName,
+                    LastName = trainer.LastName,
                     Email = trainer.Email,
                     Gender = trainer.Gender ?? default(int),
                     AvatarURL = trainer.AvatarURL,
@@ -503,7 +511,8 @@ namespace BusinessLayer.Service.Implement
                     return new TraineeResponse()
                     {
                         Id = user.Id,
-                        FullName = user.Name,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
                         Email = user.Email,
                         Gender = user.Gender ?? default(int),
                         AvatarURL = user.AvatarURL,
@@ -537,7 +546,8 @@ namespace BusinessLayer.Service.Implement
                     return new TraineeResponse()
                     {
                         Id = user.Id,
-                        FullName = user.Name,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
                         Email = user.Email,
                         Gender = user.Gender ?? default(int),
                         AvatarURL = user.AvatarURL,
@@ -572,8 +582,9 @@ namespace BusinessLayer.Service.Implement
                     var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
                     TraineeResponse res = new()
                     {
-                        Id =trainee.Id, 
-                        FullName = trainee.Name,    
+                        Id =trainee.Id,
+                        FirstName = trainee.FirstName,
+                        LastName = trainee.LastName,
                         Email = trainee.Email,  
                         AvatarURL = trainee.AvatarURL,  
                         Gender = trainee.Gender ?? default(int),
@@ -594,7 +605,8 @@ namespace BusinessLayer.Service.Implement
                     TraineeResponse res = new()
                     {
                         Id = trainee.Id,
-                        FullName = trainee.Name,
+                        FirstName = trainee.FirstName,
+                        LastName = trainee.LastName,
                         Email = trainee.Email,
                         AvatarURL = trainee.AvatarURL,
                         Gender = trainee.Gender ?? default(int),
@@ -655,7 +667,8 @@ namespace BusinessLayer.Service.Implement
                 User user = new User()
                 {
                     Role = request.Role,
-                    Name = request.FullName,
+                    FirstName = request.FirstName,  
+                    LastName = request.LastName,
                     Email = request.Email,
                     Birthday = request.Birthday,
                     PhoneNumber = request.PhoneNumber,
@@ -670,6 +683,14 @@ namespace BusinessLayer.Service.Implement
                     CreatedAt = DateTime.UtcNow.AddHours(7),
                     Status = CommonEnums.USER_STATUS.ACTIVE
                 };
+
+                if (user.Role == CommonEnums.ROLE.TRAINEE || user.Role == CommonEnums.ROLE.TRAINER)
+                {
+                    if (user.PositionId == null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Trainee or Trainer must have a Position!");
+                    }
+                }
                 
                 if (request.CreateSkills != null) 
                 {
@@ -696,7 +717,7 @@ namespace BusinessLayer.Service.Implement
                 await _unitOfWork.UserRepository.Add(user);
 
                 var sender = new MailSender();
-                sender.SendMailCreateAccount(user.Email, user.Name, user.Email, pwd);
+                sender.SendMailCreateAccount(user.Email, user.FirstName, user.Email, pwd);
             }
             catch (Exception ex)
             {
@@ -730,9 +751,14 @@ namespace BusinessLayer.Service.Implement
             
             #endregion
 
-            if (model.FullName != null)
+            if (model.FirstName != null)
             {
-                u.Name = model.FullName;
+                u.FirstName = model.FirstName;
+            }
+
+            if (model.LastName != null)
+            {
+                u.LastName = model.LastName;
             }
 
             if (model.Birthday != null)
@@ -771,7 +797,8 @@ namespace BusinessLayer.Service.Implement
                 searchTerm = searchTerm.ToLower();
 
                 query = query.Where(c =>
-                    (c.Name != null && c.Name.ToLower().Contains(searchTerm)) ||
+                    (c.FirstName != null && c.FirstName.ToLower().Contains(searchTerm)) ||
+                    (c.LastName != null && c.LastName.ToLower().Contains(searchTerm)) ||
                     (c.Address != null && c.Address.ToLower().Contains(searchTerm)) ||
                    (c.Email != null && c.Email.ToLower().Contains(searchTerm)) ||
                    (c.RollNumber != null && c.RollNumber.ToLower().Contains(searchTerm))
@@ -804,7 +831,8 @@ namespace BusinessLayer.Service.Implement
                     return new UserListResponse()
                     {
                         Id = user.Id,
-                        FullName = user.Name,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
                         Address = user.Address,
                         AvatarURL= user.AvatarURL,
                         Birthday = DateTimeService.ConvertToDateString(user.Birthday),
@@ -848,7 +876,8 @@ namespace BusinessLayer.Service.Implement
                     Email = user.Email,
                     Address = user.Address,
                     Birthday = DateTimeService.ConvertToDateString(user.Birthday),
-                    FullName=user.Name,
+                    FirstName=user.FirstName,
+                    LastName =user.LastName,    
                     Gender= user.Gender,
                     PhoneNumber= user.PhoneNumber,
                     AvatarUrl= user.AvatarURL,

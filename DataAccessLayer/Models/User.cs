@@ -17,7 +17,10 @@ namespace DataAccessLayer.Models
         public int Id { get; set; }
 
         [Column(TypeName = "nvarchar(100)")]
-        public string Name { get; set; }
+        public string FirstName { get; set; }
+
+        [Column(TypeName = "nvarchar(100)")]
+        public string LastName { get; set; }
 
         [Column(TypeName = "nvarchar(100)")]
         public string Email { get; set; }
@@ -40,6 +43,9 @@ namespace DataAccessLayer.Models
 
         [Column(TypeName = "nvarchar(500)")]
         public string AvatarURL { get; set; }
+
+        [Column(TypeName = "nvarchar(20)")]
+        public string StudentCode { get; set; }
 
         //public int? Position { get; set; }
         //Relation with Position
