@@ -139,7 +139,8 @@ namespace BusinessLayer.Service.Implement
                     return new ListPostionResponse()
                     {
                         Id = c.Id,
-                        Name = c.Name
+                        Name = c.Name,
+                        Status=c.Status                        
                     };
                 }).ToList();
                 int totalItem = listresponse.Count;
