@@ -409,7 +409,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var c = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId, "CoursePositions", "CourseSkills");
+                var c = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId, "CoursePositions", "CourseSkills","Certificates");
                 if (c == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Course not found");
@@ -423,6 +423,8 @@ namespace BusinessLayer.Service.Implement
                     Name = c.Name,
                     PlatformName = c.PlatformName,
                     Status = c.Status,
+                    TotalEnrollment = c.Certificates.Count,
+                    TotalActiveEnrollment = c.Certificates.Where(c => c.Status != CommonEnums.CERTIFICATE_STATUS.DELETED).Count(),
                     CreatedAt = DateTimeService.ConvertToDateString(c.CreatedAt),
                     UpdatedAt = DateTimeService.ConvertToDateString(c.UpdatedAt),
                     CoursePositions = c.CoursePositions.Select(cp =>
