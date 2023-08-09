@@ -122,7 +122,7 @@ namespace BusinessLayer.Service.Implement
             try
             {
                 var list = await _unitOfWork.UniversityRepository.Get(c => c.IsDeleted == false, "OJTBatches");
-                var listuser = await _unitOfWork.UserRepository.Get(c => c.Status != CommonEnums.USER_STATUS.DELETED);
+                var listuser = await _unitOfWork.UserRepository.Get();
                 if (list == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Empty list");
@@ -174,14 +174,14 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var uni = await _unitOfWork.UniversityRepository.GetFirst(c => c.Id == universityId && c.Status != CommonEnums.UNIVERSITY_STATUS.DELETED);
+                var uni = await _unitOfWork.UniversityRepository.GetFirst(c => c.Id == universityId);
                 if (uni == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "University not found");
                 }
                 if (uni.Name.ToLower() != request.Name.ToLower())
                 {
-                    var ok = await _unitOfWork.UniversityRepository.Get(c => c.Status != CommonEnums.UNIVERSITY_STATUS.DELETED);
+                    var ok = await _unitOfWork.UniversityRepository.Get();
                     var check = ok.Any(c => c.Name.ToLower() == request.Name.ToLower());
                     if (check)
                     {
@@ -210,7 +210,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var uni = await _unitOfWork.UniversityRepository.GetFirst(c => c.Id == universityId && c.Status != CommonEnums.UNIVERSITY_STATUS.DELETED, "OJTBatches");
+                var uni = await _unitOfWork.UniversityRepository.GetFirst(c => c.Id == universityId, "OJTBatches");
                 if (uni == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "University not found");
@@ -220,7 +220,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "University still have some active batches");
                 }
-                uni.Status = CommonEnums.UNIVERSITY_STATUS.DELETED;
+                uni.Status = CommonEnums.UNIVERSITY_STATUS.INACTIVE;
                 await _unitOfWork.UniversityRepository.Update(uni);
             }
             catch (ApiException ex)
@@ -237,7 +237,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var ok = await _unitOfWork.UniversityRepository.Get(c => c.Status != CommonEnums.UNIVERSITY_STATUS.DELETED);
+                var ok = await _unitOfWork.UniversityRepository.Get();
                 var check = ok.Any(c => c.Name.ToLower() == request.Name.ToLower());
                 if (check)
                 {
