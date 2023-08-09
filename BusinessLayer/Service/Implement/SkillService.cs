@@ -63,7 +63,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId && c.Status != CommonEnums.SKILL_STATUS.DELETED, "CourseSkills", "UserSkills");
+                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId, "CourseSkills", "UserSkills");
                 if (skill == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Skill not found");
@@ -78,7 +78,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! There are some active user which use this skill");
                 }
-                skill.Status = CommonEnums.SKILL_STATUS.DELETED;
+                skill.Status = CommonEnums.SKILL_STATUS.INACTIVE;
                 await _unitOfWork.SkillRepository.Update(skill);
             }
             catch (ApiException ex)
@@ -95,7 +95,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId && c.Status != CommonEnums.SKILL_STATUS.DELETED);
+                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId);
                 if (skill == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Skill not found");
@@ -140,7 +140,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var listskill = await _unitOfWork.SkillRepository.Get(c => c.Status != CommonEnums.SKILL_STATUS.DELETED);
+                var listskill = await _unitOfWork.SkillRepository.Get();
                 if (!string.IsNullOrEmpty(searchTerm)|| filterStatus != null)
                 {
                     listskill = SearchSkills(searchTerm, filterStatus, listskill.ToList());

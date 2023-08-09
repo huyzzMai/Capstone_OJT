@@ -29,7 +29,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId && c.Status != CommonEnums.TEMPLATE_STATUS.DELETED);
+                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId);
                 if (temp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template not found");
@@ -127,12 +127,12 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId && c.Status != CommonEnums.TEMPLATE_STATUS.DELETED);
+                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId);
                 if (temp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template not found");
                 }
-                temp.Status = CommonEnums.TEMPLATE_STATUS.DELETED;
+                temp.Status = CommonEnums.TEMPLATE_STATUS.INACTIVE;
                 await _unitOfWork.TemplateRepository.Update(temp);
             }
             catch (ApiException ex)
@@ -149,7 +149,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId && c.Status != CommonEnums.TEMPLATE_STATUS.DELETED, "TemplateHeaders");
+                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId, "TemplateHeaders");
                 if (temp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Template not found");
@@ -212,7 +212,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var list = await _unitOfWork.TemplateRepository.Get(c => c.Status != CommonEnums.TEMPLATE_STATUS.DELETED);
+                var list = await _unitOfWork.TemplateRepository.Get();
                 if (list == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Template list not found");
@@ -261,7 +261,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId && c.Status != CommonEnums.TEMPLATE_STATUS.DELETED, "TemplateHeaders");
+                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId, "TemplateHeaders");
                 if (temp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Template not found");
@@ -287,7 +287,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var temp = await _unitOfWork.TemplateHeaderRepository.GetFirst(c => c.Id == templateId && c.Status != CommonEnums.TEMPLATEHEADER_STATUS.DELETED);
+                var temp = await _unitOfWork.TemplateHeaderRepository.GetFirst(c => c.Id == templateId);
                 if (temp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template not found");

@@ -62,26 +62,23 @@ namespace DataAccessLayer.Commons
 
         public class TEMPLATE_STATUS
         {
-            public const int DELETED = 1;
             public const int ACTIVE = 2;
             public const int INACTIVE = 3;
+            public const int IN_USE = 4;
         }
         public class TEMPLATEHEADER_STATUS
         {
-            public const int DELETED = 1;
             public const int ACTIVE = 2;
             public const int INACTIVE = 3;
         }
         public class COURSE_STATUS
         {
-            public const int DELETED = 1;
             public const int ACTIVE = 2;
             public const int INACTIVE = 3;
         }
 
         public class SKILL_STATUS
         {
-            public const int DELETED = 1;
             public const int ACTIVE = 2;
             public const int INACTIVE = 3;
         }
@@ -106,7 +103,6 @@ namespace DataAccessLayer.Commons
 
         public class POSITION_STATUS
         {
-            public const int DELETED = 1;
             public const int ACTIVE = 2;
             public const int INACTIVE = 3;
         }
@@ -126,7 +122,6 @@ namespace DataAccessLayer.Commons
         }
         public class UNIVERSITY_STATUS
         {
-            public const int DELETED = 1;
             public const int ACTIVE = 2;
             public const int INACTIVE = 3;
         }

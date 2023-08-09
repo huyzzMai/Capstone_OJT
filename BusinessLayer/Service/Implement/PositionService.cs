@@ -62,12 +62,12 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var position = await _unitOfWork.PositionRepository.GetFirst(c => c.Id == id && c.Status != CommonEnums.POSITION_STATUS.DELETED, "CoursePositions", "Users");
+                var position = await _unitOfWork.PositionRepository.GetFirst(c => c.Id == id, "CoursePositions", "Users");
                 if (position == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Position not found");
                 }                
-                position.Status = CommonEnums.POSITION_STATUS.DELETED;
+                position.Status = CommonEnums.POSITION_STATUS.ACTIVE;
                 await _unitOfWork.PositionRepository.Update(position);
             }
             catch (ApiException ex)
@@ -84,7 +84,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var position = await _unitOfWork.PositionRepository.GetFirst(c => c.Id == id && c.Status != CommonEnums.POSITION_STATUS.DELETED);
+                var position = await _unitOfWork.PositionRepository.GetFirst(c => c.Id == id);
                 if (position == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Position not found");
@@ -129,7 +129,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var listposition = await _unitOfWork.PositionRepository.Get(c => c.Status != CommonEnums.POSITION_STATUS.DELETED);
+                var listposition = await _unitOfWork.PositionRepository.Get();
                 if (!string.IsNullOrEmpty(searchTerm) || filterStatus != null)
                 {
                     listposition = SearchPositions(searchTerm, filterStatus, listposition.ToList());
