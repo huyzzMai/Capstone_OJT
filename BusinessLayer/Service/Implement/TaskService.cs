@@ -6,6 +6,7 @@ using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -232,6 +233,40 @@ namespace BusinessLayer.Service.Implement
 
                 task.Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.FAILED;
                 await _unitOfWork.TaskRepository.Update(task);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<TaskCounterResponse> CountTaskOfTrainee(int traineeId)
+        {
+            try
+            {
+                var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
+                if (user == null)
+                {
+                    throw new Exception("User not found!");
+                }
+                var trelloUserId = user.TrelloId;
+                var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+
+                var cards = await client.GetCardsForMemberAsync(trelloUserId);
+                int totalTask = cards.Count();  
+                
+                var doneTasks = await _unitOfWork.TaskRepository.GetListTaskAccomplishedDoneOfTrainee(traineeId);
+                int totalDoneTask = doneTasks.Count();  
+
+                int totalOverdueTask = totalTask - totalDoneTask;
+
+                TaskCounterResponse result = new()
+                {
+                    TotalTask = totalTask,
+                    TaskComplete = totalDoneTask,
+                    TaskOverdue = totalOverdueTask
+                };
+                return result;
             }
             catch (Exception ex)
             {

@@ -19,5 +19,7 @@ namespace BusinessLayer.Service.Interface
         Task AcceptTraineeTask(int trainerId, string taskId);
 
         Task RejectTraineeTask(int trainerId, string taskId);
+
+        Task<TaskCounterResponse> CountTaskOfTrainee(int traineeId);
     }
 }
