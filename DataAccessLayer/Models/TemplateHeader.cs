@@ -41,5 +41,9 @@ namespace DataAccessLayer.Models
         [ForeignKey("TemplateId")]
         public Template Template { get; set; }
 
+        // Relation with Formula
+        public int? FormulaId { get; set; }
+        [ForeignKey("FormulaId")]
+        public Formula Formula { get; set; }
     }
 }

@@ -47,6 +47,6 @@ namespace DataAccessLayer.Models
         public virtual ICollection<Certificate> Certificates { get; set; }
 
         // Relation with Batch 
-        public virtual ICollection<CourseBatch> CourseBatches { get; set; } 
+        //public virtual ICollection<CourseBatch> CourseBatches { get; set; } 
     }
 }

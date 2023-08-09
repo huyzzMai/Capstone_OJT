@@ -39,6 +39,6 @@ namespace DataAccessLayer.Models
 
         public virtual ICollection<User> Trainees { get; set; }
 
-        public virtual ICollection<CourseBatch> CourseBatches { get; set; }
+        //public virtual ICollection<CourseBatch> CourseBatches { get; set; }
     }
 }
