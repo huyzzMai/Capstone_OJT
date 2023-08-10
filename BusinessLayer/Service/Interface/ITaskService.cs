@@ -14,12 +14,14 @@ namespace BusinessLayer.Service.Interface
 
         Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskAccomplished(int userId, PagingRequestModel paging);
 
-        Task CreateFinishTask(int userId, string taskId);
+        Task CreateFinishTask(string taskId);
 
         Task AcceptTraineeTask(int trainerId, string taskId);
 
         Task RejectTraineeTask(int trainerId, string taskId);
 
         Task<TaskCounterResponse> CountTaskOfTrainee(int traineeId);
+
+        Task CreateBoardWebhook(int userId);
     }
 }

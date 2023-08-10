@@ -40,7 +40,7 @@ namespace DataAccessLayer.Commons
 
         public class TASK_MESSAGE
         {
-            public const string UPDATE_FINISH = "Update Task Finished for Trainee";
+            public const string UPDATE_FINISH = "Trainee has checked finish a Task on Trello. Please process it.";
             public const string UPDATE_PROCESS = "Update Task Processing for Trainer";
         }
 

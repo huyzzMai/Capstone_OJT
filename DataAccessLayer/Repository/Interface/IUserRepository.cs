@@ -23,6 +23,8 @@ namespace DataAccessLayer.Repository.Interface
 
         Task<User> GetUserByRefTokenAndStatusActive(string token); 
 
+        Task<User> GetUserByTrelloIdAndStatusActive(string id);
+
         Task<User> GetUserByIdWithSkillList(int id);
 
         Task<List<User>> GetTrainerList(string keyword, int? position);

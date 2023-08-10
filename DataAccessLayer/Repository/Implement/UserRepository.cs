@@ -68,6 +68,12 @@ namespace DataAccessLayer.Repository.Implement
             return user;
         }
 
+        public async Task<User> GetUserByTrelloIdAndStatusActive(string id)
+        {
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.TrelloId == id && u.Status == CommonEnums.USER_STATUS.ACTIVE);
+            return user;
+        }
+
         public async Task<User> GetUserByIdWithSkillList(int id)
         {
             User user = await _context.Users

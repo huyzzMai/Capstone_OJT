@@ -696,7 +696,7 @@ namespace BusinessLayer.Service.Implement
                     }
                 }
                 
-                if (request.CreateSkills != null) 
+                if (request.CreateSkills != null && request.CreateSkills.Count != 0) 
                 {
                     ICollection<UserSkill> re = new List<UserSkill>();
                     foreach (var skillRequest in request.CreateSkills)
