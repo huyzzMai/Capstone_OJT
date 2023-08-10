@@ -14,7 +14,7 @@ namespace BusinessLayer.Models.ResponseModel.CriteriaResponse
 
         public string LastName { get; set; }
 
-        public string StudentCode { get; set; }
+        public string RollNumber { get; set; }
 
         public List<CriteriaResponse> Criterias { get; set; } 
 

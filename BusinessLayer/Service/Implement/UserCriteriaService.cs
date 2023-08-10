@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Models.RequestModel.CriteriaRequest;
 using BusinessLayer.Models.ResponseModel.CriteriaResponse;
+using BusinessLayer.Models.ResponseModel.TaskResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using TrelloDotNet;
 
 namespace BusinessLayer.Service.Implement
 {
@@ -31,8 +33,9 @@ namespace BusinessLayer.Service.Implement
             {
                 return null;
             }
+            var counting = CountTaskOfTrainee(userId).Result;
             string formular = templateheader.Formula.Calculation;
-            OperandsHandler handler = new OperandsHandler(userId, _unitOfWork, _configuration);
+            OperandsHandler handler = new OperandsHandler(userId, _unitOfWork, _configuration,counting);
             var methodNames = Regex.Matches(formular, @"\(([^)]*)\)").Cast<Match>().Select(match => match.Groups[1].Value).ToList();
             foreach (var methodName in methodNames)
             {
@@ -64,7 +67,7 @@ namespace BusinessLayer.Service.Implement
                         UserId = user.Id,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
-                        StudentCode = user.StudentCode,
+                        RollNumber = user.RollNumber,
                         Criterias = user.UserCriterias.OrderBy(c => c.TemplateHeader.Order).Select(c =>
                         new CriteriaResponse()
                         {
@@ -87,7 +90,39 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
+        public async Task<TaskCounterResponse> CountTaskOfTrainee(int traineeId)
+        {
+            try
+            {
+                var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
+                if (user == null)
+                {
+                    throw new Exception("User not found!");
+                }
+                var trelloUserId = user.TrelloId;
+                var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
 
+                var cards = await client.GetCardsForMemberAsync(trelloUserId);
+                int totalTask = cards.Count();
+
+                var doneTasks = await _unitOfWork.TaskRepository.GetListTaskAccomplishedDoneOfTrainee(traineeId);
+                int totalDoneTask = doneTasks.Count();
+
+                int totalOverdueTask = totalTask - totalDoneTask;
+
+                TaskCounterResponse result = new()
+                {
+                    TotalTask = totalTask,
+                    TaskComplete = totalDoneTask,
+                    TaskOverdue = totalOverdueTask
+                };
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
         public async Task UpdatePoints(List<UpdateCriteriaRequest> requests)
         {
             try

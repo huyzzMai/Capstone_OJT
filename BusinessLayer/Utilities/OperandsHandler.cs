@@ -20,89 +20,94 @@ namespace BusinessLayer.Utilities
         private readonly int userId;
         private readonly IUnitOfWork _unitOfWork;
         public IConfiguration _configuration;
-        public OperandsHandler(int userId, IUnitOfWork unitOfWork, IConfiguration configuration)
+        private readonly TaskCounterResponse _counter;
+        public OperandsHandler(int userId, IUnitOfWork unitOfWork, IConfiguration configuration,TaskCounterResponse counter)
         {
             this.userId = userId;
             _unitOfWork = unitOfWork; 
             _configuration = configuration;
+            _counter= counter;
         }
         public int TotalTask()
         {
-            try
-            {
-                var user =  _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId).Result;
-                if (user == null)
-                {
-                    throw new Exception("User not found!");
-                }
-                var trelloUserId = user.TrelloId;
+            //try
+            //{
+            //    var user =  _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId).Result;
+            //    if (user == null)
+            //    {
+            //        throw new Exception("User not found!");
+            //    }
+            //    var trelloUserId = user.TrelloId;
 
-                var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+            //    var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
 
-                var cards =  client.GetCardsForMemberAsync(trelloUserId).Result.ToList();
+            //    var cards =  client.GetCardsForMemberAsync(trelloUserId).Result.ToList();
 
-                int totalTask = cards.Count();
-                
-                return totalTask;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            //    int totalTask = cards.Count();
+
+            //    return totalTask;
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new Exception(ex.Message);
+            //}
+            return _counter.TotalTask;
         }
         public int TaskOverdue()
         {
-            try
-            {
-                var user =  _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId).Result;
-                if (user == null)
-                {
-                    throw new Exception("User not found!");
-                }
-                var trelloUserId = user.TrelloId;
-                var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+            //try
+            //{
+            //    var user =  _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId).Result;
+            //    if (user == null)
+            //    {
+            //        throw new Exception("User not found!");
+            //    }
+            //    var trelloUserId = user.TrelloId;
+            //    var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
 
-                var cards = client.GetCardsForMemberAsync(trelloUserId).Result.ToList();
-                int totalTask = cards.Count();
+            //    var cards = client.GetCardsForMemberAsync(trelloUserId).Result.ToList();
+            //    int totalTask = cards.Count();
 
-                var doneTasks = _unitOfWork.TaskRepository.GetListTaskAccomplishedDoneOfTrainee(userId).Result.ToList();
+            //    var doneTasks = _unitOfWork.TaskRepository.GetListTaskAccomplishedDoneOfTrainee(userId).Result.ToList();
 
-                int totalDoneTask = doneTasks.Count();
+            //    int totalDoneTask = doneTasks.Count();
 
-                int totalOverdueTask = totalTask - totalDoneTask;
-               
-                return totalOverdueTask;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            //    int totalOverdueTask = totalTask - totalDoneTask;
+
+            //    return totalOverdueTask;
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new Exception(ex.Message);
+            //}
+            return _counter.TaskOverdue;
         }
         public int TaskComplete()
         {
-            try
-            {
-                var user = _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId).Result;
-                if (user == null)
-                {
-                    throw new Exception("User not found!");
-                }
-                var trelloUserId = user.TrelloId;
-                var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+            //try
+            //{
+            //    var user = _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId).Result;
+            //    if (user == null)
+            //    {
+            //        throw new Exception("User not found!");
+            //    }
+            //    var trelloUserId = user.TrelloId;
+            //    var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
 
-                var cards = client.GetCardsForMemberAsync(trelloUserId).Result.ToList();
-                int totalTask = cards.Count();
+            //    var cards = client.GetCardsForMemberAsync(trelloUserId).Result.ToList();
+            //    int totalTask = cards.Count();
 
-                var doneTasks = _unitOfWork.TaskRepository.GetListTaskAccomplishedDoneOfTrainee(userId).Result.ToList();
+            //    var doneTasks = _unitOfWork.TaskRepository.GetListTaskAccomplishedDoneOfTrainee(userId).Result.ToList();
 
-                int totalDoneTask = doneTasks.Count();
-               
-                return totalDoneTask;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            //    int totalDoneTask = doneTasks.Count();
+
+            //    return totalDoneTask;
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new Exception(ex.Message);
+            //}
+            return _counter.TaskOverdue;
         }
         public int TotalAttendanceDay()
         {
@@ -121,7 +126,6 @@ namespace BusinessLayer.Utilities
             }
             int workingDays = 0;
             DateTime currentDate = startTime.Value.Date;
-
             while (currentDate <= endTime.Value.Date)
             {
                 if (currentDate.DayOfWeek != DayOfWeek.Saturday && currentDate.DayOfWeek != DayOfWeek.Sunday)
