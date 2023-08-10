@@ -25,8 +25,12 @@ namespace BusinessLayer.Models.ResponseModel.CourseResponse
 
         public string ImageURL { get; set; }
 
-        public int? Status { get; set; }      
-        
+        public int? Status { get; set; }
+
+        public int TotalEnrollment { get; set; }
+
+        public int TotalActiveEnrollment { get; set; }
+
         public string CreatedAt { get; set; }
 
         public string UpdatedAt { get; set; }

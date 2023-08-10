@@ -11,5 +11,7 @@ namespace DataAccessLayer.Repository.Interface
         Task<List<TaskAccomplished>> GetListTaskAccomplishedOfTrainee(int userId);
 
         Task<TaskAccomplished> GastTaskByIdAndStatusPending(string taskId);
+
+        Task<List<TaskAccomplished>> GetListTaskAccomplishedDoneOfTrainee(int userId);
     }
 }

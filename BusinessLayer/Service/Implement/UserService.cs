@@ -820,7 +820,7 @@ namespace BusinessLayer.Service.Implement
 
         public async Task<BasePagingViewModel<UserListResponse>> GetUserList(PagingRequestModel paging, string searchTerm, int? role, int? filterStatus)
         {
-            var users = await _unitOfWork.UserRepository.Get(c=>c.Status != CommonEnums.USER_STATUS.DELETED);
+            var users = await _unitOfWork.UserRepository.Get();
             if (!string.IsNullOrEmpty(searchTerm) || role != null || filterStatus !=null)
             {
                 users = SearchUsers(searchTerm,role,filterStatus,users.ToList());
@@ -865,7 +865,7 @@ namespace BusinessLayer.Service.Implement
         {
            try
             {
-                var user = await _unitOfWork.UserRepository.GetFirst(c=>c.Status!=CommonEnums.USER_STATUS.DELETED && c.Id==id);
+                var user = await _unitOfWork.UserRepository.GetFirst(c=>c.Id==id);
                 if (user == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET,"User not found");

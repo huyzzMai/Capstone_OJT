@@ -34,5 +34,12 @@ namespace DataAccessLayer.Repository.Implement
             return task;
         }
 
+        public async Task<List<TaskAccomplished>> GetListTaskAccomplishedDoneOfTrainee(int userId)
+        {
+            var list = await _context.TaskAccomplisheds
+                       .Where(u => u.UserId == userId && u.Status == CommonEnums.ACCOMPLISHED_TASK_STATUS.DONE)
+                       .ToListAsync();
+            return list;
+        }
     }
 }

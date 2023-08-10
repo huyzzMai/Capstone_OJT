@@ -53,12 +53,12 @@ namespace BusinessLayer.Service.Implement
                         throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, $"Position with positionId '{positionId}' not found.");
                     }
                 }
-                var dupName = await _unitOfWork.CourseRepository.GetFirst(c => c.Name == request.Name && c.Status != CommonEnums.COURSE_STATUS.DELETED);
+                var dupName = await _unitOfWork.CourseRepository.GetFirst(c => c.Name == request.Name);
                 if (dupName != null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Name already in use");
                 }
-                var dupLink = await _unitOfWork.CourseRepository.GetFirst(c => c.Link == request.Link && c.Status != CommonEnums.COURSE_STATUS.DELETED);
+                var dupLink = await _unitOfWork.CourseRepository.GetFirst(c => c.Link == request.Link);
                 if (dupLink != null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Link already in use");
@@ -112,12 +112,12 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId && c.Status != CommonEnums.COURSE_STATUS.DELETED, "Certificates");
+                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId, "Certificates");
                 if (cour == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Course not found");
                 }
-                cour.Status = CommonEnums.COURSE_STATUS.DELETED;
+                cour.Status = CommonEnums.COURSE_STATUS.INACTIVE;
                 await _unitOfWork.CourseRepository.Update(cour);
                 var cercour = cour.Certificates.Where(c => c.Status != CommonEnums.CERTIFICATE_STATUS.DELETED);
                 foreach (var cert in cercour)
@@ -270,7 +270,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var listcour = await _unitOfWork.CourseRepository.Get(c => c.Status != CommonEnums.COURSE_STATUS.DELETED, "CoursePositions", "CourseSkills", "Certificates");
+                var listcour = await _unitOfWork.CourseRepository.Get(expression: null, "CoursePositions", "CourseSkills", "Certificates");
                 if (listcour == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
@@ -409,7 +409,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var c = await _unitOfWork.CourseRepository.GetFirst(c => c.Status != CommonEnums.COURSE_STATUS.DELETED && c.Id == courseId, "CoursePositions", "CourseSkills");
+                var c = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId, "CoursePositions", "CourseSkills","Certificates");
                 if (c == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Course not found");
@@ -423,6 +423,8 @@ namespace BusinessLayer.Service.Implement
                     Name = c.Name,
                     PlatformName = c.PlatformName,
                     Status = c.Status,
+                    TotalEnrollment = c.Certificates.Count,
+                    TotalActiveEnrollment = c.Certificates.Where(c => c.Status != CommonEnums.CERTIFICATE_STATUS.DELETED).Count(),
                     CreatedAt = DateTimeService.ConvertToDateString(c.CreatedAt),
                     UpdatedAt = DateTimeService.ConvertToDateString(c.UpdatedAt),
                     CoursePositions = c.CoursePositions.Select(cp =>
@@ -503,14 +505,14 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId && c.Status != CommonEnums.COURSE_STATUS.DELETED);
+                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId);
                 if (cour == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
                 }
                 if (request.Name.ToLower() != cour.Name.ToLower())
                 {
-                    var dupName = await _unitOfWork.CourseRepository.GetFirst(c => c.Name == request.Name && c.Status != CommonEnums.COURSE_STATUS.DELETED);
+                    var dupName = await _unitOfWork.CourseRepository.GetFirst(c => c.Name == request.Name);
                     if (dupName != null)
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Name already in use");
@@ -518,7 +520,7 @@ namespace BusinessLayer.Service.Implement
                 }
                 if (request.Link != cour.Link)
                 {
-                    var dupName = await _unitOfWork.CourseRepository.GetFirst(c => c.Link == request.Link && c.Status != CommonEnums.COURSE_STATUS.DELETED);
+                    var dupName = await _unitOfWork.CourseRepository.GetFirst(c => c.Link == request.Link);
                     if (dupName != null)
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Link already in use");
