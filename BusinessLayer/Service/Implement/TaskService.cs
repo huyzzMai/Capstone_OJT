@@ -29,6 +29,7 @@ namespace BusinessLayer.Service.Implement
             _configuration = configuration;
         }
 
+        
         public async Task<BasePagingViewModel<TraineeTaskResponse>> GetAllTaskOfTrainee(int userId, PagingRequestModel paging)
         {
             try

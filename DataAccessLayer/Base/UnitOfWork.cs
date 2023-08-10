@@ -13,6 +13,7 @@ namespace DataAccessLayer.Base
     public class UnitOfWork : IUnitOfWork
     {
         private readonly OJTDbContext _context;
+
         public UnitOfWork(OJTDbContext context)
         {
             _context = context;

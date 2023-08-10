@@ -21,12 +21,38 @@ namespace API.Controllers.TemplateController
     public class TemplateController : ControllerBase
     {
         private readonly ITemplateService _service;
+        private readonly ITemplateHeaderService _headerservice;
         private readonly IHubContext<SignalHub> _hubContext;
-        public TemplateController(ITemplateService service, IHubContext<SignalHub> hubContext)
+        public TemplateController(ITemplateService service,ITemplateHeaderService headerService ,IHubContext<SignalHub> hubContext)
         {
             _service = service;
+            _headerservice = headerService;
             _hubContext = hubContext;
         }
+
+        [Authorize]
+        [Route("template-header/criteriaheader")]
+        [HttpGet]
+        public async Task<IActionResult> GetListcriteriaheader(int templateId)
+        {
+            try
+            {
+
+                var list = await _headerservice.GetCriteriaTemplateHeader(templateId);
+                return Ok(list);
+
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetListTemplate([FromQuery] PagingRequestModel paging, string searchTerm, int? filterStatus)
