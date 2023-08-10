@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,15 @@ namespace DataAccessLayer.Repository.Implement
         public UserRepository(OJTDbContext context, IUnitOfWork unitOfWork) : base(context, unitOfWork)
         {
         }
-
+        public override async Task<IEnumerable<User>> Get(Expression<Func<User, bool>> expression = null, params string[] includeProperties)
+        {
+            var result = await base.Get(expression, includeProperties);
+            foreach (var item in result)
+            {
+                item.UserCriterias = _unitOfWork.UserCriteriaRepository.Get(c => c.UserId == item.Id, "TemplateHeader").Result.ToList();
+            }
+            return result;
+        }
         public async Task<User> GetUserByEmailAndStatusActive(string email)
         {
             User user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Status == CommonEnums.USER_STATUS.ACTIVE);
