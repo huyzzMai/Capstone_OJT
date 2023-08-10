@@ -3,6 +3,7 @@ using BusinessLayer.Models.RequestModel.AuthenticationRequest;
 using BusinessLayer.Models.RequestModel.UserRequest;
 using BusinessLayer.Models.ResponseModel;
 using BusinessLayer.Models.ResponseModel.AuthenticationResponse;
+using BusinessLayer.Models.ResponseModel.CriteriaResponse;
 using BusinessLayer.Models.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
@@ -17,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
@@ -25,7 +27,9 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
 //using static BusinessLayer.Models.ResponseModel.UserResponse.PersonalUserResponse;
 
 namespace BusinessLayer.Service.Implement
@@ -897,5 +901,6 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
+        
     }
 }

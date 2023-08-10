@@ -3,6 +3,7 @@ using BusinessLayer.Models.RequestModel.AuthenticationRequest;
 using BusinessLayer.Models.RequestModel.UserRequest;
 using BusinessLayer.Models.ResponseModel;
 using BusinessLayer.Models.ResponseModel.AuthenticationResponse;
+using BusinessLayer.Models.ResponseModel.CriteriaResponse;
 using BusinessLayer.Models.ResponseModel.UserResponse;
 using DataAccessLayer.Models;
 using System;
@@ -38,5 +39,6 @@ namespace BusinessLayer.Service.Interface
         Task UpdateUserInformation(int id, UpdateUserInformationRequest model);
 
         Task <UserDetailResponse> GetUserDetail(int id);
+       
     }
 }
