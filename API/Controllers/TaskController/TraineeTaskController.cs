@@ -16,6 +16,7 @@ using TrelloDotNet.Model.Webhook;
 using TrelloDotNet.Model;
 using TrelloDotNet;
 using Microsoft.Extensions.Configuration;
+using System.Drawing.Text;
 
 namespace API.Controllers.TaskController
 {
@@ -79,29 +80,29 @@ namespace API.Controllers.TaskController
             }
         }
 
-        [HttpPost("{taskId}")]
-        public async Task<IActionResult> UpdateFinishTask(string taskId)
-        {
-            try
-            {
-                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                await taskService.CreateFinishTask(userId, taskId);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TASK_MESSAGE.UPDATE_FINISH);
-                return StatusCode(StatusCodes.Status201Created, "Accomplish task successfully.");
-            }
-            catch (ApiException e)
-            {
-                return StatusCode(e.StatusCode, e.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    ex.Message);
-            }
-        }
+        //[HttpPost("{taskId}")]
+        //public async Task<IActionResult> UpdateFinishTask(string taskId)
+        //{
+        //    try
+        //    {
+        //        int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+        //        await taskService.CreateFinishTask(userId, taskId);
+        //        await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TASK_MESSAGE.UPDATE_FINISH);
+        //        return StatusCode(StatusCodes.Status201Created, "Accomplish task successfully.");
+        //    }
+        //    catch (ApiException e)
+        //    {
+        //        return StatusCode(e.StatusCode, e.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            ex.Message);
+        //    }
+        //}
 
         [HttpPost("webhook")]
-        public async Task<IActionResult> Run(HttpRequestData req)
+        public async Task<IActionResult> HandleWebhookOnDueTaskComplete(HttpRequestData req)
         {
             //var trelloClientHelper = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
             try
@@ -117,36 +118,28 @@ namespace API.Controllers.TaskController
 
                 var webhookDataReceiver = new TrelloDotNet.WebhookDataReceiver(trelloClient);
 
-                //Option 1: Use code to parse the event yourself
-                WebhookNotificationBoard webhookBoard = webhookDataReceiver.ConvertJsonToWebhookNotificationBoard(json); //Alternative you can get data from a list of a card if that is what you subscribed to in your Webhook
+                //you can subscribe to more curated events (Few but common events people need)
+                webhookDataReceiver.SmartEvents.OnDueCardIsMarkedAsComplete += OnDueCardIsMarkedAsComplete;
 
-                Board board = webhookBoard.Board; //Info on the source-board
-                WebhookAction action = webhookBoard.Action; //The Webhook-action (generic if webhook is Board, List or Card)
-                string actionType = action.Type; //The type of event (Example: 'UpdateCard' or 'AddLabelToCard')
-                WebhookActionData webhookActionData = action.Data; //Data about the event (aka what board, list, card, etc. was involved)
-                WebhookActionDisplay webhookActionDisplay = action.Display; //Display name of the Action (can sometime help better understand the event)
-                Member actionMemberCreator = action.MemberCreator; //The member who did the action
-
-                //Todo: Use above to react and do what you need to do
-
-                //--------------------------------------------------------------------------------------------------------------
-                //Option 2: Let the Webhook Receiver send you C# Event based on the incoming data
-
-                //You can subscribe to basic raw events (there are over 70 of these)
-                webhookDataReceiver.BasicEvents.OnUpdateCard += BasicEvents_OnUpdateCard;
-                webhookDataReceiver.BasicEvents.OnAddLabelToCard += BasicEvents_OnAddLabelToCard;
-
-                //Or you can subscribe to more curated events (Few but common events people need)
-                webhookDataReceiver.SmartEvents.OnCardMovedToNewList += SmartEvents_OnCardMovedToNewList;
-                webhookDataReceiver.SmartEvents.OnLabelAddedToCard += SmartEvents_OnLabelAddedToCard;
-
+                webhookDataReceiver.ProcessJsonIntoEvents(json);    
+                return Ok("Update task successfully!");
             }
-            catch (Exception e)
+            catch (ApiException e)
             {
-                //todo - deal with exceptions (error mail or the like) and potential retry
+                return StatusCode(e.StatusCode, e.Message);
             }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
 
-            return req.CreateResponse(HttpStatusCode.OK);//This is still OK as Trello should not see exception as the receiver 
+        private async void OnDueCardIsMarkedAsComplete(WebhookSmartEventDueMarkedAsComplete args)
+        {
+            var check = args.CardId;
+            await taskService.CreateFinishTask(args.CardId);
+            await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TASK_MESSAGE.UPDATE_FINISH);
         }
     }
 }

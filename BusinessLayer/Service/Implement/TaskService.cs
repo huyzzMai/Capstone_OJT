@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TrelloDotNet;
+using TrelloDotNet.Model.Webhook;
 
 namespace BusinessLayer.Service.Implement
 {
@@ -159,20 +160,59 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task CreateFinishTask(int userId, string taskId)
+        //public async Task CreateFinishTask(int userId, string taskId)
+        //{
+        //    try
+        //    {
+        //        var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId);
+        //        if (user == null)
+        //        {
+        //            throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
+        //        }
+        //        var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+        //        var card = await client.GetCardAsync(taskId);
+
+        //        card.DueComplete = true;
+        //        var updatedCard = await client.UpdateCardAsync(card);
+
+        //        TaskAccomplished ta = new()
+        //        {
+        //            Id = taskId,
+        //            Name = card.Name,
+        //            Description = card.Description,
+        //            StartDate = card.Start,
+        //            DueDate = card.Due,
+        //            AccomplishDate = DateTimeOffset.UtcNow.AddHours(7),
+        //            Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.PENDING,
+        //            UserId = userId
+        //        };
+
+        //        await _unitOfWork.TaskRepository.Add(ta);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
+
+        public async Task CreateFinishTask(string taskId)
         {
             try
             {
-                var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId);
-                if (user == null)
+                var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+                var card = await client.GetCardAsync(taskId);
+                var memberIds = card.MemberIds;
+                if(memberIds == null || memberIds.Count == 0)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "There is no user for this Task!");
+                }
+                var memId = memberIds.First();
+
+                var trainee = await _unitOfWork.UserRepository.GetUserByTrelloIdAndStatusActive(memId); 
+                if (trainee == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
                 }
-                var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
-                var card = await client.GetCardAsync(taskId);
-
-                card.DueComplete = true;
-                var updatedCard = await client.UpdateCardAsync(card);
 
                 TaskAccomplished ta = new()
                 {
@@ -183,7 +223,7 @@ namespace BusinessLayer.Service.Implement
                     DueDate = card.Due,
                     AccomplishDate = DateTimeOffset.UtcNow.AddHours(7),
                     Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.PENDING,
-                    UserId = userId
+                    UserId = trainee.Id
                 };
 
                 await _unitOfWork.TaskRepository.Add(ta);
@@ -267,6 +307,43 @@ namespace BusinessLayer.Service.Implement
                     TaskOverdue = totalOverdueTask
                 };
                 return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task CreateBoardWebhook(int userId)
+        {
+            try
+            {
+                var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId);
+                if (user == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
+                }
+                var trelloUserId = user.TrelloId;
+                var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+
+                var boards = await client.GetBoardsForMemberAsync(trelloUserId);
+                if (boards == null || boards.Count == 0)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "You have not create any Board!");
+                }
+
+                var webhooks = await client.GetWebhooksForCurrentTokenAsync();
+
+                foreach (var board in boards)
+                {
+                    var check = webhooks.First(u => u.IdOfTypeYouWishToMonitor ==  board.Id);   
+                    if (check == null)
+                    {
+                        string description = "Webhook of Board : " + board.Name;
+                        var newWebhook = new Webhook(description, _configuration["TrelloWorkspace:URLCallBack"], board.Id);
+                        var addedWebhook = client.AddWebhookAsync(newWebhook);
+                    }
+                }
             }
             catch (Exception ex)
             {

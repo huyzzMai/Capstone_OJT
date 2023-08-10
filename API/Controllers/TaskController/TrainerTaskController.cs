@@ -90,5 +90,25 @@ namespace API.Controllers.TaskController
                     ex.Message);
             }
         }
+
+        [HttpPost("board-webhook")]
+        public async Task<IActionResult> AddBoardWebhook(string taskId)
+        {
+            try
+            {
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                await taskService.CreateBoardWebhook(userId);
+                return Ok("Create webhook successfully.");
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
     }
 }
