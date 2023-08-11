@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -29,12 +30,14 @@ namespace API.Controllers.CriteriaController
         }
 
         [Authorize]
-        [Route("list-of-trainee-point-by-trainer")]
+        [Route("list-of-trainee-point-by-trainer/{ojtBatchId}")]
         [HttpGet]
-        public async Task<IActionResult> GetUserCriteriaList(int trainerId, int ojtBatchId)
+        public async Task<IActionResult> GetUserCriteriaList(int ojtBatchId)
         {
             try
             {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
+                var trainerId = int.Parse(userIdClaim.Value);
                 var list = await _service.GetUserCriteria(trainerId, ojtBatchId);
                 return Ok(list);
             }
@@ -51,7 +54,9 @@ namespace API.Controllers.CriteriaController
         {
             try
             {
-                await _service.UpdatePoints(request);
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
+                var trainerId = int.Parse(userIdClaim.Value);
+                await _service.UpdatePoints(trainerId, request);
                 return Ok();
             }
             catch (Exception ex)

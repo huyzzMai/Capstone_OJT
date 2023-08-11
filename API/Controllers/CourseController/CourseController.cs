@@ -86,7 +86,7 @@ namespace API.Controllers.CourseController
         }
         [Authorize]
         [HttpPost]
-        [Route("course-participation")]
+        [Route("course-participation/{courseid}")]
         public async Task<IActionResult> EnrollCourse(int courseid)
         {
             try
@@ -127,7 +127,7 @@ namespace API.Controllers.CourseController
         }
         [Authorize]
         [HttpDelete]
-        [Route("deletion-courseskill")]
+        [Route("deletion-courseskill/{courseId}/{skillId}")]
         public async Task<IActionResult> DeleteCourseSkill(int courseId,int skillId)
         {
             try
