@@ -12,6 +12,6 @@ namespace BusinessLayer.Service.Interface
     {
         Task<List<UserCriteriaResponse>> GetUserCriteria(int tranerId, int ojtBatchId);
 
-        Task UpdatePoints(List<UpdateCriteriaRequest> requests);
+        Task UpdatePoints(int trainerId, List<UpdateCriteriaRequest> requests);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.Models.RequestModel.CriteriaRequest;
+using BusinessLayer.Models.ResponseModel.TemplateResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Base;
@@ -22,21 +23,27 @@ namespace BusinessLayer.Service.Implement
              _unitOfWork = unitOfWork;
          }
 
-        public async Task<List<string>> GetCriteriaTemplateHeader(int templateId)
+        public async Task<List<ListTemplateHeaderResponse>> GetCriteriaTemplateHeader(int templateId)
         {
             try
             {
-                List<string> strings = new List<string>();  
+                
                 var list = await _unitOfWork.TemplateHeaderRepository.Get(c=>c.TemplateId==templateId && c.IsCriteria==true);
                 if(list==null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND,"There is no criteria template header");
                 }
-                foreach (var item in list.OrderBy(c=>c.Order))
-                {
-                    strings.Add(item.Name);
-                }
-                return strings;
+                var response= list.OrderBy(c=>c.Order).Select(
+                    r=>
+                    {
+                        return new ListTemplateHeaderResponse
+                        {
+                            Id = r.Id,
+                            Name = r.Name
+                        };
+                    }                  
+                    ).ToList();
+                return response;
             }
             catch (ApiException ex)
             {

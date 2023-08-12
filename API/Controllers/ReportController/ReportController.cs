@@ -18,11 +18,11 @@ namespace API.Controllers.ReportController
 
         public ReportController(IReportService service, IHttpClientFactory httpClientFactory)
         {
-            _service= service;
+            _service = service;
             _httpClient = httpClientFactory.CreateClient();
         }
-      
-        [HttpGet]
+
+        [HttpGet("{url}/{templateId}")]
         public async Task<IActionResult> GetExcelReportFile(string url, int templateId)
         {
             try

@@ -128,7 +128,7 @@ namespace API.Controllers.OJTBatchController
         }
         [Authorize]
         [HttpGet]
-        [Route("batches-of-university")]
+        [Route("batches-of-university/{universityid}")]
         public async Task<IActionResult> GetValidOJTBatchInformation(int universityid, [FromQuery] PagingRequestModel paging)
         {
             try

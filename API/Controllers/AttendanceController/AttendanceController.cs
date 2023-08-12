@@ -24,15 +24,14 @@ namespace API.Controllers.AttendanceController
             _hubContext = hubContext;
         }
 
-        [Authorize/*(Roles = "Admin")*/]
+        [Authorize(Roles = "Admin")]
         [HttpPost("data-of-file-attendance")]
         public async Task<IActionResult> UploadAttendanceFile(IFormFile file)
         {
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");
             try
-            {
-                //var filePath = await _attendanceService.SaveTempFile(file);             
+            {                             
                 var attendanceData = await _attendanceService.ProcessAttendanceFile(file);
                 return Ok(attendanceData);
             }

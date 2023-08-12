@@ -31,13 +31,12 @@ namespace API.Controllers.TemplateController
         }
 
         [Authorize]
-        [Route("template-header/criteriaheader")]
+        [Route("template-header/criteriaheader/{templateId}")]
         [HttpGet]
         public async Task<IActionResult> GetListcriteriaheader(int templateId)
         {
             try
             {
-
                 var list = await _headerservice.GetCriteriaTemplateHeader(templateId);
                 return Ok(list);
 
@@ -95,7 +94,7 @@ namespace API.Controllers.TemplateController
             }
         }
         [Authorize]     
-        [Route("template-header")]
+        [Route("template-header/{templateId}")]
         [HttpPost]
         public async Task<IActionResult> Createtemplateheader(int templateId,[FromBody] CreateTemplateHeaderRequest request)
         {
@@ -116,13 +115,13 @@ namespace API.Controllers.TemplateController
             }
         }
         [Authorize]      
-        [Route("template-header")]
+        [Route("template-header/{templateId}")]
         [HttpPut]
-        public async Task<IActionResult> UpdateTemplate(int id, [FromBody] UpdateTemplateHeaderRequest request)
+        public async Task<IActionResult> UpdateTemplate(int templateId, [FromBody] UpdateTemplateHeaderRequest request)
         {
             try
             {
-                await _service.UpdateTemplateHeader(id, request);
+                await _service.UpdateTemplateHeader(templateId, request);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATEHEADER_SIGNALR_MESSAGE.UPDATED);
                 return Ok("Template header is updated successfully.");
             }

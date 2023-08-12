@@ -54,7 +54,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var users = await _unitOfWork.UserRepository.Get(c => c.UserReferenceId == tranerId && c.OJTBatchId == ojtBatchId);
+                var users = await _unitOfWork.UserRepository.Get(c => c.UserReferenceId == tranerId && c.OJTBatchId == ojtBatchId,"UserCriterias");
                 if(users == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Trainee not found");
@@ -100,6 +100,10 @@ namespace BusinessLayer.Service.Implement
                     throw new Exception("User not found!");
                 }
                 var trelloUserId = user.TrelloId;
+                if(trelloUserId==null)
+                {
+                    return null;
+                }
                 var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
 
                 var cards = await client.GetCardsForMemberAsync(trelloUserId);
@@ -123,7 +127,7 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(ex.Message);
             }
         }
-        public async Task UpdatePoints(List<UpdateCriteriaRequest> requests)
+        public async Task UpdatePoints(int trainerId, List<UpdateCriteriaRequest> requests)
         {
             try
             {
@@ -138,6 +142,8 @@ namespace BusinessLayer.Service.Implement
                     {
                         var usercriteria = await _unitOfWork.UserCriteriaRepository.GetFirst(c=>c.TemplateHeaderId==item.TemplateHeaderId && c.UserId==user.Id);
                         usercriteria.Point = item.Point;
+                        usercriteria.TrainerIdMark = trainerId;
+                        usercriteria.UpdatedDate= DateTimeService.GetCurrentDateTime();
                         await _unitOfWork.UserCriteriaRepository.Update(usercriteria);
                     }
                 }
