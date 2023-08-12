@@ -92,7 +92,7 @@ namespace API.Controllers.TaskController
         }
 
         [HttpPost("board-webhook")]
-        public async Task<IActionResult> AddBoardWebhook(string taskId)
+        public async Task<IActionResult> AddBoardWebhook()
         {
             try
             {

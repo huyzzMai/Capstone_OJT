@@ -101,6 +101,7 @@ namespace API.Controllers.TaskController
         //    }
         //}
 
+        [AllowAnonymous]
         [HttpPost("webhook")]
         public async Task<IActionResult> HandleWebhookOnDueTaskComplete(HttpRequestData req)
         {

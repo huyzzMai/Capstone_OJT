@@ -22,8 +22,8 @@ namespace API.Controllers.AuthenticationController
         public AuthenticationController(IUserService userService)
         {
             this.userService = userService;
-        } 
-        
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {

@@ -206,7 +206,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "There is no user for this Task!");
                 }
-                var memId = memberIds.First();
+                var memId = memberIds.FirstOrDefault();
 
                 var trainee = await _unitOfWork.UserRepository.GetUserByTrelloIdAndStatusActive(memId); 
                 if (trainee == null)
@@ -336,12 +336,12 @@ namespace BusinessLayer.Service.Implement
 
                 foreach (var board in boards)
                 {
-                    var check = webhooks.First(u => u.IdOfTypeYouWishToMonitor ==  board.Id);   
+                    var check = webhooks.FirstOrDefault(u => u.IdOfTypeYouWishToMonitor ==  board.Id);   
                     if (check == null)
                     {
                         string description = "Webhook of Board : " + board.Name;
                         var newWebhook = new Webhook(description, _configuration["TrelloWorkspace:URLCallBack"], board.Id);
-                        var addedWebhook = client.AddWebhookAsync(newWebhook);
+                        var addedWebhook = await client.AddWebhookAsync(newWebhook);
                     }
                 }
             }
