@@ -18,10 +18,10 @@ namespace DataAccessLayer.Repository.Implement
         {
         }
 
-        public async Task<TrainingPlan> GetTrainingPLanByIdAndNotDeleted(int id)
+        public async Task<TrainingPlan> GetTrainingPLanById(int id)
         {
             var tp = await _context.TrainingPlans
-                     .Where(u => u.Id == id && u.Status != CommonEnums.TRAINING_PLAN_STATUS.DELETED)
+                     .Where(u => u.Id == id)
                      .Include(u => u.TrainingPlanDetails)
                      .FirstOrDefaultAsync();
             return tp;
@@ -47,7 +47,7 @@ namespace DataAccessLayer.Repository.Implement
 
         public async Task<List<TrainingPlan>> GetTrainingPlanList()
         {
-            var list = await _context.TrainingPlans.Where(u => u.Status != CommonEnums.TRAINING_PLAN_STATUS.DELETED)
+            var list = await _context.TrainingPlans
                 .OrderByDescending(u => u.CreatedAt)
                 .ToListAsync();
             return list;
@@ -56,7 +56,7 @@ namespace DataAccessLayer.Repository.Implement
         public async Task<List<TrainingPlan>> GetTrainingPlanListSearchKeyword(string keyword)
         {
             var list = await _context.TrainingPlans
-                .Where(u => u.Status != CommonEnums.TRAINING_PLAN_STATUS.DELETED && u.Name.ToLower().Contains(keyword))
+                .Where(u => u.Name.ToLower().Contains(keyword))
                 .OrderByDescending(u => u.CreatedAt)
                 .ToListAsync();
             return list;
@@ -67,7 +67,6 @@ namespace DataAccessLayer.Repository.Implement
             var list = await _context.UserTrainingPlans
                 .Where(u => u.UserId == id && u.IsOwner == true)
                 .Select(u => u.TrainingPlan)
-                .Where(u => u.Status != CommonEnums.TRAINING_PLAN_STATUS.DELETED)
                 .OrderByDescending(u => u.CreatedAt)
                 .ToListAsync();
             return list;
@@ -78,7 +77,7 @@ namespace DataAccessLayer.Repository.Implement
             var list = await _context.UserTrainingPlans
                 .Where(u => u.UserId == id && u.IsOwner == true)
                 .Select(u => u.TrainingPlan)
-                .Where(u => u.Status != CommonEnums.TRAINING_PLAN_STATUS.DELETED && u.Name.ToLower().Contains(keyword))
+                .Where(u => u.Name.ToLower().Contains(keyword))
                 .OrderByDescending(u => u.CreatedAt)
                 .ToListAsync();
             return list;
@@ -101,10 +100,10 @@ namespace DataAccessLayer.Repository.Implement
             return u;
         }
 
-        public async Task<TrainingPlanDetail> GetTrainingPlanDetailByIdAndNotDeleted(int id)
+        public async Task<TrainingPlanDetail> GetTrainingPlanDetailById(int id)
         {
             var detail = await _context.TrainingPlanDetails
-                         .Where(u => u.Id == id && u.Status != CommonEnums.TRAINING_PLAN_DETAIL_STATUS.DELETED)
+                         .Where(u => u.Id == id)
                          .FirstOrDefaultAsync();
             return detail;  
         }

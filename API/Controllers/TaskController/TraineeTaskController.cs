@@ -102,7 +102,8 @@ namespace API.Controllers.TaskController
         //}
 
         [AllowAnonymous]
-        [HttpPost("webhook")]
+        [AcceptVerbs("POST", "HEAD")]
+        [Route("webhook")]
         public async Task<IActionResult> HandleWebhookOnDueTaskComplete(HttpRequestData req)
         {
             //var trelloClientHelper = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);

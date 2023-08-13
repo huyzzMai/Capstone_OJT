@@ -42,8 +42,8 @@ namespace BusinessLayer.Service.Interface
 
         Task AssignTraineeToTrainingPlan(int trainerId, int traineeId, int planId);
 
-        Task DeleteTrainingPlan(int planId, int trainerId);
+        //Task DeleteTrainingPlan(int planId, int trainerId);
 
-        Task DeleteTrainingPlanDetail(int detailId, int trainerId);
+        //Task DeleteTrainingPlanDetail(int detailId, int trainerId);
     }
 }

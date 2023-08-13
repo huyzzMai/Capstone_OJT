@@ -317,50 +317,50 @@ namespace API.Controllers.TrainingPlanController
             }
         }
 
-        [Authorize(Roles = "Trainer")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTrainingPlan(int id)
-        {
-            try
-            {
-                // Get id of current log in user 
-                int trainerId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                await trainingService.DeleteTrainingPlan(id, trainerId);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.DELETE);
-                return Ok("Training plan is deleted.");
-            }
-            catch (ApiException e)
-            {
-                return StatusCode(e.StatusCode, e.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    ex.Message);
-            }
-        }
+        //[Authorize(Roles = "Trainer")]
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteTrainingPlan(int id)
+        //{
+        //    try
+        //    {
+        //        // Get id of current log in user 
+        //        int trainerId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+        //        await trainingService.DeleteTrainingPlan(id, trainerId);
+        //        await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.DELETE);
+        //        return Ok("Training plan is deleted.");
+        //    }
+        //    catch (ApiException e)
+        //    {
+        //        return StatusCode(e.StatusCode, e.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            ex.Message);
+        //    }
+        //}
 
-        [Authorize(Roles = "Trainer")]
-        [HttpDelete("detail/{id}")]
-        public async Task<IActionResult> DeleteTrainingPlanDetail(int id)
-        {
-            try
-            {
-                // Get id of current log in user 
-                int trainerId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                await trainingService.DeleteTrainingPlanDetail(id, trainerId);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.DETAIL_DELETE);
-                return Ok("Training plan detail is deleted.");
-            }
-            catch (ApiException e)
-            {
-                return StatusCode(e.StatusCode, e.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    ex.Message);
-            }
-        }
+        //[Authorize(Roles = "Trainer")]
+        //[HttpDelete("detail/{id}")]
+        //public async Task<IActionResult> DeleteTrainingPlanDetail(int id)
+        //{
+        //    try
+        //    {
+        //        // Get id of current log in user 
+        //        int trainerId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+        //        await trainingService.DeleteTrainingPlanDetail(id, trainerId);
+        //        await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.DETAIL_DELETE);
+        //        return Ok("Training plan detail is deleted.");
+        //    }
+        //    catch (ApiException e)
+        //    {
+        //        return StatusCode(e.StatusCode, e.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            ex.Message);
+        //    }
+        //}
     }
 }

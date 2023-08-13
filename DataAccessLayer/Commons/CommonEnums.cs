@@ -32,7 +32,7 @@ namespace DataAccessLayer.Commons
 
         public class TRAINING_PLAN_STATUS
         {
-            public const int DELETED = 1;
+            //public const int DELETED = 1;
             public const int PENDING = 2;
             public const int ACTIVE = 3;
             public const int DENIED = 4;
@@ -41,7 +41,7 @@ namespace DataAccessLayer.Commons
 
         public class TRAINING_PLAN_DETAIL_STATUS
         {
-            public const int DELETED = 1;
+            //public const int DELETED = 1;
             public const int ACTIVE = 2;
             public const int CLOSED = 3;    
         }

@@ -11,7 +11,7 @@ namespace DataAccessLayer.Repository.Interface
     public interface ITrainingPlanRepository : IGenericRepository<TrainingPlan>
     {
 
-        Task<TrainingPlan> GetTrainingPLanByIdAndNotDeleted(int id);
+        Task<TrainingPlan> GetTrainingPLanById(int id);
 
         Task<User> GetOwnerByTrainingPlanId(int id);
 
@@ -29,6 +29,6 @@ namespace DataAccessLayer.Repository.Interface
 
         Task<UserTrainingPlan> GetUserTrainingPlanById(int userId, int planId);
 
-        Task<TrainingPlanDetail> GetTrainingPlanDetailByIdAndNotDeleted(int id);
+        Task<TrainingPlanDetail> GetTrainingPlanDetailById(int id);
     }
 }
