@@ -201,5 +201,22 @@ namespace API.Controllers.UserController
                     ex.Message);
             }
         }
+
+        [Authorize(Roles = "Manager")]
+        [HttpGet("manager/trainee-list/{trainerId}")]
+        public async Task<IActionResult> GetTraineeListByTrainerForManager([FromQuery] PagingRequestModel paging, int trainerId)
+        {
+            try
+            {
+                paging = PagingUtil.checkDefaultPaging(paging);
+                //int id = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await userService.GetTraineeListByTrainer(trainerId, paging));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
     }
 }
