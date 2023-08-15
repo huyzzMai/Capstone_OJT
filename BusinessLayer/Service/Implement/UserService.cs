@@ -3,16 +3,12 @@ using BusinessLayer.Models.RequestModel.AuthenticationRequest;
 using BusinessLayer.Models.RequestModel.UserRequest;
 using BusinessLayer.Models.ResponseModel;
 using BusinessLayer.Models.ResponseModel.AuthenticationResponse;
-using BusinessLayer.Models.ResponseModel.CriteriaResponse;
 using BusinessLayer.Models.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
-using DataAccessLayer.Repository.Implement;
-using DataAccessLayer.Repository.Interface;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
@@ -347,7 +343,15 @@ namespace BusinessLayer.Service.Implement
         public int GetCurrentLoginUserId(string authHeader)
         {
             var handler = new JwtSecurityTokenHandler();
-            authHeader = authHeader.Replace("Bearer ", "");
+            //authHeader = authHeader.Replace("Bearer ", "");
+            if (authHeader.Contains("Bearer "))
+            {
+                authHeader = authHeader.Replace("Bearer ", "");
+            }
+            else if (authHeader.Contains("bearer "))
+            {
+                authHeader = authHeader.Replace("bearer ", "");
+            }
             var jsonToken = handler.ReadToken(authHeader);
             var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
             var id = tokenS.Claims.First(claim => claim.Type == "nameid").Value;
