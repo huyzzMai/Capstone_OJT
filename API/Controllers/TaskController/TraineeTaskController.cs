@@ -17,6 +17,7 @@ using TrelloDotNet.Model;
 using TrelloDotNet;
 using Microsoft.Extensions.Configuration;
 using System.Drawing.Text;
+using BusinessLayer.Service.Implement;
 
 namespace API.Controllers.TaskController
 {
@@ -101,30 +102,69 @@ namespace API.Controllers.TaskController
         //    }
         //}
 
-        [AllowAnonymous]
-        //[AcceptVerbs("POST", "HEAD")]
-        //[Route("webhook")]
-        [HttpHead("webhook")]
-        public async Task<IActionResult> HandleWebhookOnDueTaskComplete(HttpRequestData req)
+        //[AllowAnonymous]
+        ////[AcceptVerbs("POST", "HEAD")]
+        ////[Route("webhook")]
+        ////[HttpHead("webhook")]
+        //[HttpPost("webhook")]
+        //public async Task<IActionResult> HandleWebhookOnDueTaskComplete(HttpRequestData req)
+        //{
+        //    //var trelloClientHelper = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+        //    try
+        //    {
+        //        //Get The raw JSON from the webhook and process it
+        //        byte[] content = req.Body;
+        //        Stream stream = new MemoryStream(content);
+        //        using var streamReader = new StreamReader(stream);
+        //        var json = await streamReader.ReadToEndAsync(); //JSON from a Board Webhook
+
+        //        //Get a configured Trello client
+        //        var trelloClient = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+
+        //        var webhookDataReceiver = new TrelloDotNet.WebhookDataReceiver(trelloClient);
+
+        //        //you can subscribe to more curated events (Few but common events people need)
+        //        webhookDataReceiver.SmartEvents.OnDueCardIsMarkedAsComplete += OnDueCardIsMarkedAsComplete;
+
+        //        webhookDataReceiver.ProcessJsonIntoEvents(json);
+        //        return Ok("Update task successfully!");
+        //    }
+        //    catch (ApiException e)
+        //    {
+        //        return StatusCode(e.StatusCode, e.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            ex.Message);
+        //    }
+        //}
+        private async void OnDueCardIsMarkedAsComplete(WebhookSmartEventDueMarkedAsComplete args)
         {
-            //var trelloClientHelper = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+            var check = args.CardId;
+            await taskService.CreateFinishTask(args.CardId);
+            await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TASK_MESSAGE.UPDATE_FINISH);
+        }
+
+        [AllowAnonymous]
+        [Route("webhook")]
+        [AcceptVerbs("POST", "HEAD")]
+        public async Task<IActionResult> HandleWebhookOnDueTaskComplete()
+        {
             try
             {
-                //Get The raw JSON from the webhook and process it
-                byte[] content = req.Body;
-                Stream stream = new MemoryStream(content);
-                using var streamReader = new StreamReader(stream);
-                var json = await streamReader.ReadToEndAsync(); //JSON from a Board Webhook
+                using var streamReader = new StreamReader(Request.Body);
+                var json = await streamReader.ReadToEndAsync(); // JSON from a Board Webhook
 
-                //Get a configured Trello client
                 var trelloClient = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+                var webhookDataReceiver = new WebhookDataReceiver(trelloClient);
 
-                var webhookDataReceiver = new TrelloDotNet.WebhookDataReceiver(trelloClient);
-
-                //you can subscribe to more curated events (Few but common events people need)
+                // Subscribe to the specific event you want to handle
                 webhookDataReceiver.SmartEvents.OnDueCardIsMarkedAsComplete += OnDueCardIsMarkedAsComplete;
 
-                webhookDataReceiver.ProcessJsonIntoEvents(json);    
+                // Process JSON and raise events
+                webhookDataReceiver.ProcessJsonIntoEvents(json);
+
                 return Ok("Update task successfully!");
             }
             catch (ApiException e)
@@ -133,16 +173,10 @@ namespace API.Controllers.TaskController
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
-        private async void OnDueCardIsMarkedAsComplete(WebhookSmartEventDueMarkedAsComplete args)
-        {
-            var check = args.CardId;
-            await taskService.CreateFinishTask(args.CardId);
-            await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TASK_MESSAGE.UPDATE_FINISH);
-        }
+       
     }
 }

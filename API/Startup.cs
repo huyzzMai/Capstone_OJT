@@ -96,7 +96,10 @@ namespace API
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("https://ojt-management-system.onrender.com")
+                    builder.WithOrigins("https://ojt-management-system.onrender.com",
+                        "https://trello.com",
+                        "https://api.trello.com"
+                        )
                            .AllowAnyHeader()
                            .AllowAnyMethod()
                            .AllowCredentials();
@@ -123,7 +126,7 @@ namespace API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                
+
             }
 
             app.UseSwagger();
@@ -145,7 +148,7 @@ namespace API
                 endpoints.MapControllers();
                 endpoints.MapHub<SignalHub>("/signalhub");
             });
-           
+
         }
     }
 }
