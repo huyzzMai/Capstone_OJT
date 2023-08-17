@@ -139,7 +139,13 @@ namespace API.Controllers.TaskController
         //            ex.Message);
         //    }
         //}
-        private async void OnDueCardIsMarkedAsComplete(WebhookSmartEventDueMarkedAsComplete args)
+
+        private void OnDueCardIsMarkedAsCompleteWrapper(WebhookSmartEventDueMarkedAsComplete args)
+        {
+            OnDueCardIsMarkedAsComplete(args).Wait(); // Wait synchronously
+        }
+
+        private async Task OnDueCardIsMarkedAsComplete(WebhookSmartEventDueMarkedAsComplete args)
         {
             var check = args.CardId;
             await taskService.CreateFinishTask(args.CardId);
@@ -160,7 +166,7 @@ namespace API.Controllers.TaskController
                 var webhookDataReceiver = new WebhookDataReceiver(trelloClient);
 
                 // Subscribe to the specific event you want to handle
-                webhookDataReceiver.SmartEvents.OnDueCardIsMarkedAsComplete += OnDueCardIsMarkedAsComplete;
+                webhookDataReceiver.SmartEvents.OnDueCardIsMarkedAsComplete += OnDueCardIsMarkedAsCompleteWrapper;
 
                 // Process JSON and raise events
                 webhookDataReceiver.ProcessJsonIntoEvents(json);
@@ -175,8 +181,6 @@ namespace API.Controllers.TaskController
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-        }
-
-       
+        }  
     }
 }
