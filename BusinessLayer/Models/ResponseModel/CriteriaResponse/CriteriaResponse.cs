@@ -10,8 +10,6 @@ namespace BusinessLayer.Models.ResponseModel.CriteriaResponse
     {
         public int Id { get; set; }
 
-        public double? TotalPoint { get; set; }
-
         public double? Point { get; set; }
     }
 }

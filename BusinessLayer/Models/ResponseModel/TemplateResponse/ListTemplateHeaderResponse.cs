@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Models.ResponseModel.TemplateResponse
 {
-    public class ListTemplateHeaderResponse
+    public class ListTemplateHeaderCriteriaResponse
     {
-        public int Id { get; set; }
+        public int TeamplateHeaderId { get; set; }
 
         public string Name { get; set; }
+
+        public double? MaxPoint { get; set; }
     }
 }
