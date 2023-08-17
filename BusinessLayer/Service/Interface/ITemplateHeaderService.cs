@@ -12,6 +12,6 @@ namespace BusinessLayer.Service.Interface
 {
     public interface ITemplateHeaderService
     {
-        Task<List<ListTemplateHeaderResponse>> GetCriteriaTemplateHeader(int templateId);
+        Task<List<ListTemplateHeaderCriteriaResponse>> GetCriteriaTemplateHeader(int templateId);
     }
 }

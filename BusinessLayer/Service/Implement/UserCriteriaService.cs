@@ -72,7 +72,6 @@ namespace BusinessLayer.Service.Implement
                         new CriteriaResponse()
                         {
                             Id = c.TemplateHeaderId,
-                            TotalPoint = c.TemplateHeader.TotalPoint,
                             Point = GetPointByFomular(user.Id, c.TemplateHeaderId)
                         }
                         ).ToList()
@@ -107,9 +106,11 @@ namespace BusinessLayer.Service.Implement
                 var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
 
                 var cards = await client.GetCardsForMemberAsync(trelloUserId);
+
                 int totalTask = cards.Count();
 
                 var doneTasks = await _unitOfWork.TaskRepository.GetListTaskAccomplishedDoneOfTrainee(traineeId);
+
                 int totalDoneTask = doneTasks.Count();
 
                 int totalOverdueTask = totalTask - totalDoneTask;
