@@ -23,7 +23,7 @@ namespace BusinessLayer.Service.Implement
              _unitOfWork = unitOfWork;
          }
 
-        public async Task<List<ListTemplateHeaderResponse>> GetCriteriaTemplateHeader(int templateId)
+        public async Task<List<ListTemplateHeaderCriteriaResponse>> GetCriteriaTemplateHeader(int templateId)
         {
             try
             {
@@ -36,10 +36,11 @@ namespace BusinessLayer.Service.Implement
                 var response= list.OrderBy(c=>c.Order).Select(
                     r=>
                     {
-                        return new ListTemplateHeaderResponse
+                        return new ListTemplateHeaderCriteriaResponse
                         {
-                            Id = r.Id,
-                            Name = r.Name
+                            TeamplateHeaderId = r.Id,
+                            Name = r.Name,
+                            MaxPoint=r.TotalPoint
                         };
                     }                  
                     ).ToList();
