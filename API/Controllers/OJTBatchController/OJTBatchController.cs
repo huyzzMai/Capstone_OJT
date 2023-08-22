@@ -72,6 +72,27 @@ namespace API.Controllers.OJTBatchController
             }
         }
         [Authorize]
+        [HttpGet]
+        [Route("export-status-batches")]
+        public async Task<IActionResult> GetOjtStatusExport()
+        {
+            try
+            {
+               
+                var list = await _ojtService.getListOjtbatchExportStatus();
+                return Ok(list);
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize]
         [HttpGet("{id}")]        
         public async Task<IActionResult> GetDetailOJTBatchInformation(int id)
         {

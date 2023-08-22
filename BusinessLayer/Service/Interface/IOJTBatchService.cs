@@ -26,5 +26,6 @@ namespace BusinessLayer.Service.Interface
         Task<BasePagingViewModel<ValidOJTBatchResponse>> GetValidOJtListbyUniversityId(int id, PagingRequestModel paging);
 
         Task<List<ListActiveOjtbatchforTrainer>> getListNotGradePointOjtbatch(int trainerId);
+        Task<List<ListOjtExport>> getListOjtbatchExportStatus();
     }
 }

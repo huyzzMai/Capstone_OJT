@@ -117,7 +117,7 @@ namespace BusinessLayer.Service.Implement
            try
             {
                 var listOjt = await _unitOfWork.OJTBatchRepository.Get(c=>c.Trainees.Any(c=>c.UserReferenceId == trainerId 
-                && c.UserCriterias.Any(c=>c.Point==null)),"Trainees");
+                && c.UserCriterias.Any(c=>c.Point==null)) && c.IsDeleted==false,"Trainees");
                 if (listOjt == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Empty List OJTBatch");
@@ -146,6 +146,58 @@ namespace BusinessLayer.Service.Implement
             {
                 throw new Exception(e.Message);
             }
+        }
+
+        public async Task<List<ListOjtExport>> getListOjtbatchExportStatus()
+        {
+            try
+            {
+                var list = await _unitOfWork.OJTBatchRepository.Get(o=>o.IsDeleted==false 
+                && o.EndTime >= DateTimeService.GetCurrentDateTime(),"Trainees","University");
+                if (list == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Empty List OJTBatch");
+                }
+                var res = list.Select(
+                    ojt =>
+                    {
+                        if (ojt.Trainees.Any(c => c.UserCriterias.Any(c => c.Point == null) || c.UserCriterias.Count < 1 ))
+                        {
+                            return new ListOjtExport()
+                            {
+                                Id = ojt.Id,
+                                Name = ojt.Name,
+                                StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
+                                EndTime = DateTimeService.ConvertToDateString(ojt.EndTime),
+                                Status="Can not export",
+                                UniversityName=ojt.University.Name
+                            };
+                        }
+                        else
+                        {
+                            return new ListOjtExport()
+                            {
+                                Id = ojt.Id,
+                                Name = ojt.Name,
+                                StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
+                                EndTime = DateTimeService.ConvertToDateString(ojt.EndTime),
+                                Status = "Can export",
+                                UniversityName = ojt.University.Name
+                            };
+                        }
+                    }
+                    ).ToList();
+                return res;
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+
         }
 
         public async Task<BasePagingViewModel<ValidOJTBatchResponse>> GetValidOJtList(PagingRequestModel paging)
