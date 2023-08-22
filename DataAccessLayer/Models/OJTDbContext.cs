@@ -53,6 +53,8 @@ namespace DataAccessLayer.Models
 
         public DbSet<TaskAccomplished> TaskAccomplisheds { get; set; }
 
+        public DbSet<Config> Configs { get; set; }  
+
         #endregion
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -84,6 +86,11 @@ namespace DataAccessLayer.Models
 
             modelBuilder.Entity<UserSkill>()
                 .HasKey(c => new { c.SkillId, c.UserId });
+
+            modelBuilder.Entity<Config>().HasData(
+            new Config { Id = 1, Name = "Số ngày làm quy định trong tháng",  Value = 20},
+            new Config { Id = 2, Name = "Số giờ làm quy định trong ngày", Value = 8}
+            );
         }
     }
 }

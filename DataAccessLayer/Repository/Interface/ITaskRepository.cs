@@ -10,7 +10,7 @@ namespace DataAccessLayer.Repository.Interface
     {
         Task<List<TaskAccomplished>> GetListTaskAccomplishedOfTrainee(int userId);
 
-        Task<TaskAccomplished> GastTaskByIdAndStatusPending(string taskId);
+        Task<TaskAccomplished> GastTaskByIdAndStatusPending(int taskId);
 
         Task<List<TaskAccomplished>> GetListTaskPendingOfTrainee(int userId);
 

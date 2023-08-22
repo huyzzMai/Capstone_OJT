@@ -8,7 +8,9 @@ namespace BusinessLayer.Models.ResponseModel.TaskResponse
 {
     public class TaskAccomplishedResponse
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
+
+        public string TrelloTaskId { get; set; }
 
         public string Name { get; set; }
 

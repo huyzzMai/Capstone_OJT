@@ -4,14 +4,16 @@ using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(OJTDbContext))]
-    partial class OJTDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230822121002_UpdateTaskTbl")]
+    partial class UpdateTaskTbl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,38 +69,6 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Certificate");
-                });
-
-            modelBuilder.Entity("DataAccessLayer.Models.Config", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Value")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Config");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Số ngày làm quy định trong tháng",
-                            Value = 20.0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Số giờ làm quy định trong ngày",
-                            Value = 8.0
-                        });
                 });
 
             modelBuilder.Entity("DataAccessLayer.Models.Course", b =>

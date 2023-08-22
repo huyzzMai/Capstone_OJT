@@ -9,22 +9,20 @@ using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
+using DocumentFormat.OpenXml.Office2016.Excel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using TrelloDotNet;
+using TrelloDotNet.Model;
 
 //using static BusinessLayer.Models.ResponseModel.UserResponse.PersonalUserResponse;
 
@@ -380,6 +378,7 @@ namespace BusinessLayer.Service.Implement
                     Gender = user.Gender ?? default(int),
                     PhoneNumber = user.PhoneNumber,
                     RollNumber = user.RollNumber,
+                    StudentCode = user.StudentCode
                 };
 
                 if (user.Position != null)
@@ -460,7 +459,8 @@ namespace BusinessLayer.Service.Implement
                             Email = user.Email,
                             Gender = user.Gender ?? default(int),
                             AvatarURL = user.AvatarURL,
-                            PositionName = user.Position.Name
+                            PositionName = user.Position.Name,
+                            Status = user.Status
                         };
                     }
                     ).ToList();
@@ -517,21 +517,73 @@ namespace BusinessLayer.Service.Implement
         public async Task<BasePagingViewModel<TraineeResponse>> GetTraineeList(PagingRequestModel paging, string keyword, int? position)
         {
             var users = await _unitOfWork.UserRepository.GetTraineeList(keyword, position);
-            List<TraineeResponse> res = users.Select(
-                user =>
+            var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+            List<TraineeResponse> res = new(); 
+            foreach (var user in users)
+            {
+                TraineeResponse a = new()
                 {
-                    return new TraineeResponse()
-                    {
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Email = user.Email,
-                        Gender = user.Gender ?? default(int),
-                        AvatarURL = user.AvatarURL,
-                        PositionName = user.Position.Name
-                    };
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Gender = user.Gender ?? default(int),
+                    AvatarURL = user.AvatarURL,
+                    PositionName = user.Position.Name,
+                    Status = user.Status
+                };
+                List<Card> listTask = new();
+                if (user.TrelloId != null)
+                {
+                    listTask = await client.GetCardsForMemberAsync(user.TrelloId);
                 }
-                ).ToList();
+                if (listTask != null && listTask.Count != 0)
+                {
+                    if (listTask.Any(task => task.DueComplete == false && task.Due != null))
+                    {
+                        a.WorkStatus = CommonEnums.TRAINEE_WORKING_STATUS.WORKING;
+                    }
+                    else
+                    {
+                        a.WorkStatus = CommonEnums.TRAINEE_WORKING_STATUS.FREE;
+                    }
+                }
+                else
+                {
+                    a.WorkStatus = CommonEnums.TRAINEE_WORKING_STATUS.FREE;
+                }
+                res.Add(a); 
+            }
+                
+                //users.Select(
+                //async user =>
+                //{
+                //    return new TraineeResponse()
+                //    {
+                //        Id = user.Id,
+                //        FirstName = user.FirstName,
+                //        LastName = user.LastName,
+                //        Email = user.Email,
+                //        Gender = user.Gender ?? default(int),
+                //        AvatarURL = user.AvatarURL,
+                //        PositionName = user.Position.Name,
+                //        Status = user.Status,
+                //        WorkStatus = nul 
+                //    };
+                //    var listTask = await client.GetCardsForMemberAsync(user.TrelloId);
+                //    if (listTask != null && listTask.Count != 0)
+                //    {
+                //        if (listTask.Any(task => task.DueComplete == false))
+                //        {
+
+                //        }
+                //    }
+                //    else
+                //    {
+
+                //    }
+                //}
+                //).ToList();
 
             int totalItem = res.Count;
 
@@ -563,7 +615,8 @@ namespace BusinessLayer.Service.Implement
                         Email = user.Email,
                         Gender = user.Gender ?? default(int),
                         AvatarURL = user.AvatarURL,
-                        PositionName = user.Position.Name
+                        PositionName = user.Position.Name,
+                        Status = user.Status
                     };
                 }
                 ).ToList();
@@ -609,7 +662,7 @@ namespace BusinessLayer.Service.Implement
                         AvatarURL = trainee.AvatarURL,  
                         Gender = trainee.Gender ?? default(int),
                         PositionName = trainee.Position.Name,
-                        Stauts = trainee.Status
+                        Status = trainee.Status
                     };
                     return res; 
                 }
@@ -633,7 +686,8 @@ namespace BusinessLayer.Service.Implement
                         Email = trainee.Email,
                         AvatarURL = trainee.AvatarURL,
                         Gender = trainee.Gender ?? default(int),
-                        PositionName = trainee.Position.Name
+                        PositionName = trainee.Position.Name,
+                        Status = trainee.Status
                     };
                     return res;
                 }

@@ -25,7 +25,7 @@ namespace DataAccessLayer.Repository.Implement
             return list;
         }
 
-        public async Task<TaskAccomplished> GastTaskByIdAndStatusPending(string taskId)
+        public async Task<TaskAccomplished> GastTaskByIdAndStatusPending(int taskId)
         {
             var task = await _context.TaskAccomplisheds
                                      .Where(u => u.Id == taskId && u.Status == CommonEnums.ACCOMPLISHED_TASK_STATUS.PENDING)

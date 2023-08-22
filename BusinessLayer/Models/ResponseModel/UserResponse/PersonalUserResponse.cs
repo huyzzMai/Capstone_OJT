@@ -18,6 +18,7 @@ namespace BusinessLayer.Models.ResponseModel.UserResponse
         public string RollNumber { get; set; }    
         public string AvatarURL { get; set; }   
         public string PositionName { get; set; }
+        public string StudentCode { get; set; } 
 
         public class PersonalSkillResponse
         {

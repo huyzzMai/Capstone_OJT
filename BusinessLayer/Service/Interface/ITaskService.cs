@@ -18,9 +18,9 @@ namespace BusinessLayer.Service.Interface
 
         Task CreateFinishTask(string taskId);
 
-        Task AcceptTraineeTask(int trainerId, string taskId);
+        Task AcceptTraineeTask(int trainerId, int taskId);
 
-        Task RejectTraineeTask(int trainerId, string taskId);
+        Task RejectTraineeTask(int trainerId, int taskId);
 
         Task<TaskCounterResponse> CountTaskOfTrainee(int traineeId);
 

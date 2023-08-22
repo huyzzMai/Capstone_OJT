@@ -53,6 +53,12 @@ namespace DataAccessLayer.Commons
             public const int IN_PROCESS = 3;
         }
 
+        public class TRAINEE_WORKING_STATUS
+        {
+            public const int WORKING = 1;
+            public const int FREE = 2;
+        }
+
         public class ACCOMPLISHED_TASK_STATUS
         {
             public const int PENDING = 1;

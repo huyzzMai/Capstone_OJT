@@ -28,7 +28,7 @@ namespace BusinessLayer.Service.Implement
             _unitOfWork = unitOfWork;
             _configuration = configuration;
         }
-   
+
         public async Task<BasePagingViewModel<TraineeTaskResponse>> GetAllTaskOfTrainee(int userId, PagingRequestModel paging)
         {
             try
@@ -40,20 +40,20 @@ namespace BusinessLayer.Service.Implement
                 }
                 var trelloUserId = user.TrelloId;
                 var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
-                
+
                 var cards = await client.GetCardsForMemberAsync(trelloUserId);
 
-                List<TraineeTaskResponse> res = new List<TraineeTaskResponse>(); 
+                List<TraineeTaskResponse> res = new List<TraineeTaskResponse>();
 
-                foreach ( var card in cards)
+                foreach (var card in cards)
                 {
                     DateTimeOffset og = card.Start ?? default(DateTimeOffset);
                     card.Start = og.ToLocalTime();
-                    
+
                     DateTimeOffset og2 = card.Due ?? default(DateTimeOffset);
                     var dueCheck = og2.ToLocalTime();
 
-                    TraineeTaskResponse task = new TraineeTaskResponse();   
+                    TraineeTaskResponse task = new TraineeTaskResponse();
                     task.Id = card.Id;
                     task.Name = card.Name;
                     task.Description = card.Description;
@@ -77,7 +77,7 @@ namespace BusinessLayer.Service.Implement
 
                     res.Add(task);
                 }
-                
+
                 int totalItem = res.Count;
 
                 res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
@@ -129,6 +129,7 @@ namespace BusinessLayer.Service.Implement
                     return new TaskAccomplishedResponse()
                     {
                         Id = task.Id,
+                        TrelloTaskId = task.TrelloTaskId,
                         Name = task.Name,
                         Description = task.Description,
                         StartTime = task.StartDate,
@@ -182,6 +183,7 @@ namespace BusinessLayer.Service.Implement
                     return new TaskAccomplishedResponse()
                     {
                         Id = task.Id,
+                        TrelloTaskId = task.TrelloTaskId,
                         Name = task.Name,
                         Description = task.Description,
                         StartTime = task.StartDate,
@@ -213,55 +215,22 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-            //public async Task CreateFinishTask(int userId, string taskId)
-            //{
-            //    try
-            //    {
-            //        var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId);
-            //        if (user == null)
-            //        {
-            //            throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
-            //        }
-            //        var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
-            //        var card = await client.GetCardAsync(taskId);
 
-            //        card.DueComplete = true;
-            //        var updatedCard = await client.UpdateCardAsync(card);
 
-            //        TaskAccomplished ta = new()
-            //        {
-            //            Id = taskId,
-            //            Name = card.Name,
-            //            Description = card.Description,
-            //            StartDate = card.Start,
-            //            DueDate = card.Due,
-            //            AccomplishDate = DateTimeOffset.UtcNow.AddHours(7),
-            //            Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.PENDING,
-            //            UserId = userId
-            //        };
-
-            //        await _unitOfWork.TaskRepository.Add(ta);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        throw new Exception(ex.Message);
-            //    }
-            //}
-
-            public async Task CreateFinishTask(string taskId)
+        public async Task CreateFinishTask(string taskId)
         {
             try
             {
                 var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
                 var card = await client.GetCardAsync(taskId);
                 var memberIds = card.MemberIds;
-                if(memberIds == null || memberIds.Count == 0)
+                if (memberIds == null || memberIds.Count == 0)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "There is no user for this Task!");
                 }
                 var memId = memberIds.FirstOrDefault();
 
-                var trainee = await _unitOfWork.UserRepository.GetUserByTrelloIdAndStatusActive(memId); 
+                var trainee = await _unitOfWork.UserRepository.GetUserByTrelloIdAndStatusActive(memId);
                 if (trainee == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
@@ -269,7 +238,7 @@ namespace BusinessLayer.Service.Implement
 
                 TaskAccomplished ta = new()
                 {
-                    Id = taskId,
+                    TrelloTaskId = taskId,
                     Name = card.Name,
                     Description = card.Description,
                     StartDate = card.Start,
@@ -287,7 +256,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task AcceptTraineeTask(int trainerId, string taskId)
+        public async Task AcceptTraineeTask(int trainerId, int taskId)
         {
             try
             {
@@ -310,7 +279,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task RejectTraineeTask(int trainerId, string taskId)
+        public async Task RejectTraineeTask(int trainerId, int taskId)
         {
             try
             {
@@ -346,10 +315,10 @@ namespace BusinessLayer.Service.Implement
                 var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
 
                 var cards = await client.GetCardsForMemberAsync(trelloUserId);
-                int totalTask = cards.Count();  
-                
+                int totalTask = cards.Count();
+
                 var doneTasks = await _unitOfWork.TaskRepository.GetListTaskAccomplishedDoneOfTrainee(traineeId);
-                int totalDoneTask = doneTasks.Count();  
+                int totalDoneTask = doneTasks.Count();
 
                 int totalOverdueTask = totalTask - totalDoneTask;
 
@@ -389,7 +358,7 @@ namespace BusinessLayer.Service.Implement
 
                 foreach (var board in boards)
                 {
-                    var check = webhooks.FirstOrDefault(u => u.IdOfTypeYouWishToMonitor ==  board.Id);   
+                    var check = webhooks.FirstOrDefault(u => u.IdOfTypeYouWishToMonitor == board.Id);
                     if (check == null)
                     {
                         string description = "Webhook of Board : " + board.Name;

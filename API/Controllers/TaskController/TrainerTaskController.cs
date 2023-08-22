@@ -50,7 +50,7 @@ namespace API.Controllers.TaskController
         }
 
         [HttpPut("task-accept/{taskId}")]
-        public async Task<IActionResult> AcceptTraineeTask(string taskId)
+        public async Task<IActionResult> AcceptTraineeTask(int taskId)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace API.Controllers.TaskController
         }
 
         [HttpPut("task-reject/{taskId}")]
-        public async Task<IActionResult> DenyTraineeTask(string taskId)
+        public async Task<IActionResult> DenyTraineeTask(int taskId)
         {
             try
             {
