@@ -160,42 +160,95 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        //public async Task CreateFinishTask(int userId, string taskId)
-        //{
-        //    try
-        //    {
-        //        var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId);
-        //        if (user == null)
-        //        {
-        //            throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
-        //        }
-        //        var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
-        //        var card = await client.GetCardAsync(taskId);
+        public async Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskPendingOfTrainee(int trainerId, int traineeId, PagingRequestModel paging)
+        {
+            try
+            {
+                var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
+                if (trainee == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Trainee not found!");
+                }
+                if (trainee.UserReferenceId != trainerId)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "This is not your trainee!");
+                }
 
-        //        card.DueComplete = true;
-        //        var updatedCard = await client.UpdateCardAsync(card);
+                var tasks = await _unitOfWork.TaskRepository.GetListTaskPendingOfTrainee(traineeId);
 
-        //        TaskAccomplished ta = new()
-        //        {
-        //            Id = taskId,
-        //            Name = card.Name,
-        //            Description = card.Description,
-        //            StartDate = card.Start,
-        //            DueDate = card.Due,
-        //            AccomplishDate = DateTimeOffset.UtcNow.AddHours(7),
-        //            Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.PENDING,
-        //            UserId = userId
-        //        };
+                List<TaskAccomplishedResponse> res = tasks.Select(
+                task =>
+                {
+                    return new TaskAccomplishedResponse()
+                    {
+                        Id = task.Id,
+                        Name = task.Name,
+                        Description = task.Description,
+                        StartTime = task.StartDate,
+                        EndTime = task.DueDate,
+                        FinishTime = task.AccomplishDate,
+                        ProcessStatus = task.Status
+                    };
+                }
+                ).ToList();
 
-        //        await _unitOfWork.TaskRepository.Add(ta);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
+                int totalItem = res.Count;
 
-        public async Task CreateFinishTask(string taskId)
+                res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                    .Take(paging.PageSize).ToList();
+
+                var result = new BasePagingViewModel<TaskAccomplishedResponse>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = res
+                };
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+            //public async Task CreateFinishTask(int userId, string taskId)
+            //{
+            //    try
+            //    {
+            //        var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId);
+            //        if (user == null)
+            //        {
+            //            throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
+            //        }
+            //        var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+            //        var card = await client.GetCardAsync(taskId);
+
+            //        card.DueComplete = true;
+            //        var updatedCard = await client.UpdateCardAsync(card);
+
+            //        TaskAccomplished ta = new()
+            //        {
+            //            Id = taskId,
+            //            Name = card.Name,
+            //            Description = card.Description,
+            //            StartDate = card.Start,
+            //            DueDate = card.Due,
+            //            AccomplishDate = DateTimeOffset.UtcNow.AddHours(7),
+            //            Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.PENDING,
+            //            UserId = userId
+            //        };
+
+            //        await _unitOfWork.TaskRepository.Add(ta);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        throw new Exception(ex.Message);
+            //    }
+            //}
+
+            public async Task CreateFinishTask(string taskId)
         {
             try
             {

@@ -14,6 +14,8 @@ namespace BusinessLayer.Service.Interface
 
         Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskAccomplished(int userId, PagingRequestModel paging);
 
+        Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskPendingOfTrainee(int trainerId, int traineeId, PagingRequestModel paging);  
+
         Task CreateFinishTask(string taskId);
 
         Task AcceptTraineeTask(int trainerId, string taskId);

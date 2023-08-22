@@ -145,7 +145,7 @@ namespace BusinessLayer.Service.Implement
                 var u = await _unitOfWork.UserRepository.GetUserByEmailAndStatusActive(email);
                 if (u == null)
                 {
-                    throw new Exception("User not found!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
                 }
                 String r = GenerateRamdomCode();
 
@@ -173,7 +173,7 @@ namespace BusinessLayer.Service.Implement
             var u = await _unitOfWork.UserRepository.GetUserByResetCodeAndStatusActive(token);
             if (u == null)
             {
-                throw new Exception("Reset code is not correct!");
+                throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Reset code is not correct!");
             }
         }
 
@@ -184,7 +184,7 @@ namespace BusinessLayer.Service.Implement
                 var u = await _unitOfWork.UserRepository.GetUserByResetCodeAndStatusActive(request.ResetCode);
                 if (u == null)
                 {
-                    throw new Exception("Reset code is not correct! Please go back to resend verification code.");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Reset code is not correct! Please go back to resend verification code.");
                 }
                 var newPassword = EncryptPassword(request.NewPassword);
                 u.Password = newPassword;
@@ -491,6 +491,10 @@ namespace BusinessLayer.Service.Implement
             try
             {
                 var trainer = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(trainerId);
+                if (trainer == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Trainer not found!");
+                }
                 TrainerResponse res = new()
                 {
                     Id = trainer.Id,
@@ -585,9 +589,17 @@ namespace BusinessLayer.Service.Implement
             try
             {
                 var check = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(roleId);
+                if (check == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Current Login User not found!");
+                }
                 if (check.Role == CommonEnums.ROLE.MANAGER)
                 {
                     var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
+                    if (trainee == null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Trainee not found!");
+                    }
                     TraineeResponse res = new()
                     {
                         Id =trainee.Id,
@@ -604,7 +616,10 @@ namespace BusinessLayer.Service.Implement
                 else
                 {
                     var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
-
+                    if(trainee == null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Trainee not found!");
+                    }
                     if (trainee.UserReferenceId != roleId)
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Not your assigned trainee!");
@@ -637,6 +652,10 @@ namespace BusinessLayer.Service.Implement
                 if (trainer.Role != CommonEnums.ROLE.TRAINER)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Trainer not found!");
+                }
+                if (request.Trainees == null || request.Trainees.Count == 0)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "List of trainees is not found!");
                 }
 
                 foreach (var item in request.Trainees)

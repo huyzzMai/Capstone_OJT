@@ -28,15 +28,15 @@ namespace API.Controllers.TaskController
             _hubContext = hubContext;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetListTaskPendingOfTrainee([FromQuery] PagingRequestModel paging)
+        [HttpGet("trainee/{traineeId}")]
+        public async Task<IActionResult> GetListTaskPendingOfTrainee([FromQuery] PagingRequestModel paging, int traineeId)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                return Ok(/*await taskService.*/);
+                return Ok(await taskService.GetListTaskPendingOfTrainee(userId, traineeId, paging));
             }
             catch (ApiException e)
             {

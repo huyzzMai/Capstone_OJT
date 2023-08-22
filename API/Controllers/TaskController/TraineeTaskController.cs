@@ -81,65 +81,6 @@ namespace API.Controllers.TaskController
             }
         }
 
-        //[HttpPost("{taskId}")]
-        //public async Task<IActionResult> UpdateFinishTask(string taskId)
-        //{
-        //    try
-        //    {
-        //        int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-        //        await taskService.CreateFinishTask(userId, taskId);
-        //        await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TASK_MESSAGE.UPDATE_FINISH);
-        //        return StatusCode(StatusCodes.Status201Created, "Accomplish task successfully.");
-        //    }
-        //    catch (ApiException e)
-        //    {
-        //        return StatusCode(e.StatusCode, e.Message);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError,
-        //            ex.Message);
-        //    }
-        //}
-
-        //[AllowAnonymous]
-        ////[AcceptVerbs("POST", "HEAD")]
-        ////[Route("webhook")]
-        ////[HttpHead("webhook")]
-        //[HttpPost("webhook")]
-        //public async Task<IActionResult> HandleWebhookOnDueTaskComplete(HttpRequestData req)
-        //{
-        //    //var trelloClientHelper = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
-        //    try
-        //    {
-        //        //Get The raw JSON from the webhook and process it
-        //        byte[] content = req.Body;
-        //        Stream stream = new MemoryStream(content);
-        //        using var streamReader = new StreamReader(stream);
-        //        var json = await streamReader.ReadToEndAsync(); //JSON from a Board Webhook
-
-        //        //Get a configured Trello client
-        //        var trelloClient = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
-
-        //        var webhookDataReceiver = new TrelloDotNet.WebhookDataReceiver(trelloClient);
-
-        //        //you can subscribe to more curated events (Few but common events people need)
-        //        webhookDataReceiver.SmartEvents.OnDueCardIsMarkedAsComplete += OnDueCardIsMarkedAsComplete;
-
-        //        webhookDataReceiver.ProcessJsonIntoEvents(json);
-        //        return Ok("Update task successfully!");
-        //    }
-        //    catch (ApiException e)
-        //    {
-        //        return StatusCode(e.StatusCode, e.Message);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError,
-        //            ex.Message);
-        //    }
-        //}
-
         private void OnDueCardIsMarkedAsCompleteWrapper(WebhookSmartEventDueMarkedAsComplete args)
         {
             OnDueCardIsMarkedAsComplete(args).Wait(); // Wait synchronously

@@ -142,6 +142,10 @@ namespace API.Controllers.AuthenticationController
                 await userService.SendTokenResetPassword(email);
                 return Ok("Reset code sent to your email.");
             }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
@@ -156,6 +160,10 @@ namespace API.Controllers.AuthenticationController
             {
                 await userService.VerifyResetCode(request.ResetCode);
                 return Ok("Reset code correct.");
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {
@@ -172,6 +180,10 @@ namespace API.Controllers.AuthenticationController
             {
                 await userService.ResetPassword(request);
                 return Ok("Reset password successfully!");
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {
