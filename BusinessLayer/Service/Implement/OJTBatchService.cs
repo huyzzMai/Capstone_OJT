@@ -39,6 +39,7 @@ namespace BusinessLayer.Service.Implement
                     Name = request.Name,
                     StartTime = request.StartTime,
                     EndTime = request.EndTime,
+                    TemplateId = request.TemplateId,
                     CreatedAt = DateTime.UtcNow.AddHours(7),
                     UpdatedAt = DateTime.UtcNow.AddHours(7),
                     UniversityId = request.UniversityId,
@@ -94,11 +95,48 @@ namespace BusinessLayer.Service.Implement
                  StartTime= DateTimeService.ConvertToDateString(batch.StartTime),
                  EndTime= DateTimeService.ConvertToDateString(batch.EndTime),
                  UniversityId= batch.UniversityId,
+                 TemplateId= batch.TemplateId,
                  CreatedAt= DateTimeService.ConvertToDateString(batch.CreatedAt),
                  UpdatedAt= DateTimeService.ConvertToDateString(batch.UpdatedAt),
                  IsDeleted= batch.IsDeleted
                 };
                 return batchresponse;
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<List<ListActiveOjtbatchforTrainer>> getListNotGradePointOjtbatch(int trainerId)
+        {
+           try
+            {
+                var listOjt = await _unitOfWork.OJTBatchRepository.Get(c=>c.Trainees.Any(c=>c.UserReferenceId == trainerId 
+                && c.UserCriterias.Any(c=>c.Point==null)),"Trainees");
+                if (listOjt == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Empty List OJTBatch");
+                }
+                var res = listOjt.Select(
+                    ojt =>
+                    {
+                        return new ListActiveOjtbatchforTrainer()
+                        {
+                            Id = ojt.Id,
+                            Name = ojt.Name,
+                            StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
+                            EndTime = DateTimeService.ConvertToDateString(ojt.EndTime),
+                            NumberTrainee=ojt.Trainees.Count()
+                            
+                        };
+                    }
+                    ).ToList();
+                return res;
             }
             catch (ApiException ex)
             {

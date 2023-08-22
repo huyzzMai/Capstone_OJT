@@ -140,8 +140,12 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == userid && c.Status == CommonEnums.USER_STATUS.ACTIVE && c.Role == CommonEnums.ROLE.TRAINEE);
-                var ismatch = await _unitOfWork.CourseRepository.GetFirst(c => c.CoursePositions.Any(c => c.Position.Equals(user.Position)));
+                var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == userid && c.Status == CommonEnums.USER_STATUS.ACTIVE
+                && c.Role == CommonEnums.ROLE.TRAINEE, "UserSkills");
+                var ismatch = await _unitOfWork.CourseRepository.GetFirst(c => 
+                c.CoursePositions.Any(c => c.Position.Equals(user.Position))
+                &&c.CourseSkills.Any(c=>user.UserSkills.Any(uk=>uk.CurrentLevel==c.RecommendedLevel)));
+
                 if (ismatch == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "User can not enroll this course");

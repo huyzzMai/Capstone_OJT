@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.SignalR;
 using DataAccessLayer.Commons;
 using BusinessLayer.Models.RequestModel;
 using BusinessLayer.Models.RequestModel.CourseRequest;
+using System.Linq;
 
 namespace API.Controllers.OJTBatchController
 {
@@ -37,6 +38,27 @@ namespace API.Controllers.OJTBatchController
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
                 var list = await _ojtService.GetValidOJtList(paging);
+                return Ok(list);
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        [Route("notgrade-batches")]
+        public async Task<IActionResult> GetNotGradeBatch()
+        {
+            try
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
+                var list = await _ojtService.getListNotGradePointOjtbatch(int.Parse(userIdClaim.Value));
                 return Ok(list);
             }
             catch (ApiException ex)

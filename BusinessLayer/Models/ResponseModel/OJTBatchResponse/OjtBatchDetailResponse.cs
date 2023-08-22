@@ -19,6 +19,8 @@ namespace BusinessLayer.Models.ResponseModel.OJTBatchResponse
         
         public string EndTime { get; set; }
 
+        public int? TemplateId { get; set; }
+
         public bool? IsDeleted { get; set; }
         
         public string CreatedAt { get; set; }
