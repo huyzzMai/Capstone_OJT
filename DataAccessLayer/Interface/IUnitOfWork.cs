@@ -40,5 +40,7 @@ namespace DataAccessLayer.Interface
         IAttendanceRepository AttendanceRepository { get; }
 
         IPositionRepository PositionRepository { get; }
+
+        IFormulaRepository FormulaRepository { get; }
     }
 }

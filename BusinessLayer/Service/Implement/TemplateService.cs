@@ -41,6 +41,7 @@ namespace BusinessLayer.Service.Implement
                     MatchedAttribute = request.MatchedAttribute,
                     Order = request.Order,
                     Status = CommonEnums.TEMPLATEHEADER_STATUS.ACTIVE,
+                    FormulaId = request.FormulaId,
                     TemplateId = templateId,
                     TotalPoint = request.TotalPoint,
                     CreatedAt = DateTime.UtcNow.AddHours(7),
@@ -89,6 +90,7 @@ namespace BusinessLayer.Service.Implement
                         IsCriteria = i.IsCriteria,
                         MatchedAttribute = i.MatchedAttribute,
                         Order = i.Order,
+                        FormulaId = i.FormulaId,
                         TotalPoint = i.TotalPoint,
                         Status = CommonEnums.TEMPLATEHEADER_STATUS.ACTIVE,
                         CreatedAt = DateTime.UtcNow.AddHours(7),
@@ -171,6 +173,7 @@ namespace BusinessLayer.Service.Implement
                             Name = cp.Name,
                             MatchedAttribute = cp.MatchedAttribute,
                             TotalPoint = cp.TotalPoint,
+                            FormulaId= cp.FormulaId,
                             IsCriteria = cp.IsCriteria,
                             Order = cp.Order,
                             Status = cp.Status
@@ -296,6 +299,7 @@ namespace BusinessLayer.Service.Implement
                 temp.Name=request.Name;
                 temp.Order = request.Order;
                 temp.Status = request.Status;
+                temp.FormulaId=request.FormulaId;
                 temp.TotalPoint=request.TotalPoint;
                 temp.UpdatedAt= DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.TemplateHeaderRepository.Update(temp);              

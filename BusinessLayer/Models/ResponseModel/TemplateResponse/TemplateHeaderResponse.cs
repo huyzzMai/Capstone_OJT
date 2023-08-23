@@ -14,7 +14,10 @@ namespace BusinessLayer.Models.ResponseModel.TemplateResponse
 
         public double? TotalPoint { get; set; }
 
+        public int? FormulaId { get; set; }
+
         public string MatchedAttribute { get; set; }
+
 
         public bool? IsCriteria { get; set; }
 

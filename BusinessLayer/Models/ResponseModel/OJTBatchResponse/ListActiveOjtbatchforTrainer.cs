@@ -17,5 +17,7 @@ namespace BusinessLayer.Models.ResponseModel.OJTBatchResponse
         public string EndTime { get; set; }
 
         public int? NumberTrainee { get; set; }
+
+        public string Status { get; set; }
     }
 }

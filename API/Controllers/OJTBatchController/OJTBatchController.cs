@@ -52,13 +52,13 @@ namespace API.Controllers.OJTBatchController
         }
         [Authorize]
         [HttpGet]
-        [Route("notgrade-batches")]
-        public async Task<IActionResult> GetNotGradeBatch()
+        [Route("status-grade-batches-trainer")]
+        public async Task<IActionResult> GetStatusGradeBatch()
         {
             try
             {
                 var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
-                var list = await _ojtService.getListNotGradePointOjtbatch(int.Parse(userIdClaim.Value));
+                var list = await _ojtService.getListGradePointOjtbatch(int.Parse(userIdClaim.Value));
                 return Ok(list);
             }
             catch (ApiException ex)
@@ -71,27 +71,27 @@ namespace API.Controllers.OJTBatchController
                   e.Message);
             }
         }
-        [Authorize]
-        [HttpGet]
-        [Route("export-status-batches")]
-        public async Task<IActionResult> GetOjtStatusExport()
-        {
-            try
-            {
-               
-                var list = await _ojtService.getListOjtbatchExportStatus();
-                return Ok(list);
-            }
-            catch (ApiException ex)
-            {
-                return StatusCode(ex.StatusCode, ex.Message);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                  e.Message);
-            }
-        }
+        //[Authorize]
+        //[HttpGet]
+        //[Route("export-status-batches")]
+        //public async Task<IActionResult> GetOjtStatusExport([FromQuery] PagingRequestModel paging)
+        //{
+        //    try
+        //    {
+        //        paging = PagingUtil.checkDefaultPaging(paging);
+        //        var list = await _ojtService.getListOjtbatchExportStatus(paging);
+        //        return Ok(list);
+        //    }
+        //    catch (ApiException ex)
+        //    {
+        //        return StatusCode(ex.StatusCode, ex.Message);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //          e.Message);
+        //    }
+        //}
         [Authorize]
         [HttpGet("{id}")]        
         public async Task<IActionResult> GetDetailOJTBatchInformation(int id)

@@ -15,6 +15,9 @@ namespace BusinessLayer.Models.RequestModel.TemplateHeaderRequest
         public double? TotalPoint { get; set; }
         [Required]
         public string MatchedAttribute { get; set; }
+
+        public int FormulaId { get; set; }
+
         [Required]
         public int? Status { get; set; }
         [Required]

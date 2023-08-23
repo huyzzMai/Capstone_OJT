@@ -89,6 +89,11 @@ namespace DataAccessLayer.Commons
             public const int INACTIVE = 3;
         }
 
+        public class FORMULA_STATUS
+        {
+            public const int ACTIVE = 2;
+            public const int INACTIVE = 3;
+        }
         public class SKILL_LEVEL
         { 
             public const int INTRODUCTION = 0;    
