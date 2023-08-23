@@ -143,13 +143,13 @@ namespace BusinessLayer.Service.Implement
                 var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == request.CourseId && c.Status == CommonEnums.COURSE_STATUS.ACTIVE);
                 if (cour == null)
                 {
-                    throw new Exception("Course not found");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Course not found");
                 }
 
                 var cer = await _unitOfWork.CertificateRepository.GetFirst(c => c.CourseId == request.CourseId && c.UserId == request.UserId && c.Status == CommonEnums.CERTIFICATE_STATUS.PENDING);
                 if (cer == null)
                 {
-                    throw new Exception("User do not submit or User did not enroll course");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "User do not submit or User did not enroll course");
                 }
                 cer.Status = CommonEnums.CERTIFICATE_STATUS.APPROVED;
                 await _unitOfWork.CertificateRepository.Update(cer);

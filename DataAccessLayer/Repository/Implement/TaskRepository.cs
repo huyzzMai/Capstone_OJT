@@ -34,6 +34,14 @@ namespace DataAccessLayer.Repository.Implement
             return task;
         }
 
+        public async Task<TaskAccomplished> GetMatchingTask(string trelloTaskId, int userId)
+        {
+            var task = await _context.TaskAccomplisheds
+                                     .Where(u => u.TrelloTaskId == trelloTaskId && u.UserId == userId)
+                                     .FirstOrDefaultAsync();
+            return task;
+        }
+
         public async Task<List<TaskAccomplished>> GetListTaskPendingOfTrainee(int userId)
         {
             var list = await _context.TaskAccomplisheds

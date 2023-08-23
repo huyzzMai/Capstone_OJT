@@ -237,6 +237,11 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found or User have not update TrelloId!");
                 }
+                var matchingTask = await _unitOfWork.TaskRepository.GetMatchingTask(taskId, trainee.Id);
+                if (matchingTask != null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "This task had been submit to the system!");
+                }
 
                 TaskAccomplished ta = new()
                 {

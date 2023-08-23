@@ -37,7 +37,8 @@ namespace BusinessLayer.Service.Implement
                     Message = message,  
                     Type = type,
                     IsRead = false,
-                    CreatedAt = DateTime.UtcNow.AddHours(7)
+                    CreatedAt = DateTime.UtcNow.AddHours(7),
+                    UserId = userId
                 };
                 await _unitOfWork.NotificationRepository.Add(noti);
             }
