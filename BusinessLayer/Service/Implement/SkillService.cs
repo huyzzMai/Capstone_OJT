@@ -28,12 +28,7 @@ namespace BusinessLayer.Service.Implement
         public async Task CreateSkill(CreateSkillRequest request)
         {
             try
-            {
-                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower() && c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
-                if (skill != null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT,"Skill already exists");
-                }
+            {               
                 var skillcheck = await _unitOfWork.SkillRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower() && c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
 
                 if (skillcheck != null)
@@ -185,7 +180,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Skill not found");
                 }
-                var skillcheck = await _unitOfWork.SkillRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower()&&c.Status==CommonEnums.SKILL_STATUS.ACTIVE);
+                var skillcheck = await _unitOfWork.SkillRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower());
 
                 if (skillcheck != null)
                 {

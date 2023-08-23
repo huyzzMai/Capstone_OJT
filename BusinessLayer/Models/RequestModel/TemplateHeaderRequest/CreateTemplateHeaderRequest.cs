@@ -17,6 +17,7 @@ namespace BusinessLayer.Models.RequestModel.TemplateHeaderRequest
         public string MatchedAttribute { get; set; }
         [Required]
         public bool? IsCriteria { get; set; }
+        public int FormulaId { get; set; }
         [Required]
         public int? Order { get; set; }
 

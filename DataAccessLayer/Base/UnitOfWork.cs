@@ -55,6 +55,8 @@ namespace DataAccessLayer.Base
 
         public IAttendanceRepository AttendanceRepository => new AttendanceRepository(_context, this);
 
-        public IPositionRepository PositionRepository => new PositionRepository(_context, this);    
+        public IPositionRepository PositionRepository => new PositionRepository(_context, this);
+
+        public IFormulaRepository FormulaRepository => new FormulaRepository(_context, this);
     }
 }

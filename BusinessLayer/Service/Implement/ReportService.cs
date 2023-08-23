@@ -67,7 +67,7 @@ namespace BusinessLayer.Service.Implement
 
 
 
-        public async Task<List<List<string>>> GenerateData(Template headers)
+        public async Task<List<List<string>>> GenerateData(Template headers,OJTBatch ojt)
         {
             List<List<string>> dataMap = new List<List<string>>();
             var th = headers.TemplateHeaders.Where(c => c.Status == CommonEnums.TEMPLATEHEADER_STATUS.ACTIVE).OrderBy(c => c.Order);
@@ -76,13 +76,14 @@ namespace BusinessLayer.Service.Implement
                 List<string> list = new List<string>();
                 if (h.IsCriteria == true)
                 {
+                    h.UserCriterias = h.UserCriterias.Where(c=>ojt.Trainees.Any(o=>o.Id==c.UserId)).ToList();
                     list = GetPropertyDataforCriteria(h.MatchedAttribute, h.UserCriterias.ToList());
                     dataMap.Add(list);
                 }
                 else
                 {
                     var users = await _unitOfWork.UserRepository.Get(c => c.Status == CommonEnums.USER_STATUS.ACTIVE && c.OJTBatch.UniversityId == headers.UniversityId, "OJTBatch");
-                    list = GetPropertyDataforUser(h.MatchedAttribute, users.ToList());
+                    list = GetPropertyDataforUser(h.MatchedAttribute, ojt.Trainees.ToList());
                     dataMap.Add(list);
                 }
             }
@@ -161,16 +162,21 @@ namespace BusinessLayer.Service.Implement
 
 
 
-        public async Task<byte[]> ExportReportExcelFileFromUniversity(byte[] excelStream, int templateid)
+        public async Task<byte[]> ExportReportExcelFileFromUniversity(byte[] excelStream, int  batchId)
         {
             try
             {
-                var template = await _unitOfWork.TemplateRepository.GetFirst(c => c.Status == CommonEnums.TEMPLATE_STATUS.ACTIVE && c.Id == templateid, "TemplateHeaders");
+                var ojtbatch = await _unitOfWork.OJTBatchRepository.GetFirst(c=>c.IsDeleted==false && c.Id==batchId,"Trainees");
+                if (ojtbatch == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Ojt batch not found");
+                }
+                var template = await _unitOfWork.TemplateRepository.GetFirst(c => c.Status == CommonEnums.TEMPLATE_STATUS.ACTIVE && c.Id == ojtbatch.TemplateId, "TemplateHeaders");
                 if (template == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Template not found");
                 }
-                var data = await GenerateData(template);
+                var data = await GenerateData(template, ojtbatch);
                 (int row, int col) = GetRowAndColumnFromCellIndex(template.StartCell);
                 var updatedExcelData = UpdateExcelFile(row, col, excelStream, data);
                 return updatedExcelData;

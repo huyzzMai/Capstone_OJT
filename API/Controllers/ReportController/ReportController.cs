@@ -6,6 +6,7 @@ using System;
 using System.Net.Http;
 using System.IO;
 using BusinessLayer.Utilities;
+using BusinessLayer.Models.RequestModel.ReportRequest;
 
 namespace API.Controllers.ReportController
 {
@@ -22,14 +23,14 @@ namespace API.Controllers.ReportController
             _httpClient = httpClientFactory.CreateClient();
         }
 
-        [HttpGet("{url}/{templateId}")]
-        public async Task<IActionResult> GetExcelReportFile(string url, int templateId)
+        [HttpPut]
+        public async Task<IActionResult> GetExcelReportFile([FromBody] ReportRequest request)
         {
             try
             {
                 using (var httpClient = new HttpClient())
                 {
-                    var response = await httpClient.GetAsync(url);
+                    var response = await httpClient.GetAsync(request.url);
                     if (response.IsSuccessStatusCode)
                     {
                         var stream = await response.Content.ReadAsStreamAsync();
@@ -41,7 +42,7 @@ namespace API.Controllers.ReportController
                             excelData = memoryStream.ToArray();
                         }
 
-                        var updatedExcelData = await _service.ExportReportExcelFileFromUniversity(excelData, templateId);
+                        var updatedExcelData = await _service.ExportReportExcelFileFromUniversity(excelData, request.batchId);
                         return File(updatedExcelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ReportExcelFile.xlsx");
                     }
                 }

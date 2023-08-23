@@ -10,6 +10,6 @@ namespace BusinessLayer.Service.Interface
 {
     public interface IReportService
     {
-       Task<byte[]> ExportReportExcelFileFromUniversity(byte[] excelStream, int templateid);
+       Task<byte[]> ExportReportExcelFileFromUniversity(byte[] excelStream, int batchId);
     }
 }
