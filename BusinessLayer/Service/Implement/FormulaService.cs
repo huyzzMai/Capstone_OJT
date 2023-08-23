@@ -15,6 +15,7 @@ using System.Text;
 using NCalc;
 using System.Threading.Tasks;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace BusinessLayer.Service.Implement
 {
@@ -25,15 +26,36 @@ namespace BusinessLayer.Service.Implement
         {
             _unitOfWork = unitOfWork;
         }
-        static bool IsExpressionValid(string expression, object value)
+        static bool IsExpressionValid(string expression)
         {
             try
             {
-                DataTable dt = new DataTable();
-                dt.Columns.Add("TotalAttendanceDay", value.GetType());
-                dt.Rows.Add(value);
+                Random random = new Random();
+                string pattern = @"\b[a-zA-Z]+\b";
 
-                var result = dt.Compute(expression, null);
+                List<string> variables = new List<string>();
+               if (expression.Contains("/0"))
+                {
+                    return false;
+                }
+                MatchEvaluator evaluator = (match) =>
+                {
+                    variables.Add(match.Value); 
+                    return "0"; 
+                };
+                string replacedExpression = Regex.Replace(expression, pattern, evaluator);
+                Expression ncalcExpression = new  Expression(expression); ;             
+                foreach (var variable in variables)
+                {
+                    int randomValue = random.Next(1, 100);
+                    ncalcExpression.Parameters[variable] = randomValue.ToString();
+                }
+
+                object result = ncalcExpression.Evaluate();
+                if (result is double && double.IsInfinity((double)result))
+                {
+                    return false;
+                }
                 return true;
             }
             catch
@@ -52,16 +74,11 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Name formula already exists");
                 }
-                if (!IsExpressionValid(request.Calculation, 5))
+                if (!IsExpressionValid(request.Calculation))
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT,
-                        "The expression is not valid with an integer value.");
-                };
-                if (!IsExpressionValid(request.Calculation, 5.0))
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT,
-                        "The expression is not valid with a double value.");
-                };
+                        "The expression is not valid.");
+                };               
                 
                 var newformula = new Formula()
                 {
