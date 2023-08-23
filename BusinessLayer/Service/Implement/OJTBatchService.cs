@@ -112,12 +112,13 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<List<ListActiveOjtbatchforTrainer>> getListNotGradePointOjtbatch(int trainerId)
+        public async Task<List<ListActiveOjtbatchforTrainer>> getListGradePointOjtbatch(int trainerId)
         {
            try
             {
                 var listOjt = await _unitOfWork.OJTBatchRepository.Get(c=>c.Trainees.Any(c=>c.UserReferenceId == trainerId 
-                && c.UserCriterias.Any(c=>c.Point==null)) && c.IsDeleted==false,"Trainees");
+                && c.UserCriterias.Any(c=>c.Point==null)) && c.IsDeleted==false 
+                && c.EndTime.Value.AddDays(7) >= DateTimeService.GetCurrentDateTime(),"Trainees");
                 if (listOjt == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Empty List OJTBatch");
@@ -125,15 +126,31 @@ namespace BusinessLayer.Service.Implement
                 var res = listOjt.Select(
                     ojt =>
                     {
-                        return new ListActiveOjtbatchforTrainer()
+                        if (ojt.Trainees.Any(c => c.UserCriterias.Any(c => c.Point == null) || c.UserCriterias.Count < 1))
                         {
-                            Id = ojt.Id,
-                            Name = ojt.Name,
-                            StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
-                            EndTime = DateTimeService.ConvertToDateString(ojt.EndTime),
-                            NumberTrainee=ojt.Trainees.Count()
-                            
-                        };
+                            return new ListActiveOjtbatchforTrainer()
+                            {
+                                Id = ojt.Id,
+                                Name = ojt.Name,
+                                StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
+                                EndTime = DateTimeService.ConvertToDateString(ojt.EndTime),
+                                NumberTrainee = ojt.Trainees.Count(),
+                                Status="Not Grade yet"
+                            };
+                        }
+                        else
+                        {
+                            return new ListActiveOjtbatchforTrainer()
+                            {
+                                Id = ojt.Id,
+                                Name = ojt.Name,
+                                StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
+                                EndTime = DateTimeService.ConvertToDateString(ojt.EndTime),
+                                NumberTrainee = ojt.Trainees.Count(),
+                                Status = "Graded"
+
+                            };
+                        }
                     }
                     ).ToList();
                 return res;
@@ -147,13 +164,28 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
+        public List<ListOjtExport> SearchOjt(string Status,List<ListOjtExport> list)
+        {
+            if (!string.IsNullOrEmpty(Status))
+            {
+                Status = Status.ToLower();
+            }
 
-        public async Task<List<ListOjtExport>> getListOjtbatchExportStatus()
+            var query = list.AsQueryable();
+
+            if (!string.IsNullOrEmpty(Status))
+            {
+                query = query.Where(c =>
+                    c.Status.ToLower().Contains(Status)
+                );
+            }          
+            return query.ToList();
+        }
+        public async Task<BasePagingViewModel<ListOjtExport>> getListOjtbatchExportStatus(PagingRequestModel paging,string Status)
         {
             try
             {
-                var list = await _unitOfWork.OJTBatchRepository.Get(o=>o.IsDeleted==false 
-                && o.EndTime >= DateTimeService.GetCurrentDateTime(),"Trainees","University");
+                var list = await _unitOfWork.OJTBatchRepository.Get(o=>o.IsDeleted==false,"Trainees","University");
                 if (list == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Empty List OJTBatch");
@@ -187,7 +219,22 @@ namespace BusinessLayer.Service.Implement
                         }
                     }
                     ).ToList();
-                return res;
+                if (!string.IsNullOrEmpty(Status))
+                {
+                    res = SearchOjt(Status, res);
+                }
+                int totalItem =res.Count;
+                res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                 .Take(paging.PageSize).ToList();
+                var result = new BasePagingViewModel<ListOjtExport>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = res
+                };
+                return result;
             }
             catch (ApiException ex)
             {
