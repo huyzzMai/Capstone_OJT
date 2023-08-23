@@ -49,5 +49,13 @@ namespace DataAccessLayer.Repository.Implement
                        .ToListAsync();
             return list;
         }
+
+        public async Task<List<TaskAccomplished>> GetListTaskAccomplishedFailedOfTrainee(int userId)
+        {
+            var list = await _context.TaskAccomplisheds
+                       .Where(u => u.UserId == userId && u.Status == CommonEnums.ACCOMPLISHED_TASK_STATUS.FAILED)
+                       .ToListAsync();
+            return list;
+        }
     }
 }

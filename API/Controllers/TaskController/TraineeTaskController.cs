@@ -81,6 +81,26 @@ namespace API.Controllers.TaskController
             }
         }
 
+        //[HttpGet("count-tasks")]
+        //public async Task<IActionResult> CountTaskForTrainee()
+        //{
+        //    try
+        //    {
+        //        // Get id of current log in user 
+        //        int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+        //        return Ok(await taskService.CountTaskOfTrainee(userId));
+        //    }
+        //    catch (ApiException e)
+        //    {
+        //        return StatusCode(e.StatusCode, e.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            ex.Message);
+        //    }
+        //}
+
         private void OnDueCardIsMarkedAsCompleteWrapper(WebhookSmartEventDueMarkedAsComplete args)
         {
             OnDueCardIsMarkedAsComplete(args).Wait(); // Wait synchronously

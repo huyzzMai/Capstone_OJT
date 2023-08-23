@@ -90,7 +90,8 @@ namespace DataAccessLayer.Commons
         }
 
         public class SKILL_LEVEL
-        {
+        { 
+            public const int INTRODUCTION = 0;    
             public const int BEGINNER = 1;
             public const int ELEMENTARY = 2;
             public const int INTERMEDIATE = 3;

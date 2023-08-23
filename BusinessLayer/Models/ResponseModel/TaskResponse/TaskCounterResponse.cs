@@ -10,7 +10,9 @@ namespace BusinessLayer.Models.ResponseModel.TaskResponse
     {
         public int TotalTask { get; set; }
 
-        public int TaskComplete { get; set; }  
+        public int TaskComplete { get; set; }
+
+        public int TaskFail { get; set; }
 
         public int TaskOverdue { get; set; }
     }

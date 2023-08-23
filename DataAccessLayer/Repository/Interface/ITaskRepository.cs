@@ -15,5 +15,7 @@ namespace DataAccessLayer.Repository.Interface
         Task<List<TaskAccomplished>> GetListTaskPendingOfTrainee(int userId);
 
         Task<List<TaskAccomplished>> GetListTaskAccomplishedDoneOfTrainee(int userId);
+
+        Task<List<TaskAccomplished>> GetListTaskAccomplishedFailedOfTrainee(int userId);
     }
 }

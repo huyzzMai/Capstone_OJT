@@ -38,6 +38,10 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
                 }
+                if (user.TrelloId == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "User have not update TrelloId!");
+                }
                 var trelloUserId = user.TrelloId;
                 var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
 
@@ -215,8 +219,6 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-
-
         public async Task CreateFinishTask(string taskId)
         {
             try
@@ -233,7 +235,7 @@ namespace BusinessLayer.Service.Implement
                 var trainee = await _unitOfWork.UserRepository.GetUserByTrelloIdAndStatusActive(memId);
                 if (trainee == null)
                 {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found or User have not update TrelloId!");
                 }
 
                 TaskAccomplished ta = new()
@@ -309,24 +311,35 @@ namespace BusinessLayer.Service.Implement
                 var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
                 if (user == null)
                 {
-                    throw new Exception("User not found!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
+                }
+                if (user.TrelloId == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "User have not update TrelloId!");
                 }
                 var trelloUserId = user.TrelloId;
                 var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
 
                 var cards = await client.GetCardsForMemberAsync(trelloUserId);
-                int totalTask = cards.Count();
+                int totalTask = cards.Count;
+
+                var pendingTask = await _unitOfWork.TaskRepository.GetListTaskPendingOfTrainee(traineeId);
+                var totalPeningTask = pendingTask.Count;  
 
                 var doneTasks = await _unitOfWork.TaskRepository.GetListTaskAccomplishedDoneOfTrainee(traineeId);
-                int totalDoneTask = doneTasks.Count();
+                int totalDoneTask = doneTasks.Count;
 
-                int totalOverdueTask = totalTask - totalDoneTask;
+                var failTasks = await _unitOfWork.TaskRepository.GetListTaskAccomplishedFailedOfTrainee(traineeId);
+                int totalFailTask = failTasks.Count;  
+
+                int totalOverdueTask = totalTask - totalDoneTask - totalFailTask - totalPeningTask;
 
                 TaskCounterResponse result = new()
                 {
                     TotalTask = totalTask,
                     TaskComplete = totalDoneTask,
-                    TaskOverdue = totalOverdueTask
+                    TaskOverdue = totalOverdueTask,
+                    TaskFail = totalFailTask
                 };
                 return result;
             }
