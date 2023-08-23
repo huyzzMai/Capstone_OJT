@@ -154,7 +154,30 @@ namespace BusinessLayer.Service.Implement
                 cer.Status = CommonEnums.CERTIFICATE_STATUS.APPROVED;
                 await _unitOfWork.CertificateRepository.Update(cer);
 
-                await _unitOfWork.UserSkillRepository.UpdateUserSkillCurrentLevel(request.UserId, request.CourseId);
+                var listSkill = await _unitOfWork.UserSkillRepository.GetListSkillOfCourse(request.CourseId); 
+                var listUserSKill = await _unitOfWork.UserSkillRepository.GetListUserSkill(request.UserId); 
+
+                foreach ( var skill in listSkill)
+                {
+                    var check = listUserSKill.FirstOrDefault(u => u.SkillId == skill.SkillId);
+                    if(check == null)
+                    {
+                        UserSkill us = new()
+                        {
+                            SkillId = skill.SkillId,
+                            UserId = request.UserId,    
+                            CurrentLevel = skill.AfterwardLevel,
+                            InitLevel = 0
+                        };
+                        await _unitOfWork.UserSkillRepository.Add(us);  
+                    }
+                    else
+                    {
+                        check.CurrentLevel = skill.AfterwardLevel;
+                        await _unitOfWork.UserSkillRepository.Update(check);
+                    }
+                }
+                //await _unitOfWork.UserSkillRepository.UpdateUserSkillCurrentLevel(request.UserId, request.CourseId);
 
                 await _notificationService.CreateNotificaion(request.UserId, "Certificate Verified",
                       "Your certificate has been approved by the Trainer.", CommonEnums.NOTIFICATION_TYPE.UPDATE);

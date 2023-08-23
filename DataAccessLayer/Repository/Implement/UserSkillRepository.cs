@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,22 @@ namespace DataAccessLayer.Repository.Implement
     {
         public UserSkillRepository(OJTDbContext context, IUnitOfWork unitOfWork) : base(context, unitOfWork)
         {
+        }
+
+        public async Task<List<CourseSkill>> GetListSkillOfCourse(int courseId)
+        {
+            var list = await _context.CourseSkills
+                .Where(u => u.CourseId == courseId)
+                .ToListAsync(); 
+            return list;
+        }
+
+        public async Task<List<UserSkill>> GetListUserSkill(int userId)
+        {
+            var list = await _context.UserSkills
+                .Where(u => u.UserId == userId)
+                .ToListAsync();
+            return list;
         }
 
         public async Task UpdateUserSkillCurrentLevel(int courseId, int userId)

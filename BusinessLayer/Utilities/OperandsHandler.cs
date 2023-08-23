@@ -30,84 +30,19 @@ namespace BusinessLayer.Utilities
         }
         public int TotalTask()
         {
-            //try
-            //{
-            //    var user =  _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId).Result;
-            //    if (user == null)
-            //    {
-            //        throw new Exception("User not found!");
-            //    }
-            //    var trelloUserId = user.TrelloId;
-
-            //    var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
-
-            //    var cards =  client.GetCardsForMemberAsync(trelloUserId).Result.ToList();
-
-            //    int totalTask = cards.Count();
-
-            //    return totalTask;
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw new Exception(ex.Message);
-            //}
             return _counter.TotalTask;
         }
         public int TaskOverdue()
         {
-            //try
-            //{
-            //    var user =  _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId).Result;
-            //    if (user == null)
-            //    {
-            //        throw new Exception("User not found!");
-            //    }
-            //    var trelloUserId = user.TrelloId;
-            //    var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
-
-            //    var cards = client.GetCardsForMemberAsync(trelloUserId).Result.ToList();
-            //    int totalTask = cards.Count();
-
-            //    var doneTasks = _unitOfWork.TaskRepository.GetListTaskAccomplishedDoneOfTrainee(userId).Result.ToList();
-
-            //    int totalDoneTask = doneTasks.Count();
-
-            //    int totalOverdueTask = totalTask - totalDoneTask;
-
-            //    return totalOverdueTask;
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw new Exception(ex.Message);
-            //}
             return _counter.TaskOverdue;
         }
         public int TaskComplete()
         {
-            //try
-            //{
-            //    var user = _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId).Result;
-            //    if (user == null)
-            //    {
-            //        throw new Exception("User not found!");
-            //    }
-            //    var trelloUserId = user.TrelloId;
-            //    var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
-
-            //    var cards = client.GetCardsForMemberAsync(trelloUserId).Result.ToList();
-            //    int totalTask = cards.Count();
-
-            //    var doneTasks = _unitOfWork.TaskRepository.GetListTaskAccomplishedDoneOfTrainee(userId).Result.ToList();
-
-            //    int totalDoneTask = doneTasks.Count();
-
-            //    return totalDoneTask;
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw new Exception(ex.Message);
-            //}
-            return _counter.TaskOverdue;
+            return _counter.TaskComplete;
+        }
+        public int TaskFailed()
+        {
+            return _counter.TaskFail;
         }
         public int TotalAttendanceDay()
         {

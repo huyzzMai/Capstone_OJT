@@ -21,10 +21,13 @@ namespace BusinessLayer.Service.Implement
         private readonly IUnitOfWork _unitOfWork;
 
         public IConfiguration _configuration;
-        public UserCriteriaService(IUnitOfWork unitOfWork, IConfiguration configuration)
+
+        private readonly ITaskService _taskService; 
+        public UserCriteriaService(IUnitOfWork unitOfWork, IConfiguration configuration, ITaskService taskService)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
+            _taskService = taskService;
         }
         public double? GetPointByFomular(int userId, int templateHeaderId)
         {
@@ -33,9 +36,9 @@ namespace BusinessLayer.Service.Implement
             {
                 return null;
             }
-            var counting = CountTaskOfTrainee(userId).Result;
+            var counting = _taskService.CountTaskOfTrainee(userId).Result;
             string formular = templateheader.Formula.Calculation;
-            OperandsHandler handler = new OperandsHandler(userId, _unitOfWork, _configuration,counting);
+            OperandsHandler handler = new OperandsHandler(userId, _unitOfWork, _configuration, counting);
             var methodNames = Regex.Matches(formular, @"\(([^)]*)\)").Cast<Match>().Select(match => match.Groups[1].Value).ToList();
             foreach (var methodName in methodNames)
             {
@@ -50,12 +53,13 @@ namespace BusinessLayer.Service.Implement
             var finalResult = engine.Evaluate();
             return (double?)finalResult;
         }
+
         public async Task<List<UserCriteriaResponse>> GetUserCriteria(int tranerId, int ojtBatchId)
         {
             try
             {
-                var users = await _unitOfWork.UserRepository.Get(c => c.UserReferenceId == tranerId && c.OJTBatchId == ojtBatchId,"UserCriterias");
-                if(users == null)
+                var users = await _unitOfWork.UserRepository.Get(c => c.UserReferenceId == tranerId && c.OJTBatchId == ojtBatchId, "UserCriterias");
+                if (users == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Trainee not found");
                 }
@@ -89,45 +93,47 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-        public async Task<TaskCounterResponse> CountTaskOfTrainee(int traineeId)
-        {
-            try
-            {
-                var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
-                if (user == null)
-                {
-                    throw new Exception("User not found!");
-                }
-                var trelloUserId = user.TrelloId;
-                if(trelloUserId==null)
-                {
-                    return null;
-                }
-                var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
 
-                var cards = await client.GetCardsForMemberAsync(trelloUserId);
+        //public async Task<TaskCounterResponse> CountTaskOfTrainee(int traineeId)
+        //{
+        //    try
+        //    {
+        //        var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
+        //        if (user == null)
+        //        {
+        //            throw new Exception("User not found!");
+        //        }
+        //        var trelloUserId = user.TrelloId;
+        //        if(trelloUserId==null)
+        //        {
+        //            return null;
+        //        }
+        //        var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
 
-                int totalTask = cards.Count();
+        //        var cards = await client.GetCardsForMemberAsync(trelloUserId);
 
-                var doneTasks = await _unitOfWork.TaskRepository.GetListTaskAccomplishedDoneOfTrainee(traineeId);
+        //        int totalTask = cards.Count();
 
-                int totalDoneTask = doneTasks.Count();
+        //        var doneTasks = await _unitOfWork.TaskRepository.GetListTaskAccomplishedDoneOfTrainee(traineeId);
 
-                int totalOverdueTask = totalTask - totalDoneTask;
+        //        int totalDoneTask = doneTasks.Count();
 
-                TaskCounterResponse result = new()
-                {
-                    TotalTask = totalTask,
-                    TaskComplete = totalDoneTask,
-                    TaskOverdue = totalOverdueTask
-                };
-                return result;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+        //        int totalOverdueTask = totalTask - totalDoneTask;
+
+        //        TaskCounterResponse result = new()
+        //        {
+        //            TotalTask = totalTask,
+        //            TaskComplete = totalDoneTask,
+        //            TaskOverdue = totalOverdueTask
+        //        };
+        //        return result;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
+
         public async Task UpdatePoints(int trainerId, List<UpdateCriteriaRequest> requests)
         {
             try
