@@ -90,7 +90,7 @@ namespace BusinessLayer.Service.Implement
                         IsCriteria = i.IsCriteria,
                         MatchedAttribute = i.MatchedAttribute,
                         Order = i.Order,
-                        FormulaId = i.FormulaId,
+                        FormulaId = i.FormulaId   ,
                         TotalPoint = i.TotalPoint,
                         Status = CommonEnums.TEMPLATEHEADER_STATUS.ACTIVE,
                         CreatedAt = DateTime.UtcNow.AddHours(7),
