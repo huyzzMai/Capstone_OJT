@@ -28,5 +28,7 @@ namespace BusinessLayer.Models.ResponseModel.OJTBatchResponse
         public string UpdatedAt { get; set; }
 
         public int? UniversityId { get; set; }
+
+        public string UniversityName { get; set; }
     }
 }

@@ -19,5 +19,7 @@ namespace BusinessLayer.Models.ResponseModel.TemplateResponse
 
         public int? UniversityId { get; set; }
 
+        public string UniversityName { get; set; }
+
     }
 }
