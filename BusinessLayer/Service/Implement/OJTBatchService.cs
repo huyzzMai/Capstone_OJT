@@ -185,7 +185,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var list = await _unitOfWork.OJTBatchRepository.Get(o=>o.IsDeleted==false,"Trainees","University");
+                var list = await _unitOfWork.OJTBatchRepository.Get(o=>o.IsDeleted==false,"Trainees","University", "Template");
                 if (list == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Empty List OJTBatch");
@@ -202,6 +202,7 @@ namespace BusinessLayer.Service.Implement
                                 StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
                                 EndTime = DateTimeService.ConvertToDateString(ojt.EndTime),
                                 Status="Can not export",
+                                Url=ojt.Template.Url,
                                 UniversityName=ojt.University.Name
                             };
                         }
@@ -214,6 +215,7 @@ namespace BusinessLayer.Service.Implement
                                 StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
                                 EndTime = DateTimeService.ConvertToDateString(ojt.EndTime),
                                 Status = "Can export",
+                                Url = ojt.Template.Url,
                                 UniversityName = ojt.University.Name
                             };
                         }

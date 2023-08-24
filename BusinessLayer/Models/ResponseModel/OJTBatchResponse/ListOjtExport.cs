@@ -18,6 +18,8 @@ namespace BusinessLayer.Models.ResponseModel.OJTBatchResponse
 
         public string UniversityName { get; set; }
 
+        public string Url { get; set; }
+
         public string Status { get; set; }
 
     }
