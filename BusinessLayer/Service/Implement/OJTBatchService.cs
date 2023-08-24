@@ -83,7 +83,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var batch = await _unitOfWork.OJTBatchRepository.GetFirst(c=>c.Id==batchId);
+                var batch = await _unitOfWork.OJTBatchRepository.GetFirst(c=>c.Id==batchId,"University");
                 if(batch == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "OJTBatch not found");
@@ -95,6 +95,7 @@ namespace BusinessLayer.Service.Implement
                  StartTime= DateTimeService.ConvertToDateString(batch.StartTime),
                  EndTime= DateTimeService.ConvertToDateString(batch.EndTime),
                  UniversityId= batch.UniversityId,
+                 UniversityName=batch.University.Name,
                  TemplateId= batch.TemplateId,
                  CreatedAt= DateTimeService.ConvertToDateString(batch.CreatedAt),
                  UpdatedAt= DateTimeService.ConvertToDateString(batch.UpdatedAt),
@@ -118,7 +119,7 @@ namespace BusinessLayer.Service.Implement
             {
                 var listOjt = await _unitOfWork.OJTBatchRepository.Get(c=>c.Trainees.Any(c=>c.UserReferenceId == trainerId 
                 && c.UserCriterias.Any(c=>c.Point==null)) && c.IsDeleted==false 
-                && c.EndTime.Value.AddDays(7) >= DateTimeService.GetCurrentDateTime(),"Trainees");
+                && c.EndTime.Value.AddDays(7) >= DateTimeService.GetCurrentDateTime(),"Trainees","University");
                 if (listOjt == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Empty List OJTBatch");
@@ -135,6 +136,8 @@ namespace BusinessLayer.Service.Implement
                                 StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
                                 EndTime = DateTimeService.ConvertToDateString(ojt.EndTime),
                                 NumberTrainee = ojt.Trainees.Count(),
+                                UniversityId = ojt.UniversityId,
+                                UniversityName=ojt.University.Name,
                                 Status="Not Grade yet"
                             };
                         }
@@ -147,6 +150,8 @@ namespace BusinessLayer.Service.Implement
                                 StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
                                 EndTime = DateTimeService.ConvertToDateString(ojt.EndTime),
                                 NumberTrainee = ojt.Trainees.Count(),
+                                UniversityId = ojt.UniversityId,
+                                UniversityName = ojt.University.Name,
                                 Status = "Graded"
 
                             };
@@ -308,6 +313,7 @@ namespace BusinessLayer.Service.Implement
                         {
                             Id = ojt.Id,
                             Name = ojt.Name,
+                            TemplateId=ojt.TemplateId,
                             StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
                             EndTime = DateTimeService.ConvertToDateString(ojt.EndTime)
                         };

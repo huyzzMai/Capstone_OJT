@@ -151,7 +151,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId, "TemplateHeaders");
+                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId, "TemplateHeaders","University");
                 if (temp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Template not found");
@@ -163,6 +163,7 @@ namespace BusinessLayer.Service.Implement
                     StartCell = temp.StartCell,
                     Status = temp.Status,
                     UniversityId = temp.UniversityId,
+                    UniversityName=temp.University.Name,
                     UpdatedAt = DateTimeService.ConvertToDateString(temp.UpdatedAt),
                     CreatedAt = DateTimeService.ConvertToDateString(temp.CreatedAt),
                     Url = temp.Url,
@@ -215,7 +216,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var list = await _unitOfWork.TemplateRepository.Get();
+                var list = await _unitOfWork.TemplateRepository.Get(includeProperties:"University");
                 if (list == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Template list not found");
@@ -233,6 +234,7 @@ namespace BusinessLayer.Service.Implement
                         StartCell = c.StartCell,
                         Status = c.Status,
                         UniversityId = c.UniversityId,
+                        UniversityName=c.University.Name,
                         Url = c.Url
                     };
                 }
