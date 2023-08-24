@@ -71,27 +71,27 @@ namespace API.Controllers.OJTBatchController
                   e.Message);
             }
         }
-        //[Authorize]
-        //[HttpGet]
-        //[Route("export-status-batches")]
-        //public async Task<IActionResult> GetOjtStatusExport([FromQuery] PagingRequestModel paging)
-        //{
-        //    try
-        //    {
-        //        paging = PagingUtil.checkDefaultPaging(paging);
-        //        var list = await _ojtService.getListOjtbatchExportStatus(paging);
-        //        return Ok(list);
-        //    }
-        //    catch (ApiException ex)
-        //    {
-        //        return StatusCode(ex.StatusCode, ex.Message);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError,
-        //          e.Message);
-        //    }
-        //}
+        [Authorize]
+        [HttpGet]
+        [Route("export-status-batches")]
+        public async Task<IActionResult> GetOjtStatusExport([FromQuery] PagingRequestModel paging, string Status)
+        {
+            try
+            {
+                paging = PagingUtil.checkDefaultPaging(paging);
+                var list = await _ojtService.getListOjtbatchExportStatus(paging,Status);
+                return Ok(list);
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
         [Authorize]
         [HttpGet("{id}")]        
         public async Task<IActionResult> GetDetailOJTBatchInformation(int id)
