@@ -11,13 +11,12 @@ namespace BusinessLayer.Models.RequestModel.TemplateHeaderRequest
     {
         [Required]
         public string Name { get; set; }
-        [Required]
         public double? TotalPoint { get; set; }
         [Required]
         public string MatchedAttribute { get; set; }
         [Required]
         public bool? IsCriteria { get; set; }
-        public int FormulaId { get; set; }
+        public int? FormulaId { get; set; }
         [Required]
         public int? Order { get; set; }
 
