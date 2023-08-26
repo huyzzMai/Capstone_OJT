@@ -1,4 +1,5 @@
 using API.Hubs;
+using BusinessLayer.Service;
 using BusinessLayer.Service.Implement;
 using BusinessLayer.Service.Interface;
 using DataAccessLayer.Base;
@@ -68,6 +69,7 @@ namespace API
             services.AddScoped<IPositionService, PositionService>();
             services.AddScoped<IUserCriteriaService, UserCriteriaService>();
             services.AddScoped<IFormulaService, FormulaService>();
+            services.AddSingleton<OperandService>();
             services.AddHttpClient();
 
 

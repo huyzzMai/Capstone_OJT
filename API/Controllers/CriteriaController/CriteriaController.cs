@@ -38,7 +38,7 @@ namespace API.Controllers.CriteriaController
             {
                 var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
                 var trainerId = int.Parse(userIdClaim.Value);
-                var list = await _service.GetUserCriteria(trainerId, ojtBatchId);
+                var list = await _service.GetUserCriteriaToGrade(trainerId, ojtBatchId);
                 return Ok(list);
             }
             catch (Exception ex)
@@ -47,7 +47,24 @@ namespace API.Controllers.CriteriaController
                     ex.Message);
             }
         }
-
+        [Authorize]
+        [Route("list-current-point-of-trainee-point-by-trainer/{ojtBatchId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetCurrentUserCriteriaList(int ojtBatchId)
+        {
+            try
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
+                var trainerId = int.Parse(userIdClaim.Value);
+                var list = await _service.GetCurrentUserCriteria(trainerId, ojtBatchId);
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
         [Authorize]       
         [HttpPost]
         public async Task<IActionResult> UpdateUserCriteriaList([FromBody]List<UpdateCriteriaRequest> request)

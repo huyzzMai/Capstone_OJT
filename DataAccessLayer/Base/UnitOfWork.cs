@@ -58,5 +58,7 @@ namespace DataAccessLayer.Base
         public IPositionRepository PositionRepository => new PositionRepository(_context, this);
 
         public IFormulaRepository FormulaRepository => new FormulaRepository(_context, this);
+
+        public IConfigRepository ConfigRepository => new ConfigRepository(_context, this);
     }
 }

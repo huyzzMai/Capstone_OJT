@@ -24,6 +24,10 @@ namespace BusinessLayer.Utilities
                 throw new ArgumentException("Invalid date format. The input string must be in the format 'd/M/yyyy' or 'dd/MM/yyyy'.");
             }
         }
+        public static int GetTotalDaysInMonth(int year, int month)
+        {
+            return DateTime.DaysInMonth(year, month);
+        }
         public static string ConvertToDateString(DateTime? dateTime)
         {
             if (dateTime.HasValue)
@@ -34,6 +38,22 @@ namespace BusinessLayer.Utilities
 
             return null;
         }
+        //public static int DaysRemainingOfMonth(DateTime date)
+        //{
+        //    DateTime currentDate = date;
+
+           
+        //    DateTime nextMonthStart = currentDate.AddMonths(1).Date;
+
+           
+        //    DateTime currentMonthEnd = nextMonthStart.AddDays(-1);
+
+            
+        //    int daysRemaining = (currentMonthEnd - currentDate).Days;
+
+
+        //    return daysRemaining;
+        //}
         public static TimeSpan ConvertToTimeSpan(double hours)
         {
             int totalMinutes = (int)(hours * 60);

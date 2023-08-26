@@ -29,36 +29,53 @@ namespace BusinessLayer.Service.Implement
             _configuration = configuration;
             _taskService = taskService;
         }
-        public double? GetPointByFomular(int userId, int templateHeaderId)
+        public double? GetPointByFomular(int templateHeaderId,OperandsHandler handler)
         {
             var templateheader = _unitOfWork.TemplateHeaderRepository.GetFirst(c => c.Id == templateHeaderId, "Formula").Result;
             if (templateheader.FormulaId == null)
             {
                 return null;
             }
-            var counting = _taskService.CountTaskOfTrainee(userId).Result;
-            string formular = templateheader.Formula.Calculation;
-            OperandsHandler handler = new OperandsHandler(userId, _unitOfWork, _configuration, counting);
+           
+            string formular = templateheader.Formula.Calculation;           
             var methodNames = Regex.Matches(formular, @"\(([^)]*)\)").Cast<Match>().Select(match => match.Groups[1].Value).ToList();
             foreach (var methodName in methodNames)
             {
                 var method = typeof(OperandsHandler).GetMethod(methodName);
                 if (method != null)
                 {
-                    var result = (int)method.Invoke(handler, null);
-                    formular = formular.Replace($"({methodName})", result.ToString());
+                    var test = method.Invoke(handler, null);
+                    if (test is int inttValue)
+                    {
+                        formular = formular.Replace($"({methodName})", inttValue.ToString());
+                    }
+                    else if (test is double doubleeValue)
+                    {
+                        formular = formular.Replace($"({methodName})", doubleeValue.ToString());
+                    }
                 }
             }
             var engine = new NCalc.Expression(formular);
-            var finalResult = engine.Evaluate();
-            return (double?)finalResult;
+            double finalResult=0;
+            object result = engine.Evaluate();
+
+            if (result is int intValue)
+            {
+                finalResult = Convert.ToDouble(intValue);
+            }
+            else if (result is double doubleValue)
+            {
+                finalResult = doubleValue;
+            }
+            return finalResult;
         }
 
-        public async Task<List<UserCriteriaResponse>> GetUserCriteria(int tranerId, int ojtBatchId)
+        public async Task<List<UserCriteriaResponse>> GetUserCriteriaToGrade(int tranerId, int ojtBatchId)
         {
             try
-            {
+            {             
                 var users = await _unitOfWork.UserRepository.Get(c => c.UserReferenceId == tranerId && c.OJTBatchId == ojtBatchId, "UserCriterias");
+                OperandsHandler handler=null;
                 if (users == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Trainee not found");
@@ -66,6 +83,15 @@ namespace BusinessLayer.Service.Implement
                 var res = users.Select(
                 user =>
                 {
+                    if(user.TrelloId != null)
+                    {
+                        var counting = _taskService.CountTaskOfTrainee(user.Id).Result;
+                        handler = new OperandsHandler(user.Id, _unitOfWork, _configuration, counting);
+                    }
+                    else
+                    {
+                        handler = new OperandsHandler(user.Id, _unitOfWork, _configuration, null);
+                    }
                     return new UserCriteriaResponse()
                     {
                         UserId = user.Id,
@@ -76,7 +102,7 @@ namespace BusinessLayer.Service.Implement
                         new CriteriaResponse()
                         {
                             Id = c.TemplateHeaderId,
-                            Point = GetPointByFomular(user.Id, c.TemplateHeaderId)
+                            Point = GetPointByFomular(c.TemplateHeaderId,handler)
                         }
                         ).ToList()
                     };
@@ -154,6 +180,45 @@ namespace BusinessLayer.Service.Implement
                         await _unitOfWork.UserCriteriaRepository.Update(usercriteria);
                     }
                 }
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+
+        public async Task<List<UserCriteriaResponse>> GetCurrentUserCriteria(int tranerId, int ojtBatchId)
+        {
+            try
+            {
+                var users = await _unitOfWork.UserRepository.Get(c => c.UserReferenceId == tranerId && c.OJTBatchId == ojtBatchId, "UserCriterias");
+                
+                var res = users.Select(
+                user =>
+                {
+                    
+                    return new UserCriteriaResponse()
+                    {
+                        UserId = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        RollNumber = user.RollNumber,
+                        Criterias = user.UserCriterias.OrderBy(c => c.TemplateHeader.Order).Select(c =>
+                        new CriteriaResponse()
+                        {
+                            Id = c.TemplateHeaderId,
+                            Point = c.Point,
+                        }
+                        ).ToList()
+                    };
+                }
+                ).ToList();
+                return res;
             }
             catch (ApiException ex)
             {

@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using BusinessLayer.Models.RequestModel.FormulaRequest;
+using BusinessLayer.Service;
 
 namespace API.Controllers.Formula
 {
@@ -21,25 +22,28 @@ namespace API.Controllers.Formula
     [ApiController]
     public class FormulaController : ControllerBase
     {
-        private readonly IFormulaService _service;      
-        public FormulaController(IFormulaService service)
+        private readonly IFormulaService _service;
+        private readonly OperandService _operandService;
+        public FormulaController(IFormulaService service, OperandService operandService)
         {
-            _service = service;         
+            _service = service;
+            _operandService = operandService;
         }
         [Authorize]
-        [HttpGet("enum-operand")]
-        public IActionResult Get()
+        [HttpGet("data-operand")]
+        public IActionResult Get([FromQuery] string category)
         {
-            var enums = typeof(EnumData)
-                .GetNestedTypes(BindingFlags.Public | BindingFlags.Static)
-                .Where(t => t.IsEnum)
-                .Select(t => new
-                {
-                    Name = t.Name,
-                    Values = Enum.GetNames(t)
-                })
-                .ToList();
-            return Ok(enums);
+            if (category == null)
+            {
+                var allOperands = _operandService.GetAllOperands();
+                return Ok(allOperands);
+            }
+            var operands = _operandService.GetOperandsByKey(category);
+            if (operands != null)
+            {
+                return Ok(operands);
+            }
+            return NotFound();
         }
         [Authorize]
         [HttpPost]

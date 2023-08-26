@@ -10,8 +10,9 @@ namespace BusinessLayer.Service.Interface
 {
     public interface IUserCriteriaService
     {
-        Task<List<UserCriteriaResponse>> GetUserCriteria(int tranerId, int ojtBatchId);
+        Task<List<UserCriteriaResponse>> GetUserCriteriaToGrade(int tranerId, int ojtBatchId);
 
+        Task<List<UserCriteriaResponse>> GetCurrentUserCriteria(int tranerId, int ojtBatchId);
         Task UpdatePoints(int trainerId, List<UpdateCriteriaRequest> requests);
     }
 }
