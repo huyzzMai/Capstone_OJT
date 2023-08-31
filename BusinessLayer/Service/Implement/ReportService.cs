@@ -1,9 +1,12 @@
 ﻿using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
+using ClosedXML;
 using ClosedXML.Excel;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
+using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.VariantTypes;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
@@ -132,6 +135,13 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Start index is over colum or row");
                 }
                 int currentCol = startCol;
+                var countlineinsert = dataMap[0].Count();
+                for (int i = 1; i <= countlineinsert; i++)
+                {
+                    var placeindex = startRow + i;
+                    worksheet.Cells[startRow, 1, rowCount, columnCount].Copy(worksheet.Cells[placeindex, 1, rowCount, columnCount]);
+
+                }
                 foreach (var rowData in dataMap)
                 {
 
@@ -142,11 +152,13 @@ namespace BusinessLayer.Service.Implement
                         if (cell.Value == null)
                         {
                             cell.Value = data;
+                            
                         }
                         else
                         {
                             throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "There is data at blank need insert data");
                         }
+                       
                         currentRow++;
                     }
                     currentCol++;
