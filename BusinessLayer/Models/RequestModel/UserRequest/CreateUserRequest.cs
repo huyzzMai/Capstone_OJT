@@ -30,6 +30,7 @@ namespace BusinessLayer.Models.RequestModel.UserRequest
         public string RollNumber { get; set; }
         public string AvatarUrl { get; set; }
         public int? Position { get; set; }
+        public string StudentCode { get; set; } 
         public string TrelloId { get; set; }
         public int? BatchId { get; set; }    
 

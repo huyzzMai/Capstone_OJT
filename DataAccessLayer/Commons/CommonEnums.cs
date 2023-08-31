@@ -130,6 +130,7 @@ namespace DataAccessLayer.Commons
             public const int BAD_REQUET = 400;
             public const int UNAUTHORIZED = 401;
             public const int NOT_FOUND = 404;
+            public const int REQUEST_TIMEOUT = 408;
             public const int CONFLICT = 409;
         }
         public class UNIVERSITY_STATUS

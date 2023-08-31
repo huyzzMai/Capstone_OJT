@@ -604,22 +604,60 @@ namespace BusinessLayer.Service.Implement
         public async Task<BasePagingViewModel<TraineeResponse>> GetTraineeListByTrainer(int id, PagingRequestModel paging)
         {
             var users = await _unitOfWork.UserRepository.GetTraineeListByTrainerId(id);
-            List<TraineeResponse> res = users.Select(
-                user =>
+            var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+            List<TraineeResponse> res = new();
+            foreach (var user in users)
+            {
+                TraineeResponse a = new()
                 {
-                    return new TraineeResponse()
-                    {
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Email = user.Email,
-                        Gender = user.Gender ?? default(int),
-                        AvatarURL = user.AvatarURL,
-                        PositionName = user.Position.Name,
-                        Status = user.Status
-                    };
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Gender = user.Gender ?? default(int),
+                    AvatarURL = user.AvatarURL,
+                    PositionName = user.Position.Name,
+                    Status = user.Status
+                };
+                List<Card> listTask = new();
+                if (user.TrelloId != null)
+                {
+                    listTask = await client.GetCardsForMemberAsync(user.TrelloId);
                 }
-                ).ToList();
+                if (listTask != null && listTask.Count != 0)
+                {
+                    if (listTask.Any(task => task.DueComplete == false && task.Due != null))
+                    {
+                        a.WorkStatus = CommonEnums.TRAINEE_WORKING_STATUS.WORKING;
+                    }
+                    else
+                    {
+                        a.WorkStatus = CommonEnums.TRAINEE_WORKING_STATUS.FREE;
+                    }
+                }
+                else
+                {
+                    a.WorkStatus = CommonEnums.TRAINEE_WORKING_STATUS.FREE;
+                }
+                res.Add(a);
+            }
+
+            //List<TraineeResponse> res = users.Select(
+            //    user =>
+            //    {
+            //        return new TraineeResponse()
+            //        {
+            //            Id = user.Id,
+            //            FirstName = user.FirstName,
+            //            LastName = user.LastName,
+            //            Email = user.Email,
+            //            Gender = user.Gender ?? default(int),
+            //            AvatarURL = user.AvatarURL,
+            //            PositionName = user.Position.Name,
+            //            Status = user.Status
+            //        };
+            //    }
+            //    ).ToList();
 
             int totalItem = res.Count;
 
@@ -759,8 +797,9 @@ namespace BusinessLayer.Service.Implement
                     AvatarURL = request.AvatarUrl,
                     Password = encryptPwd,
                     PositionId = request.Position,
-                    TrelloId = request.TrelloId,
+                    StudentCode = request.StudentCode,  
                     OJTBatchId = request.BatchId,
+                    //TrelloId = request.TrelloId,
                     CreatedAt = DateTime.UtcNow.AddHours(7),
                     Status = CommonEnums.USER_STATUS.ACTIVE
                 };
@@ -771,6 +810,14 @@ namespace BusinessLayer.Service.Implement
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Trainee or Trainer must have a Position!");
                     }
+                    var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+                    var trelloUsers = await client.GetMembersOfOrganizationAsync(_configuration["TrelloWorkspace:WorkspaceId"]); 
+                    var target = trelloUsers.FirstOrDefault(x => x.Username == user.RollNumber);
+                    if (target == null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Trainee or Trainer had not been created a Trello Accout!");
+                    }
+                    user.TrelloId = target.Id;  
                 }
                 
                 if (request.CreateSkills != null && request.CreateSkills.Count != 0) 

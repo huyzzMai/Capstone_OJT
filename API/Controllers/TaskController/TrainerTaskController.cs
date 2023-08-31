@@ -97,8 +97,7 @@ namespace API.Controllers.TaskController
             try
             {
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                await taskService.CreateBoardWebhook(userId);
-                return Ok("Create webhook successfully.");
+                return Ok(await taskService.CreateBoardWebhook(userId));
             }
             catch (ApiException e)
             {
