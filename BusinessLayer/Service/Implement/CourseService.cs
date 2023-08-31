@@ -156,7 +156,7 @@ namespace BusinessLayer.Service.Implement
                 if (!checkmatch)
                 {
                     var checklevelzero = course.CourseSkills.Any(c => c.RecommendedLevel > 0);
-                    if (checkmatch)
+                    if (checklevelzero)
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "The trainee is not eligible to take this course");
                     }
