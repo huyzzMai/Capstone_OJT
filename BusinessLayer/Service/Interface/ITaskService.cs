@@ -24,6 +24,6 @@ namespace BusinessLayer.Service.Interface
 
         Task<TaskCounterResponse> CountTaskOfTrainee(int traineeId);
 
-        Task CreateBoardWebhook(int userId);
+        Task<List<WebhookBoardsResponse>> CreateBoardWebhook(int userId);
     }
 }

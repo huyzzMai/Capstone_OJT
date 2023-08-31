@@ -354,7 +354,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task CreateBoardWebhook(int userId)
+        public async Task<List<WebhookBoardsResponse>> CreateBoardWebhook(int userId)
         {
             try
             {
@@ -371,7 +371,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "You have not create any Board!");
                 }
-
+                var response = new List<WebhookBoardsResponse>();
                 var webhooks = await client.GetWebhooksForCurrentTokenAsync();
 
                 foreach (var board in boards)
@@ -381,9 +381,26 @@ namespace BusinessLayer.Service.Implement
                     {
                         string description = "Webhook of Board : " + board.Name;
                         var newWebhook = new Webhook(description, _configuration["TrelloWorkspace:URLCallBack"], board.Id);
-                        var addedWebhook = await client.AddWebhookAsync(newWebhook);
+                        try
+                        {
+                            var addedWebhook = await client.AddWebhookAsync(newWebhook);
+                        }
+                        catch (Exception webhookEx)
+                        {
+                            // Handle exception specific to adding webhook
+                            Console.WriteLine($"An error occurred while adding a webhook: {webhookEx.Message}");
+                            throw new ApiException(CommonEnums.CLIENT_ERROR.REQUEST_TIMEOUT,"Trello server took too much time to process the request. Please try to reattempt to send this request!");
+                        }
                     }
+                    WebhookBoardsResponse a = new()
+                    {
+                        BoardTrelloId = board.Id,
+                        BoardName = board.Name,
+                        BoardURL = board.Url,
+                    };
+                    response.Add(a);    
                 }
+                return response;    
             }
             catch (Exception ex)
             {
