@@ -142,26 +142,30 @@ namespace BusinessLayer.Service.Implement
             {
                 var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == userid && c.Status == CommonEnums.USER_STATUS.ACTIVE
                 && c.Role == CommonEnums.ROLE.TRAINEE, "UserSkills");
-                var ismatch = await _unitOfWork.CourseRepository.GetFirst(c => 
-                c.CoursePositions.Any(c => c.Position.Equals(user.Position))
-                &&c.CourseSkills.Any(c=>user.UserSkills.Any(uk=>uk.CurrentLevel==c.RecommendedLevel)));
-
-                if (ismatch == null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "User can not enroll this course");
-                }
+                var course = await _unitOfWork.CourseRepository.GetFirst(c=>c.Id==courseId && c.Status==CommonEnums.COURSE_STATUS.ACTIVE);
                 if (user == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Invalid user");
                 }
-                if (await _unitOfWork.CourseRepository.Get(c => c.Id == courseId) == null)
+                if (course == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Course not found");
                 }
+                var checkmatch = course.CourseSkills.Any(c => c.RecommendedLevel > 0 
+                && user.UserSkills.Any(uk => uk.SkillId == c.SkillId && uk.CurrentLevel == c.RecommendedLevel));
+                if (!checkmatch)
+                {
+                    var checklevelzero = course.CourseSkills.Any(c => c.RecommendedLevel > 0);
+                    if (checklevelzero)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "The trainee is not eligible to take this course");
+                    }
+                }
+               
                 var newcer = new Certificate()
                 {
                     Status = CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT,
-                    EnrollDate = DateTime.UtcNow.AddHours(7),
+                    EnrollDate = DateTimeService.GetCurrentDateTime(),
                     CourseId = courseId,
                     UserId = userid,
                 };
