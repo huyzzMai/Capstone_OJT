@@ -33,7 +33,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var uni = await _unitOfWork.UniversityRepository.GetFirst(c => c.IsDeleted == false && c.Id==Id, "OJTBatches");
+                var uni = await _unitOfWork.UniversityRepository.GetFirst(c => c.Id==Id, "OJTBatches");
                 if (uni == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "University not found");
@@ -121,7 +121,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var list = await _unitOfWork.UniversityRepository.Get(c => c.IsDeleted == false, "OJTBatches");
+                var list = await _unitOfWork.UniversityRepository.Get(includeProperties:"OJTBatches");
                 var listuser = await _unitOfWork.UserRepository.Get();
                 if (list == null)
                 {
