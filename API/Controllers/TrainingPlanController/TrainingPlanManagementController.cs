@@ -202,97 +202,97 @@ namespace API.Controllers.TrainingPlanController
             }
         }
 
-        [Authorize(Roles = "Trainer")]
-        [HttpPost("detail/{planId}")]
-        public async Task<IActionResult> CreateTrainingPlanDetailForExistingTrainingPlan(int planId, [FromBody] List<CreateTrainingPlanDetailRequest> request)
-        {
-            try
-            {
-                // Get id of current log in user 
-                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                await trainingService.CreateTrainingPlanDetailForExistingTrainingPlan(userId, planId, request);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
-                return StatusCode(StatusCodes.Status201Created, "Training plan detail is created successfully.");
-            }
-            catch (ApiException e)
-            {
-                return StatusCode(e.StatusCode, e.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    ex.Message);
-            }
-        }
+        //[Authorize(Roles = "Trainer")]
+        //[HttpPost("detail/{planId}")]
+        //public async Task<IActionResult> CreateTrainingPlanDetailForExistingTrainingPlan(int planId, [FromBody] List<CreateTrainingPlanDetailRequest> request)
+        //{
+        //    try
+        //    {
+        //        // Get id of current log in user 
+        //        int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+        //        await trainingService.CreateTrainingPlanDetailForExistingTrainingPlan(userId, planId, request);
+        //        await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
+        //        return StatusCode(StatusCodes.Status201Created, "Training plan detail is created successfully.");
+        //    }
+        //    catch (ApiException e)
+        //    {
+        //        return StatusCode(e.StatusCode, e.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            ex.Message);
+        //    }
+        //}
 
-        [Authorize(Roles = "Trainer")]
-        [HttpPut("detail/{id}")]
-        public async Task<IActionResult> UpdateTrainingPlanDetail(int id, [FromBody] CreateTrainingPlanDetailRequest request)
-        {
-            try
-            {
-                // Get id of current log in user 
-                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                await trainingService.UpdateTrainingPlanDetail(userId, id, request);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
-                return Ok("Update training plan detail successfully.");
-            }
-            catch (ApiException e)
-            {
-                return StatusCode(e.StatusCode, e.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    ex.Message);
-            }
-        }
+        //[Authorize(Roles = "Trainer")]
+        //[HttpPut("detail/{id}")]
+        //public async Task<IActionResult> UpdateTrainingPlanDetail(int id, [FromBody] CreateTrainingPlanDetailRequest request)
+        //{
+        //    try
+        //    {
+        //        // Get id of current log in user 
+        //        int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+        //        await trainingService.UpdateTrainingPlanDetail(userId, id, request);
+        //        await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
+        //        return Ok("Update training plan detail successfully.");
+        //    }
+        //    catch (ApiException e)
+        //    {
+        //        return StatusCode(e.StatusCode, e.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            ex.Message);
+        //    }
+        //}
 
-        [Authorize(Roles = "Trainer")]
-        [HttpPut("deactivated-plan/{planId}")]
-        public async Task<IActionResult> DeactivateTrainingPlan(int planId)
-        {
-            try
-            {
-                // Get id of current log in user 
-                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                await trainingService.DeactivateTrainingPlan(userId, planId);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
-                return Ok("Training plan is deactivated.");
-            }
-            catch (ApiException e)
-            {
-                return StatusCode(e.StatusCode, e.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    ex.Message);
-            }
-        }
+        //[Authorize(Roles = "Trainer")]
+        //[HttpPut("deactivated-plan/{planId}")]
+        //public async Task<IActionResult> DeactivateTrainingPlan(int planId)
+        //{
+        //    try
+        //    {
+        //        // Get id of current log in user 
+        //        int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+        //        await trainingService.DeactivateTrainingPlan(userId, planId);
+        //        await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
+        //        return Ok("Training plan is deactivated.");
+        //    }
+        //    catch (ApiException e)
+        //    {
+        //        return StatusCode(e.StatusCode, e.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            ex.Message);
+        //    }
+        //}
 
-        [Authorize(Roles = "Trainer")]
-        [HttpPut("open-plan/{planId}")]
-        public async Task<IActionResult> OpenDeactivatedTrainingPlan(int planId)
-        {
-            try
-            {
-                // Get id of current log in user 
-                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                await trainingService.OpenDeactivatedTrainingPlan(userId, planId);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
-                return Ok("Training plan is re-opened.");
-            }
-            catch (ApiException e)
-            {
-                return StatusCode(e.StatusCode, e.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    ex.Message);
-            }
-        }
+        //[Authorize(Roles = "Trainer")]
+        //[HttpPut("open-plan/{planId}")]
+        //public async Task<IActionResult> OpenDeactivatedTrainingPlan(int planId)
+        //{
+        //    try
+        //    {
+        //        // Get id of current log in user 
+        //        int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+        //        await trainingService.OpenDeactivatedTrainingPlan(userId, planId);
+        //        await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.UPDATE);
+        //        return Ok("Training plan is re-opened.");
+        //    }
+        //    catch (ApiException e)
+        //    {
+        //        return StatusCode(e.StatusCode, e.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            ex.Message);
+        //    }
+        //}
 
         [Authorize(Roles = "Trainer")]
         [HttpPost("{id}/trainee/{traineeId}")]

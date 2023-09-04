@@ -373,7 +373,7 @@ namespace BusinessLayer.Service.Implement
                     CreatedAt = DateTime.UtcNow.AddHours(7)
                 };
 
-                if (request.Details != null)
+                if (request.Details != null && request.Details.Count != 0)
                 {
                     ICollection<TrainingPlanDetail> re = new List<TrainingPlanDetail>();
                     foreach (var detail in request.Details)
@@ -430,9 +430,94 @@ namespace BusinessLayer.Service.Implement
                 {
                     tp.Name = request.Name;
                 }
+
+                if (request.Details != null && request.Details.Count != 0) 
+                {
+                    ICollection<TrainingPlanDetail> re = new List<TrainingPlanDetail>();
+                    foreach (var detail in request.Details)
+                    {
+                        if (detail.Id != null)
+                        {
+                            var tpd = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailById(detail.Id ?? default);
+                            if (tpd == null)
+                            {
+                                throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Training plan detail updated not found !");
+                            }
+                            tpd.Name = detail.Name;
+                            tpd.Description = detail.Description;
+                            tpd.StartTime = detail.StartTime;
+                            tpd.EndTime = detail.EndTime;
+                            tpd.IsEvaluativeTask = detail.IsEvaluativeTask; 
+                            tpd.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                            re.Add(tpd);
+                        }
+                        else
+                        {
+                            TrainingPlanDetail td = new()
+                            {
+                                Name = detail.Name,
+                                Description = detail.Description,   
+                                StartTime = detail.StartTime,   
+                                EndTime = detail.EndTime,
+                                IsEvaluativeTask = detail.IsEvaluativeTask,
+                                Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.ACTIVE,
+                                CreatedAt = DateTime.UtcNow.AddHours(7)
+                        };
+                            re.Add(td);
+                        }
+                    }   
+                    tp.TrainingPlanDetails = re;    
+                }
+
                 tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.TrainingPlanRepository.Update(tp);
 
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task UpdateTrainingPlanDetail(int userId, int detailId, CreateTrainingPlanDetailRequest request)
+        {
+            try
+            {
+                //var detail = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailByIdAndNotDeleted(detailId);
+                var detail = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailById(detailId);
+                if (detail == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan detail not found !");
+                }
+                var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(userId, detail.TrainingPlanId ?? default(int));
+                if (check == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "You are not the owner of this training plan detail !");
+                }
+
+                if (request.Name != null)
+                {
+                    detail.Name = request.Name;
+                }
+                if (request.Description != null)
+                {
+                    detail.Description = request.Description;
+                }
+                if (request.StartTime != null)
+                {
+                    detail.StartTime = request.StartTime;
+                }
+                if (request.EndTime != null)
+                {
+                    detail.EndTime = request.EndTime;
+                }
+                if (request.IsEvaluativeTask != null)
+                {
+                    detail.IsEvaluativeTask = request.IsEvaluativeTask;
+                }
+
+                detail.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                await _unitOfWork.TrainingPlanDetailRepository.Update(detail);
             }
             catch (Exception ex)
             {
@@ -532,52 +617,6 @@ namespace BusinessLayer.Service.Implement
             catch (Exception ex) 
             {
                 throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task UpdateTrainingPlanDetail(int userId, int detailId, CreateTrainingPlanDetailRequest request) 
-        {
-            try
-            {
-                //var detail = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailByIdAndNotDeleted(detailId);
-                var detail = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailById(detailId);
-                if (detail == null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan detail not found !");
-                }
-                var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(userId, detail.TrainingPlanId ?? default(int));
-                if (check == null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "You are not the owner of this training plan detail !");
-                }
-
-                if (request.Name != null)
-                {
-                    detail.Name = request.Name;
-                }
-                if (request.Description != null)
-                {
-                    detail.Description = request.Description;
-                }
-                if (request.StartTime != null)
-                {
-                    detail.StartTime = request.StartTime;
-                }
-                if (request.EndTime != null)
-                {
-                    detail.EndTime = request.EndTime;
-                }
-                if (request.IsEvaluativeTask != null)
-                {
-                    detail.IsEvaluativeTask = request.IsEvaluativeTask;
-                }
-
-                detail.UpdatedAt = DateTime.UtcNow.AddHours(7);
-                await _unitOfWork.TrainingPlanDetailRepository.Update(detail);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);    
             }
         }
 
