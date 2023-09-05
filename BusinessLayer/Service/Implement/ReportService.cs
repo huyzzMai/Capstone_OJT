@@ -30,6 +30,17 @@ namespace BusinessLayer.Service.Implement
         {
             _unitOfWork = unitOfWork;
         }
+        static List<string> GetIndexList(int count)
+        {
+            List<string> indexList = new List<string>();
+
+            for (int i = 1; i <= count; i++)
+            {
+                indexList.Add(i.ToString());
+            }
+
+            return indexList;
+        }
         public static List<string> GetPropertyDataforUser(string propertyName, List<User> userList)
         {
             var query = userList.OrderBy(c => c.Id).AsQueryable();
@@ -85,9 +96,19 @@ namespace BusinessLayer.Service.Implement
                 }
                 else
                 {
-                    var users = await _unitOfWork.UserRepository.Get(c => c.Status == CommonEnums.USER_STATUS.ACTIVE && c.OJTBatch.UniversityId == headers.UniversityId, "OJTBatch");
-                    list = GetPropertyDataforUser(h.MatchedAttribute, ojt.Trainees.ToList());
-                    dataMap.Add(list);
+                    if (h.MatchedAttribute == "STT")
+                    {
+                        List<string> indexList = GetIndexList(ojt.Trainees.Count());
+                        dataMap.Add(indexList);
+
+                    }
+                    else
+                    {
+                        var users = await _unitOfWork.UserRepository.Get(c => c.Status == CommonEnums.USER_STATUS.ACTIVE && c.OJTBatch.UniversityId == headers.UniversityId, "OJTBatch");
+                        list = GetPropertyDataforUser(h.MatchedAttribute, ojt.Trainees.ToList());
+                        dataMap.Add(list);
+                    }
+                    
                 }
             }
             return dataMap;
@@ -149,16 +170,8 @@ namespace BusinessLayer.Service.Implement
                     foreach (string data in rowData)
                     {
                         var cell = worksheet.Cells[currentRow, currentCol];
-                        if (cell.Value == null)
-                        {
-                            cell.Value = data;
-                            
-                        }
-                        else
-                        {
-                            throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "There is data at blank need insert data");
-                        }
-                       
+                        
+                            cell.Value = data;                    
                         currentRow++;
                     }
                     currentCol++;
