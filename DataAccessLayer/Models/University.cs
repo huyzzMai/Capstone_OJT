@@ -32,7 +32,7 @@ namespace DataAccessLayer.Models
 
         public DateTime? JoinDate { get; set; }
 
-        public bool? IsDeleted { get; set; }
+        //public bool? IsDeleted { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 
