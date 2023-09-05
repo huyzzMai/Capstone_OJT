@@ -29,7 +29,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var uni = await _unitOfWork.UniversityRepository.GetFirst(c=>c.Id==request.UniversityId && c.IsDeleted==false);
+                var uni = await _unitOfWork.UniversityRepository.GetFirst(c=>c.Id==request.UniversityId);
                 if (uni==null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET,"University not found");
