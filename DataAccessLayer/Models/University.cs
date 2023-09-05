@@ -22,6 +22,9 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(500)")]
         public string ImgURL { get; set; }
 
+        [Column(TypeName = "nvarchar(MAX)")]
+        public string UniversityCode { get; set; }  
+
         [Column(TypeName = "nvarchar(500)")]
         public string Address { get; set; } 
 

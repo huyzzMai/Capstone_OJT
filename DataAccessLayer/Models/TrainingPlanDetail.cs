@@ -22,7 +22,7 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(500)")]
         public string Description { get; set; }
 
-        public bool? IsEvaluativeTask { get; set; } 
+        //public bool? IsEvaluativeTask { get; set; } 
 
         public int? Status { get; set; }
 

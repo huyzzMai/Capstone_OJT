@@ -21,7 +21,7 @@ namespace BusinessLayer.Models.RequestModel.TrainingPLanRequest
         [Required]
         public DateTime? EndTime { get; set; }
 
-        [Required]
-        public bool? IsEvaluativeTask { get; set; } 
+        //[Required]
+        //public bool? IsEvaluativeTask { get; set; } 
     }
 }
