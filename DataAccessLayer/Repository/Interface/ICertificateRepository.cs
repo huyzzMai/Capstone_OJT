@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Repository.Interface
 {
-    public interface ICertificateRepository : IGenericRepository<Certificate>
+    public interface ICertificateRepository : IGenericRepository<Register>
     {
-        Task<Certificate> GetCertificateWithUserAndCourse(int userId, int couseId);
-        Task<List<Certificate>> GetListCertificateOfTraineeWithUserAndCourse(int userId);
+        Task<Register> GetCertificateWithUserAndCourse(int userId, int couseId);
+        Task<List<Register>> GetListCertificateOfTraineeWithUserAndCourse(int userId);
     }
 }

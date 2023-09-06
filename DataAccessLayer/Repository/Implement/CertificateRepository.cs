@@ -12,15 +12,15 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Repository.Implement
 {
-    public class CertificateRepository : GenericRepository<Certificate>, ICertificateRepository
+    public class CertificateRepository : GenericRepository<Register>, ICertificateRepository
     {
         public CertificateRepository(OJTDbContext context, IUnitOfWork unitOfWork) : base(context, unitOfWork)
         {
         }
 
-        public async Task<Certificate> GetCertificateWithUserAndCourse(int userId, int couseId)
+        public async Task<Register> GetCertificateWithUserAndCourse(int userId, int couseId)
         {
-            Certificate certificate = await _context.Certificates
+            Register certificate = await _context.Certificates
                 .Where(u => u.UserId == userId && u.CourseId == couseId && u.Status != CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT)
                 .Include(u => u.User)
                 .Include(u => u.Course)
@@ -28,9 +28,9 @@ namespace DataAccessLayer.Repository.Implement
             return certificate; 
         }
 
-        public async Task<List<Certificate>> GetListCertificateOfTraineeWithUserAndCourse(int userId)
+        public async Task<List<Register>> GetListCertificateOfTraineeWithUserAndCourse(int userId)
         {
-            List<Certificate> list = await _context.Certificates
+            List<Register> list = await _context.Certificates
                 .Where(u => u.UserId == userId && u.Status != CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT)
                 .Include(u => u.User)
                 .Include(u => u.Course)

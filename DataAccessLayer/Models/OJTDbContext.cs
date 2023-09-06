@@ -19,7 +19,7 @@ namespace DataAccessLayer.Models
 
         public DbSet<Course> Courses { get; set; }
 
-        public DbSet<Certificate> Certificates { get; set; }
+        public DbSet<Register> Certificates { get; set; }
 
         public DbSet<University> Universities { get; set; }
 
@@ -78,7 +78,7 @@ namespace DataAccessLayer.Models
             modelBuilder.Entity<UserTrainingPlan>()
                 .HasKey(c => new { c.UserId, c.TrainingPlanId });
 
-            modelBuilder.Entity<Certificate>()
+            modelBuilder.Entity<Register>()
                 .HasKey(c => new { c.CourseId, c.UserId });
 
             modelBuilder.Entity<CourseSkill>()
