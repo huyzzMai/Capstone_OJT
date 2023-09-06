@@ -88,8 +88,8 @@ namespace DataAccessLayer.Models
                 .HasKey(c => new { c.SkillId, c.UserId });
 
             modelBuilder.Entity<Config>().HasData(
-            new Config { Id = 1, Name = "Số ngày làm quy định trong tháng",  Value = 20},
-            new Config { Id = 2, Name = "Số giờ làm quy định trong ngày", Value = 8}
+            new Config { Id = 1, Name = "Total Working Days Per Month",  Value = 20},
+            new Config { Id = 2, Name = "Work Hours Required", Value = 8}
             );
         }
     }
