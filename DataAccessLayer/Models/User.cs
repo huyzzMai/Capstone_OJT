@@ -94,7 +94,7 @@ namespace DataAccessLayer.Models
         public virtual ICollection<UserSkill> UserSkills { get; set; }
 
         // Relation with Certificate
-        public virtual ICollection<Register> Certificates { get; set; }
+        public virtual ICollection<Registration> Certificates { get; set; }
 
 
         // Relation with Notification

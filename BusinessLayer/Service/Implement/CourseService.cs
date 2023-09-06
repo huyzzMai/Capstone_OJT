@@ -162,7 +162,7 @@ namespace BusinessLayer.Service.Implement
                     }
                 }
                
-                var newcer = new Register()
+                var newcer = new Registration()
                 {
                     Status = CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT,
                     EnrollDate = DateTimeService.GetCurrentDateTime(),

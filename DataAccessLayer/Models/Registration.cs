@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Models
 {
-    [Table("Register")]
-    public class Register
+    [Table("Registration")]
+    public class Registration
     {
         //[Key]
         //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
