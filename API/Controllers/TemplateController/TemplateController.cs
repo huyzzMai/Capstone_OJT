@@ -1,5 +1,5 @@
 ﻿using API.Hubs;
-using BusinessLayer.Models.RequestModel.CourseRequest;
+using BusinessLayer.Payload.RequestModel.CourseRequest;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
@@ -9,10 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using System;
-using BusinessLayer.Models.RequestModel.TemplateRequest;
+using BusinessLayer.Payload.RequestModel.TemplateRequest;
 using System.Linq;
-using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.RequestModel.TemplateHeaderRequest;
+using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.RequestModel.TemplateHeaderRequest;
 
 namespace API.Controllers.TemplateController
 {

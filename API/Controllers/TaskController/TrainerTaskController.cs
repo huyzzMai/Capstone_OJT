@@ -1,5 +1,5 @@
 ﻿using API.Hubs;
-using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Payload.RequestModel;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;

@@ -1,6 +1,6 @@
 ﻿using API.Hubs;
-using BusinessLayer.Models.RequestModel.SkillRequest;
-using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Payload.RequestModel.SkillRequest;
+using BusinessLayer.Payload.RequestModel;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using System;
-using BusinessLayer.Models.RequestModel.PositionRequest;
+using BusinessLayer.Payload.RequestModel.PositionRequest;
 
 namespace API.Controllers.PositionController
 {

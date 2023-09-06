@@ -1,12 +1,12 @@
-﻿using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.ResponseModel;
+﻿using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.ResponseModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BusinessLayer.Models.RequestModel.PositionRequest;
-using BusinessLayer.Models.ResponseModel.PositionResponse;
+using BusinessLayer.Payload.RequestModel.PositionRequest;
+using BusinessLayer.Payload.ResponseModel.PositionResponse;
 
 namespace BusinessLayer.Service.Interface
 {

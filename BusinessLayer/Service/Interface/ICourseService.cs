@@ -1,7 +1,7 @@
-﻿using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.RequestModel.CourseRequest;
-using BusinessLayer.Models.ResponseModel;
-using BusinessLayer.Models.ResponseModel.CourseResponse;
+﻿using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.RequestModel.CourseRequest;
+using BusinessLayer.Payload.ResponseModel;
+using BusinessLayer.Payload.ResponseModel.CourseResponse;
 using DataAccessLayer.Models;
 using System;
 using System.Collections.Generic;

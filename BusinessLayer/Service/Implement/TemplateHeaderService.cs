@@ -1,5 +1,5 @@
-﻿using BusinessLayer.Models.RequestModel.CriteriaRequest;
-using BusinessLayer.Models.ResponseModel.TemplateResponse;
+﻿using BusinessLayer.Payload.RequestModel.CriteriaRequest;
+using BusinessLayer.Payload.ResponseModel.TemplateResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Base;

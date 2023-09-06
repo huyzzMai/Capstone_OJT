@@ -1,7 +1,7 @@
 ﻿using API.Hubs;
-using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.RequestModel.UserRequest;
-using BusinessLayer.Models.ResponseModel.ExcelResponse;
+using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.RequestModel.UserRequest;
+using BusinessLayer.Payload.ResponseModel.ExcelResponse;
 using BusinessLayer.Service.Implement;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;

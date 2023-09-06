@@ -1,4 +1,4 @@
-﻿using BusinessLayer.Models.ResponseModel.TaskResponse;
+﻿using BusinessLayer.Payload.ResponseModel.TaskResponse;
 using BusinessLayer.Service.Implement;
 using BusinessLayer.Service.Interface;
 using DataAccessLayer.Base;

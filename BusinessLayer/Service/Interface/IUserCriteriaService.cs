@@ -1,5 +1,5 @@
-﻿using BusinessLayer.Models.RequestModel.CriteriaRequest;
-using BusinessLayer.Models.ResponseModel.CriteriaResponse;
+﻿using BusinessLayer.Payload.RequestModel.CriteriaRequest;
+using BusinessLayer.Payload.ResponseModel.CriteriaResponse;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,15 +1,15 @@
-﻿using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.RequestModel.CourseRequest;
-using BusinessLayer.Models.RequestModel.TemplateRequest;
-using BusinessLayer.Models.ResponseModel.CourseResponse;
-using BusinessLayer.Models.ResponseModel;
+﻿using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.RequestModel.CourseRequest;
+using BusinessLayer.Payload.RequestModel.TemplateRequest;
+using BusinessLayer.Payload.ResponseModel.CourseResponse;
+using BusinessLayer.Payload.ResponseModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BusinessLayer.Models.ResponseModel.TemplateResponse;
-using BusinessLayer.Models.RequestModel.TemplateHeaderRequest;
+using BusinessLayer.Payload.ResponseModel.TemplateResponse;
+using BusinessLayer.Payload.RequestModel.TemplateHeaderRequest;
 
 namespace BusinessLayer.Service.Interface
 {

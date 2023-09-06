@@ -1,9 +1,9 @@
-﻿using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.RequestModel.AuthenticationRequest;
-using BusinessLayer.Models.RequestModel.UserRequest;
-using BusinessLayer.Models.ResponseModel;
-using BusinessLayer.Models.ResponseModel.AuthenticationResponse;
-using BusinessLayer.Models.ResponseModel.UserResponse;
+﻿using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.RequestModel.AuthenticationRequest;
+using BusinessLayer.Payload.RequestModel.UserRequest;
+using BusinessLayer.Payload.ResponseModel;
+using BusinessLayer.Payload.ResponseModel.AuthenticationResponse;
+using BusinessLayer.Payload.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;

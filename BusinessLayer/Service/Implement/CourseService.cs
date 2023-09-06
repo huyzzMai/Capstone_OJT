@@ -1,8 +1,8 @@
-﻿using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.RequestModel.CourseRequest;
-using BusinessLayer.Models.ResponseModel;
-using BusinessLayer.Models.ResponseModel.CourseResponse;
-using BusinessLayer.Models.ResponseModel.UserResponse;
+﻿using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.RequestModel.CourseRequest;
+using BusinessLayer.Payload.ResponseModel;
+using BusinessLayer.Payload.ResponseModel.CourseResponse;
+using BusinessLayer.Payload.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;

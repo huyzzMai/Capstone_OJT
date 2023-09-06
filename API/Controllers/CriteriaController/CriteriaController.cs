@@ -1,7 +1,7 @@
 ﻿//using API.Models.ResponseModel;
-using BusinessLayer.Models.RequestModel.AuthenticationRequest;
-using BusinessLayer.Models.RequestModel.CriteriaRequest;
-using BusinessLayer.Models.ResponseModel;
+using BusinessLayer.Payload.RequestModel.AuthenticationRequest;
+using BusinessLayer.Payload.RequestModel.CriteriaRequest;
+using BusinessLayer.Payload.ResponseModel;
 using BusinessLayer.Service.Implement;
 using BusinessLayer.Service.Interface;
 using DataAccessLayer.Interface;

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
-using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Payload.RequestModel;
 using BusinessLayer.Utilities;
 using API.Hubs;
 using Microsoft.AspNetCore.SignalR;

@@ -1,17 +1,17 @@
-﻿using BusinessLayer.Models.RequestModel.CourseRequest;
+﻿using BusinessLayer.Payload.RequestModel.CourseRequest;
 using BusinessLayer.Service.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
-using BusinessLayer.Models.RequestModel.CertificateRequest;
+using BusinessLayer.Payload.RequestModel.CertificateRequest;
 using System.Linq;
 using BusinessLayer.Utilities;
 using API.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using DataAccessLayer.Commons;
-using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Payload.RequestModel;
 using BusinessLayer.Service.Implement;
 
 namespace API.Controllers.CetificateController

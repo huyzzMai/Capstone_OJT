@@ -1,13 +1,13 @@
-﻿using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.ResponseModel.CourseResponse;
-using BusinessLayer.Models.ResponseModel;
+﻿using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.ResponseModel.CourseResponse;
+using BusinessLayer.Payload.ResponseModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BusinessLayer.Models.ResponseModel.UniversityResponse;
-using BusinessLayer.Models.RequestModel.UniversityRequest;
+using BusinessLayer.Payload.ResponseModel.UniversityResponse;
+using BusinessLayer.Payload.RequestModel.UniversityRequest;
 
 namespace BusinessLayer.Service.Interface
 {

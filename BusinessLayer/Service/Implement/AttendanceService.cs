@@ -1,9 +1,9 @@
-﻿using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.ResponseModel;
-using BusinessLayer.Models.ResponseModel.Attendanceesponse;
-using BusinessLayer.Models.ResponseModel.CourseResponse;
-using BusinessLayer.Models.ResponseModel.ExcelResponse;
-using BusinessLayer.Models.ResponseModel.UserResponse;
+﻿using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.ResponseModel;
+using BusinessLayer.Payload.ResponseModel.Attendanceesponse;
+using BusinessLayer.Payload.ResponseModel.CourseResponse;
+using BusinessLayer.Payload.ResponseModel.ExcelResponse;
+using BusinessLayer.Payload.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;

@@ -1,6 +1,6 @@
-﻿using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.ResponseModel;
-using BusinessLayer.Models.ResponseModel.TaskResponse;
+﻿using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.ResponseModel;
+using BusinessLayer.Payload.ResponseModel.TaskResponse;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

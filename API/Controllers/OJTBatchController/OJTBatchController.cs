@@ -1,4 +1,4 @@
-﻿using BusinessLayer.Models.ResponseModel.UserResponse;
+﻿using BusinessLayer.Payload.ResponseModel.UserResponse;
 using BusinessLayer.Service.Implement;
 using BusinessLayer.Service.Interface;
 using Microsoft.AspNetCore.Http;
@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using BusinessLayer.Utilities;
-using BusinessLayer.Models.RequestModel.OjtBatchRequest;
+using BusinessLayer.Payload.RequestModel.OjtBatchRequest;
 using API.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using DataAccessLayer.Commons;
-using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.RequestModel.CourseRequest;
+using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.RequestModel.CourseRequest;
 using System.Linq;
 
 namespace API.Controllers.OJTBatchController

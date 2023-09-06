@@ -1,9 +1,9 @@
-﻿using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.RequestModel.UniversityRequest;
-using BusinessLayer.Models.ResponseModel;
-using BusinessLayer.Models.ResponseModel.CourseResponse;
-using BusinessLayer.Models.ResponseModel.OJTBatchResponse;
-using BusinessLayer.Models.ResponseModel.UniversityResponse;
+﻿using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.RequestModel.UniversityRequest;
+using BusinessLayer.Payload.ResponseModel;
+using BusinessLayer.Payload.ResponseModel.CourseResponse;
+using BusinessLayer.Payload.ResponseModel.OJTBatchResponse;
+using BusinessLayer.Payload.ResponseModel.UniversityResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;

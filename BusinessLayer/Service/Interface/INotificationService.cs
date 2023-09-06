@@ -1,4 +1,4 @@
-﻿using BusinessLayer.Models.ResponseModel.NotificationResponse;
+﻿using BusinessLayer.Payload.ResponseModel.NotificationResponse;
 using System;
 using System.Collections.Generic;
 using System.Linq;

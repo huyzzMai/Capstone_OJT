@@ -6,7 +6,7 @@ using System;
 using BusinessLayer.Service.Interface;
 using API.Hubs;
 using Microsoft.AspNetCore.SignalR;
-using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Payload.RequestModel;
 using BusinessLayer.Utilities;
 
 namespace API.Controllers.AttendanceController

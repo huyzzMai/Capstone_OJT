@@ -1,5 +1,5 @@
 ﻿using API.Hubs;
-using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Payload.RequestModel;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using System;
-using BusinessLayer.Models.RequestModel.UniversityRequest;
+using BusinessLayer.Payload.RequestModel.UniversityRequest;
 using DataAccessLayer.Commons;
 
 namespace API.Controllers.UniversityController

@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using System;
-using BusinessLayer.Models.RequestModel.SkillRequest;
-using BusinessLayer.Models.RequestModel;
+using BusinessLayer.Payload.RequestModel.SkillRequest;
+using BusinessLayer.Payload.RequestModel;
 
 namespace API.Controllers.SkillController
 {

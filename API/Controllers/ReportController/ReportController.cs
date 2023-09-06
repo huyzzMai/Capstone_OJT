@@ -6,7 +6,7 @@ using System;
 using System.Net.Http;
 using System.IO;
 using BusinessLayer.Utilities;
-using BusinessLayer.Models.RequestModel.ReportRequest;
+using BusinessLayer.Payload.RequestModel.ReportRequest;
 
 namespace API.Controllers.ReportController
 {

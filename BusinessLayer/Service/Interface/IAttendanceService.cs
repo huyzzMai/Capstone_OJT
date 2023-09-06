@@ -1,6 +1,6 @@
-﻿using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.ResponseModel;
-using BusinessLayer.Models.ResponseModel.ExcelResponse;
+﻿using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.ResponseModel;
+using BusinessLayer.Payload.ResponseModel.ExcelResponse;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;

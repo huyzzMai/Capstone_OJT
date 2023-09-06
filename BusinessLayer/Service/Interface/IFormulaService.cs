@@ -1,14 +1,14 @@
-﻿using BusinessLayer.Models.RequestModel.SkillRequest;
-using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.ResponseModel.SkillResponse;
-using BusinessLayer.Models.ResponseModel;
+﻿using BusinessLayer.Payload.RequestModel.SkillRequest;
+using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.ResponseModel.SkillResponse;
+using BusinessLayer.Payload.ResponseModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BusinessLayer.Models.RequestModel.FormulaRequest;
-using BusinessLayer.Models.ResponseModel.FormulaResponse;
+using BusinessLayer.Payload.RequestModel.FormulaRequest;
+using BusinessLayer.Payload.ResponseModel.FormulaResponse;
 
 namespace BusinessLayer.Service.Interface
 {

@@ -1,8 +1,8 @@
-﻿using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.ResponseModel;
+﻿using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.ResponseModel;
 using System.Threading.Tasks;
-using BusinessLayer.Models.RequestModel.SkillRequest;
-using BusinessLayer.Models.ResponseModel.SkillResponse;
+using BusinessLayer.Payload.RequestModel.SkillRequest;
+using BusinessLayer.Payload.ResponseModel.SkillResponse;
 
 namespace BusinessLayer.Service.Interface
 {

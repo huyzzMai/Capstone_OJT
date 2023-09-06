@@ -1,4 +1,4 @@
-﻿using BusinessLayer.Models.ResponseModel.NotificationResponse;
+﻿using BusinessLayer.Payload.ResponseModel.NotificationResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;

@@ -1,6 +1,6 @@
 ﻿using API.Hubs;
-using BusinessLayer.Models.RequestModel.UserRequest;
-using BusinessLayer.Models.ResponseModel.UserResponse;
+using BusinessLayer.Payload.RequestModel.UserRequest;
+using BusinessLayer.Payload.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;

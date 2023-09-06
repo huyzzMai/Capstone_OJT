@@ -1,6 +1,6 @@
-﻿using BusinessLayer.Models.RequestModel.CriteriaRequest;
-using BusinessLayer.Models.ResponseModel.CriteriaResponse;
-using BusinessLayer.Models.ResponseModel.TaskResponse;
+﻿using BusinessLayer.Payload.RequestModel.CriteriaRequest;
+using BusinessLayer.Payload.ResponseModel.CriteriaResponse;
+using BusinessLayer.Payload.ResponseModel.TaskResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;

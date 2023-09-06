@@ -1,6 +1,6 @@
-﻿using BusinessLayer.Models.RequestModel.CourseRequest;
-using BusinessLayer.Models.RequestModel.CriteriaRequest;
-using BusinessLayer.Models.ResponseModel.TemplateResponse;
+﻿using BusinessLayer.Payload.RequestModel.CourseRequest;
+using BusinessLayer.Payload.RequestModel.CriteriaRequest;
+using BusinessLayer.Payload.ResponseModel.TemplateResponse;
 using DataAccessLayer.Models;
 using System;
 using System.Collections.Generic;

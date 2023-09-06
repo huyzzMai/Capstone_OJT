@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using System;
-using BusinessLayer.Models.RequestModel.AuthenticationRequest;
+using BusinessLayer.Payload.RequestModel.AuthenticationRequest;
 using BusinessLayer.Utilities;
-using BusinessLayer.Models.ResponseModel.AuthenticationResponse;
+using BusinessLayer.Payload.ResponseModel.AuthenticationResponse;
 using DataAccessLayer.Commons;
 
 namespace API.Controllers.AuthenticationController

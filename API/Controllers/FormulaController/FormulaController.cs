@@ -1,7 +1,7 @@
 ﻿using API.Hubs;
-using BusinessLayer.Models.RequestModel.SkillRequest;
-using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.ResponseModel.EnumResponse;
+using BusinessLayer.Payload.RequestModel.SkillRequest;
+using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.ResponseModel.EnumResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
@@ -13,7 +13,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using BusinessLayer.Models.RequestModel.FormulaRequest;
+using BusinessLayer.Payload.RequestModel.FormulaRequest;
 using BusinessLayer.Service;
 
 namespace API.Controllers.Formula
