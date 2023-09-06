@@ -33,17 +33,14 @@ namespace BusinessLayer.Service.Implement
         {
             _unitOfWork = unitOfWork;
         }
-        public bool HasDuplicateItems(List<Attendance> list1, List<Attendance> list2)
-        {
-            var uniqueItemsList1 = list1.Select(a => new { a.UserId, a.PresentDate }).ToList();
-            foreach (var item in list2)
-            {
+        public bool HasDuplicateItems(Attendance attendance, List<Attendance> list2)
+        {         
+           
                
-                if (uniqueItemsList1.Any(x => x.UserId == item.UserId && IsSameDate(x.PresentDate, item.PresentDate)))
+                if (list2.Any(x => x.UserId == attendance.UserId && IsSameDate(x.PresentDate, attendance.PresentDate)))
                 {
                     return true;
                 }
-            }
 
             return false; 
         }     
@@ -66,11 +63,12 @@ namespace BusinessLayer.Service.Implement
                 var attendanceresponse = new AttendanceUserResponse()
                 {
                     userId = user.Id,
-                    presentDay = listattend.Where(c => c.UserId == user.Id).Select(c => new AttendanceDetail
+                    presentDay = listattend.Where(c => c.UserId == user.Id && c.TotalTime.Value.Hours > 0).Select(c => new AttendanceDetail
                     {
                         day = DateTimeService.ConvertToDateString(c.PresentDate),
                         totalWorkingTime = c.TotalTime
-                    }).ToList()
+                    }).ToList(),
+                    numberOfDateforget= listattend.Where(c => c.UserId == user.Id && c.TotalTime.Value.Hours <= 0 || c.TotalTime==null).Count()
                 };
                 lisresponse.Add(attendanceresponse);
             }
@@ -98,10 +96,6 @@ namespace BusinessLayer.Service.Implement
                         continue;
                     }
                     var totaltime = double.Parse(worksheet.Cells[row, 11].Value?.ToString());
-                    if(totaltime <=0 || totaltime == null)
-                    {
-                        continue;
-                    }
                     var model = new Attendance()
                     {
                         UserId = user.Id,
@@ -111,12 +105,13 @@ namespace BusinessLayer.Service.Implement
                     attendances.Add(model);
                 }
                 var listattendDb = await _unitOfWork.AttendanceRepository.Get();
-                if (HasDuplicateItems(attendances, listattendDb.ToList()))
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT,"Duplicate attendences import fail!");
-                }
+                
                 foreach (var attendance in attendances)
                 {
+                    if (HasDuplicateItems(attendance, listattendDb.ToList()))
+                    {
+                        continue;
+                    }
                     await _unitOfWork.AttendanceRepository.Add(attendance);
                 }                   
             }
