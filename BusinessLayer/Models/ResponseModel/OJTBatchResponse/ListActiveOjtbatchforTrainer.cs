@@ -20,7 +20,7 @@ namespace BusinessLayer.Models.ResponseModel.OJTBatchResponse
 
         public string Status { get; set; }
 
-        public int? UniversityId { get; set; }
+        public string UniversityCode { get; set; }
 
         public string UniversityName { get; set; }
 

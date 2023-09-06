@@ -117,8 +117,8 @@ namespace BusinessLayer.Service.Implement
         {
            try
             {
-                var listOjt = await _unitOfWork.OJTBatchRepository.Get(c=>c.Trainees.Any(c=>c.UserReferenceId == trainerId 
-                && c.UserCriterias.Any(c=>c.Point==null)) && c.IsDeleted==false 
+                var listOjt = await _unitOfWork.OJTBatchRepository.Get(c=>c.Trainees.Any(c=>c.UserReferenceId == trainerId) 
+                && c.IsDeleted==false 
                 && c.EndTime.Value.AddDays(7) >= DateTimeService.GetCurrentDateTime(),"Trainees","University");
                 if (listOjt == null)
                 {
@@ -136,7 +136,7 @@ namespace BusinessLayer.Service.Implement
                                 StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
                                 EndTime = DateTimeService.ConvertToDateString(ojt.EndTime),
                                 NumberTrainee = ojt.Trainees.Count(),
-                                UniversityId = ojt.UniversityId,
+                                UniversityCode = ojt.University.UniversityCode,
                                 UniversityName=ojt.University.Name,
                                 Status="Not Grade yet"
                             };
@@ -150,7 +150,7 @@ namespace BusinessLayer.Service.Implement
                                 StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
                                 EndTime = DateTimeService.ConvertToDateString(ojt.EndTime),
                                 NumberTrainee = ojt.Trainees.Count(),
-                                UniversityId = ojt.UniversityId,
+                                UniversityCode = ojt.University.UniversityCode,
                                 UniversityName = ojt.University.Name,
                                 Status = "Graded"
 
