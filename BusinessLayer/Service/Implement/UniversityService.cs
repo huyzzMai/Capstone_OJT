@@ -44,6 +44,7 @@ namespace BusinessLayer.Service.Implement
                     ImgURL = uni.ImgURL,
                     Name = uni.Name,
                     Address = uni.Address,
+                    UniversityCode= uni.UniversityCode,
                     JoinDate = DateTimeService.ConvertToDateString(uni.JoinDate),
                     CreatedAt = DateTimeService.ConvertToDateString(uni.CreatedAt),
                     UpdatedAt = DateTimeService.ConvertToDateString(uni.UpdatedAt),
@@ -139,6 +140,7 @@ namespace BusinessLayer.Service.Implement
                         Name = c.Name,
                         Address = c.Address,
                         ImgURL = c.ImgURL,
+                        UniversityCode=c.UniversityCode,
                         JoinDate = DateTimeService.ConvertToDateString(c.JoinDate),
                         Status = c.Status,
                         TotalBatches = c.OJTBatches.Where(c => c.IsDeleted != false).ToList().Count,
@@ -191,6 +193,7 @@ namespace BusinessLayer.Service.Implement
                 uni.Name = request.Name;
                 uni.Address = request.Address;
                 uni.ImgURL = request.ImgURL;
+                uni.UniversityCode = request.UniversityCode;
                 uni.JoinDate = request.JoinDate;
                 uni.Status = request.Status;
                 uni.UpdatedAt = DateTime.UtcNow.AddHours(7);
@@ -249,6 +252,7 @@ namespace BusinessLayer.Service.Implement
                     Address = request.Address,
                     ImgURL = request.ImgURL,
                     JoinDate = request.JoinDate,
+                    UniversityCode = request.UniversityCode,
                     Status = CommonEnums.UNIVERSITY_STATUS.ACTIVE,
                     UpdatedAt = DateTime.UtcNow.AddHours(7),
                     CreatedAt = DateTime.UtcNow.AddHours(7)                   

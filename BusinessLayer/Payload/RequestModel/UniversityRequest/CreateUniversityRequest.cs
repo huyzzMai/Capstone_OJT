@@ -14,6 +14,10 @@ namespace BusinessLayer.Payload.RequestModel.UniversityRequest
         [Required]
         public string ImgURL { get; set; }
         [Required]
+
+        public string UniversityCode { get; set; }
+
+        [Required]
         public string Address { get; set; }
         [Required]
         public DateTime? JoinDate { get; set; }
