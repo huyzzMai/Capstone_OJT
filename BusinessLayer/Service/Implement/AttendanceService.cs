@@ -63,7 +63,7 @@ namespace BusinessLayer.Service.Implement
                 var attendanceresponse = new AttendanceUserResponse()
                 {
                     userId = user.Id,
-                    presentDay = listattend.Where(c => c.UserId == user.Id && c.TotalTime.Value.Hours > 0).Select(c => new AttendanceDetail
+                    presentDay = listattend.Where(c => c.UserId == user.Id).Select(c => new AttendanceDetail
                     {
                         day = DateTimeService.ConvertToDateString(c.PresentDate),
                         totalWorkingTime = c.TotalTime
