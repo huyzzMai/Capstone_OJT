@@ -17,6 +17,10 @@ namespace BusinessLayer.Models.RequestModel.UniversityRequest
         public string Address { get; set; }
         [Required]
         public int? Status { get; set; }
+
+        [Required]
+        public string UniversityCode { get; set; }
+
         [Required]
         public DateTime? JoinDate { get; set; }
     }

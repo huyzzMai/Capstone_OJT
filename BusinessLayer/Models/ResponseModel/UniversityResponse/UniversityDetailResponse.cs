@@ -28,6 +28,8 @@ namespace BusinessLayer.Models.ResponseModel.UniversityResponse
         
         public string JoinDate { get; set; }
 
+        public string UniversityCode { get; set; }
+
         public bool? IsDeleted { get; set; }
 
        

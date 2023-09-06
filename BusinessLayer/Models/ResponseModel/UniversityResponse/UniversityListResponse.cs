@@ -23,6 +23,9 @@ namespace BusinessLayer.Models.ResponseModel.UniversityResponse
        
         public string JoinDate { get; set; }
 
+        public string UniversityCode { get; set; }
+
+
         public int TotalBatches { get; set; }
 
         public int OjtTrainees { get; set;}
