@@ -24,7 +24,7 @@ namespace API.Controllers.AttendanceController
             _hubContext = hubContext;
         }
 
-        [Authorize/*(Roles = "Manager")*/]
+        [Authorize(Roles = "Manager")]
         [HttpPost("data-of-file-attendance")]
         public async Task<IActionResult> UploadAttendanceFile(IFormFile file)
         {

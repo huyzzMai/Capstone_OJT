@@ -69,6 +69,7 @@ namespace API
             services.AddScoped<IPositionService, PositionService>();
             services.AddScoped<IUserCriteriaService, UserCriteriaService>();
             services.AddScoped<IFormulaService, FormulaService>();
+            services.AddScoped<IConfigService, ConfigService>();
             services.AddSingleton<OperandService>();
             services.AddHttpClient();
 
