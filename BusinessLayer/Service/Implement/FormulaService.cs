@@ -227,7 +227,7 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "formula not found");
 
                 }
-                var formulacheck = await _unitOfWork.FormulaRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower() 
+                var formulacheck = await _unitOfWork.FormulaRepository.GetFirst(c =>request.Name!=formula.Name && c.Name.ToLower() == request.Name.Trim().ToLower() 
                 );
 
                 if (formulacheck != null)

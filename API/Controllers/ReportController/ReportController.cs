@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.IO;
 using BusinessLayer.Utilities;
 using BusinessLayer.Payload.RequestModel.ReportRequest;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers.ReportController
 {
@@ -22,7 +23,7 @@ namespace API.Controllers.ReportController
             _service = service;
             _httpClient = httpClientFactory.CreateClient();
         }
-
+        [Authorize(Roles ="Admin,Manager,Trainer")]
         [HttpPut]
         public async Task<IActionResult> GetExcelReportFile([FromBody] ReportRequest request)
         {

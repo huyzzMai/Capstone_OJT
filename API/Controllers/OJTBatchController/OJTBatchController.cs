@@ -29,7 +29,7 @@ namespace API.Controllers.OJTBatchController
             _hubContext = hubContext;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("ongoing-batches")]
         public async Task<IActionResult> GetValidOJTBatchInformation([FromQuery] PagingRequestModel paging)
@@ -50,7 +50,7 @@ namespace API.Controllers.OJTBatchController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("status-grade-batches-trainer")]
         public async Task<IActionResult> GetStatusGradeBatch()
@@ -71,7 +71,7 @@ namespace API.Controllers.OJTBatchController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("export-status-batches")]
         public async Task<IActionResult> GetOjtStatusExport([FromQuery] PagingRequestModel paging, string Status)
@@ -92,7 +92,7 @@ namespace API.Controllers.OJTBatchController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]        
         public async Task<IActionResult> GetDetailOJTBatchInformation(int id)
         {
@@ -111,7 +111,7 @@ namespace API.Controllers.OJTBatchController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateOjtBatch(int id, [FromBody] UpdateOjtBatchRequest request)
         {
@@ -130,7 +130,7 @@ namespace API.Controllers.OJTBatchController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOjtBacth(int id)
         {
@@ -150,7 +150,7 @@ namespace API.Controllers.OJTBatchController
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateOJTBatchInformation([FromBody]CreateOjtBatchRequest request)
         {
@@ -169,7 +169,7 @@ namespace API.Controllers.OJTBatchController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("batches-of-university/{universityid}")]
         public async Task<IActionResult> GetValidOJTBatchInformation(int universityid, [FromQuery] PagingRequestModel paging)
