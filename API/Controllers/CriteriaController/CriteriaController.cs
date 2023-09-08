@@ -29,7 +29,7 @@ namespace API.Controllers.CriteriaController
             _service = service;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Trainer")]
         [Route("list-of-trainee-point-by-trainer/{ojtBatchId}")]
         [HttpGet]
         public async Task<IActionResult> GetUserCriteriaList(int ojtBatchId)
@@ -47,7 +47,7 @@ namespace API.Controllers.CriteriaController
                     ex.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Trainer")]
         [Route("list-current-point-of-trainee-point-by-trainer/{ojtBatchId}")]
         [HttpGet]
         public async Task<IActionResult> GetCurrentUserCriteriaList(int ojtBatchId)
@@ -65,7 +65,7 @@ namespace API.Controllers.CriteriaController
                     ex.Message);
             }
         }
-        [Authorize]       
+        [Authorize(Roles = "Trainer")]       
         [HttpPost]
         public async Task<IActionResult> UpdateUserCriteriaList([FromBody]List<UpdateCriteriaRequest> request)
         {

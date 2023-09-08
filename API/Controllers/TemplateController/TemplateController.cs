@@ -30,7 +30,7 @@ namespace API.Controllers.TemplateController
             _hubContext = hubContext;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [Route("template-header/criteriaheader/{templateId}")]
         [HttpGet]
         public async Task<IActionResult> GetListcriteriaheader(int templateId)
@@ -52,7 +52,7 @@ namespace API.Controllers.TemplateController
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetListTemplate([FromQuery] PagingRequestModel paging, string searchTerm, int? filterStatus)
         {
@@ -73,7 +73,7 @@ namespace API.Controllers.TemplateController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Createtemplate([FromBody] CreateTemplateRequest request)
         {
@@ -93,7 +93,7 @@ namespace API.Controllers.TemplateController
                   e.Message);
             }
         }
-        [Authorize]     
+        [Authorize(Roles = "Admin")]     
         [Route("template-header/{templateId}")]
         [HttpPost]
         public async Task<IActionResult> Createtemplateheader(int templateId,[FromBody] CreateTemplateHeaderRequest request)
@@ -114,7 +114,7 @@ namespace API.Controllers.TemplateController
                   e.Message);
             }
         }
-        [Authorize]      
+        [Authorize(Roles = "Admin")]      
         [Route("template-header/{templateId}")]
         [HttpPut]
         public async Task<IActionResult> UpdateTemplate(int templateId, [FromBody] UpdateTemplateHeaderRequest request)
@@ -135,7 +135,7 @@ namespace API.Controllers.TemplateController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTemplate(int id, [FromBody] UpdateTemplateRequest request)
         {
@@ -155,7 +155,7 @@ namespace API.Controllers.TemplateController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDetailTemplateById(int id)
         {
@@ -174,7 +174,7 @@ namespace API.Controllers.TemplateController
                   e.Message);
             }
         }       
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTemplate(int id)
         {
