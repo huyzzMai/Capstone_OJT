@@ -53,6 +53,7 @@ namespace DataAccessLayer.Commons
         public class NOTIFICATION_MESSAGE
         {
             public const string UPDATE_NOTI = "Update Notification Read. Reload notification list.";
+            public const string CREATE_NOTI = "Notification created. Reload notification list.";
         }
 
         public class TEMPLATE_SIGNALR_MESSAGE

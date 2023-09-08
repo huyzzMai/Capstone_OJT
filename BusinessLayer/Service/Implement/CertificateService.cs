@@ -180,7 +180,7 @@ namespace BusinessLayer.Service.Implement
                 //await _unitOfWork.UserSkillRepository.UpdateUserSkillCurrentLevel(request.UserId, request.CourseId);
 
                 await _notificationService.CreateNotificaion(request.UserId, "Certificate Verified",
-                      "Your certificate has been approved by the Trainer.", CommonEnums.NOTIFICATION_TYPE.UPDATE);
+                      "Your certificate has been approved by the Trainer.", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
             }
             catch (Exception e)
             {
@@ -217,7 +217,7 @@ namespace BusinessLayer.Service.Implement
                 await _unitOfWork.CertificateRepository.Update(cer);
 
                 await _notificationService.CreateNotificaion(request.UserId, "Certificate Denied",
-                      "Your certificate has been denied by the Trainer.", CommonEnums.NOTIFICATION_TYPE.UPDATE);
+                      "Your certificate has been denied by the Trainer.", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
             }
             catch (Exception e)
             {
@@ -249,7 +249,7 @@ namespace BusinessLayer.Service.Implement
                 cer.SubmitDate = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.CertificateRepository.Update(cer);
                 await _notificationService.CreateNotificaion(user.UserReferenceId ??default, "Certificate submit",
-                    $"Trainee '{user.FirstName}' has submit certificate. Please evaluate", CommonEnums.NOTIFICATION_TYPE.CREATE);
+                    $"Trainee '{user.FirstName}' has submit certificate. Please evaluate", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
 
             }
             catch (Exception e)

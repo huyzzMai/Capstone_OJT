@@ -121,8 +121,11 @@ namespace DataAccessLayer.Commons
 
         public class NOTIFICATION_TYPE
         {
-            public const int CREATE = 1;
-            public const int UPDATE = 2;
+            //public const int CREATE = 1;
+            //public const int UPDATE = 2;
+            public const int CERTIFICATE_TYPE = 1;
+            public const int TRAINING_PLAN_TYPE = 2;
+            public const int BATCH_TYPE = 3;
         }
 
         public class  CLIENT_ERROR

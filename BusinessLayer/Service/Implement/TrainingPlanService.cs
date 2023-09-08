@@ -354,7 +354,7 @@ namespace BusinessLayer.Service.Implement
                 };
                 await _unitOfWork.UserTrainingPlanRepository.Add(utp);
                 await _notificationService.CreateNotificaion(traineeId, "Training Plan Assigned",
-                                            "You have been assigned to a training plan.", CommonEnums.NOTIFICATION_TYPE.CREATE);
+                                            "You have been assigned to a training plan.", CommonEnums.NOTIFICATION_TYPE.TRAINING_PLAN_TYPE);
             }
             catch (Exception ex)
             {
@@ -645,7 +645,7 @@ namespace BusinessLayer.Service.Implement
                 await _unitOfWork.TrainingPlanRepository.Update(tp);
 
                 await _notificationService.CreateNotificaion(owner.Id, "Training Plan Accepted",
-                      "Your training plan is accepted.", CommonEnums.NOTIFICATION_TYPE.UPDATE);
+                      "Your training plan is accepted.", CommonEnums.NOTIFICATION_TYPE.TRAINING_PLAN_TYPE);
             }
             catch (Exception ex)
             {
@@ -678,7 +678,7 @@ namespace BusinessLayer.Service.Implement
                 await _unitOfWork.TrainingPlanRepository.Update(tp);
 
                 await _notificationService.CreateNotificaion(owner.Id, "Training Plan Accepted",
-                      "Your training plan is accepted.", CommonEnums.NOTIFICATION_TYPE.UPDATE);
+                      "Your training plan is accepted.", CommonEnums.NOTIFICATION_TYPE.TRAINING_PLAN_TYPE);
             }
             catch (Exception ex)
             {

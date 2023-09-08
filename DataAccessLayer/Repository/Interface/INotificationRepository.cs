@@ -12,6 +12,8 @@ namespace DataAccessLayer.Repository.Interface
     {
         Task<List<Notification>> GetListNotificaitonByUser(int userId);
 
+        Task<List<Notification>> GetListNotificaitonWithFilter(int userId, int? status);
+
         Task<Notification> GetNotificationById(int id);  
     }
 }

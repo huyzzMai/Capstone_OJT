@@ -34,7 +34,29 @@ namespace API.Controllers.NotificationController
             {
                 await notificationService.UpdateIsReadNotification(notificationId);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.UPDATE_NOTI);
-                return Ok("Task is read");
+                return Ok("Notification is read");
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateIsReadNotificationList()
+        {
+            try
+            {
+                // Get id of current log in user 
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                await notificationService.UpdateIsReadNotificationList(userId);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.UPDATE_NOTI);
+                return Ok("Notification read");
             }
             catch (ApiException e)
             {
@@ -48,13 +70,29 @@ namespace API.Controllers.NotificationController
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetNotificationList()
+        public async Task<IActionResult> GetNotificationList([FromQuery] int? statusRead)
         {
             try
             {
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                return Ok(await notificationService.GetNotificationListForUser(userId)); 
+                return Ok(await notificationService.GetNotificationListForUser(userId, statusRead)); 
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [HttpPost("batch/{batchId}")]
+        public async Task<IActionResult> CreateBatchNotification(int batchId)
+        {
+            try
+            {
+                await notificationService.CreateBatchNotificationForTrainer(batchId);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.CREATE_NOTI);
+                return Ok("Create notification successfully!");
             }
             catch (Exception ex)
             {
