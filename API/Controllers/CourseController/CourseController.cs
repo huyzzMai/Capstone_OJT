@@ -25,7 +25,7 @@ namespace API.Controllers.CourseController
            _service= service;
            _hubContext= hubContext;
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateCourse([FromBody] CreateCourseRequest request)
         {
@@ -44,8 +44,8 @@ namespace API.Controllers.CourseController
                 return StatusCode(StatusCodes.Status500InternalServerError,
                   e.Message);
             }
-        }
-        [Authorize]
+        }      
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCourse(int id, [FromBody] UpdateCourseRequest request)
         {
@@ -84,7 +84,7 @@ namespace API.Controllers.CourseController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Trainee")]
         [HttpPost]
         [Route("course-participation/{courseid}")]
         public async Task<IActionResult> EnrollCourse(int courseid)
@@ -105,7 +105,7 @@ namespace API.Controllers.CourseController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCourse(int id)
         {
@@ -125,7 +125,7 @@ namespace API.Controllers.CourseController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("deletion-courseskill/{courseId}/{skillId}")]
         public async Task<IActionResult> DeleteCourseSkill(int courseId,int skillId)
@@ -146,7 +146,7 @@ namespace API.Controllers.CourseController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin,Trainee")]
         [HttpGet]
         public async Task<IActionResult> GetListCourse([FromQuery] PagingRequestModel paging, string sortField, string sortOrder, string searchTerm, int? filterSkill, int? filterPosition, int? filterStatus)
         {
@@ -167,7 +167,7 @@ namespace API.Controllers.CourseController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Trainee")]
         [HttpGet("attendance-courses")]
         public async Task<IActionResult> GetEnrollCourse([FromQuery] PagingRequestModel paging)
         {
@@ -189,7 +189,7 @@ namespace API.Controllers.CourseController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Trainee")]
         [HttpGet("recommendation-courses")]
         public async Task<IActionResult> GetListCourseRecommendForUser([FromQuery] PagingRequestModel paging)
         {
@@ -212,7 +212,7 @@ namespace API.Controllers.CourseController
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Trainee")]
         [HttpGet("compulsory-courses")]
         public async Task<IActionResult> GetListCourseCompulsoryForUser([FromQuery] PagingRequestModel paging)
         {

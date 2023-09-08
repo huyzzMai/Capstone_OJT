@@ -24,7 +24,7 @@ namespace API.Controllers.UniversityController
             _service = service;
             _hubContext = hubContext;
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetListUniversity([FromQuery] PagingRequestModel paging, string searchTerm,int? filterStaus)
         {
@@ -44,7 +44,7 @@ namespace API.Controllers.UniversityController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateUniversity([FromBody] CreateUniversityRequest request)
         {
@@ -63,7 +63,7 @@ namespace API.Controllers.UniversityController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUniversityDetail(int id)
         {
@@ -82,7 +82,7 @@ namespace API.Controllers.UniversityController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUniversity(int id, [FromBody] UpdateUniversityRequest request)
         {
@@ -102,7 +102,7 @@ namespace API.Controllers.UniversityController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUniversity(int id)
         {

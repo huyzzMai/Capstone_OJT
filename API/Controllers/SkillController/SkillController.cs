@@ -24,7 +24,7 @@ namespace API.Controllers.SkillController
             _service = service;
             _hubContext = hubContext;
         }
-        [Authorize]
+        [Authorize(Roles ="Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateSkill([FromBody] CreateSkillRequest request)
         {
@@ -46,7 +46,7 @@ namespace API.Controllers.SkillController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateSkill(int id, [FromBody] UpdateSkillRequest request)
         {
@@ -66,7 +66,7 @@ namespace API.Controllers.SkillController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSkill(int id)
         {
@@ -86,7 +86,7 @@ namespace API.Controllers.SkillController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetListSkill([FromQuery] PagingRequestModel paging,string searchTerm,int? filterStatus)
         {
@@ -106,7 +106,7 @@ namespace API.Controllers.SkillController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSkillDetail(int id)
         {

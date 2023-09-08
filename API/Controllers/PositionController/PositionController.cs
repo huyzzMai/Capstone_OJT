@@ -25,7 +25,7 @@ namespace API.Controllers.PositionController
             _service = service;
             _hubContext = hubContext;
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreatePosition([FromBody] CreatePositionRequest request)
         {
@@ -47,7 +47,7 @@ namespace API.Controllers.PositionController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePosition(int id, [FromBody] UpdatePositionRequest request)
         {
@@ -67,7 +67,7 @@ namespace API.Controllers.PositionController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePosition(int id)
         {
@@ -87,7 +87,7 @@ namespace API.Controllers.PositionController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetListPosition([FromQuery] PagingRequestModel paging, string searchTerm, int? filterStatus)
         {
@@ -107,7 +107,7 @@ namespace API.Controllers.PositionController
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPositionDetail(int id)
         {

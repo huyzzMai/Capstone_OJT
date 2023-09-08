@@ -29,7 +29,7 @@ namespace API.Controllers.Formula
             _service = service;
             _operandService = operandService;
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("data-operand")]
         public IActionResult Get([FromQuery] string category)
         {
@@ -45,7 +45,7 @@ namespace API.Controllers.Formula
             }
             return NotFound();
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateFormula([FromBody] CreateFormulaRequest request)
         {
@@ -66,7 +66,7 @@ namespace API.Controllers.Formula
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]    
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateFormula(int id, [FromBody] UpdateFormulaRequest request)
         {
@@ -85,7 +85,7 @@ namespace API.Controllers.Formula
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFormula(int id)
         {
@@ -104,7 +104,7 @@ namespace API.Controllers.Formula
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetListFormula([FromQuery] PagingRequestModel paging, string searchTerm, int? filterStatus)
         {
@@ -124,7 +124,7 @@ namespace API.Controllers.Formula
                   e.Message);
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFormulaDetail(int id)
         {
