@@ -3,6 +3,7 @@ using BusinessLayer.Payload.RequestModel;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,15 +29,56 @@ namespace API.Controllers.TaskController
             _hubContext = hubContext;
         }
 
-        [HttpGet("trainee/{traineeId}")]
-        public async Task<IActionResult> GetListTaskPendingOfTrainee([FromQuery] PagingRequestModel paging, int traineeId)
+        [HttpGet]
+        public async Task<IActionResult> GetListAllTasksOfTrainee([FromQuery] PagingRequestModel paging, [FromQuery] int? status)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                return Ok(await taskService.GetListTaskPendingOfTrainee(userId, traineeId, paging));
+                return Ok(await taskService.GetListAllTaskOfTrainees(userId, paging, status));
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [HttpGet("{taskId}")]
+        public async Task<IActionResult> GetTaskById(int taskId)
+        {
+            try
+            {
+                // Get id of current log in user 
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await taskService.GetTaskAccomplishedById(taskId, userId));
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [HttpGet("trainee/{traineeId}")]
+        public async Task<IActionResult> GetListTaskOfTrainee([FromQuery] PagingRequestModel paging, [FromQuery] int? status, int traineeId)
+        {
+            try
+            {
+                paging = PagingUtil.checkDefaultPaging(paging);
+                // Get id of current log in user 
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await taskService.GetListTaskOfTrainee(userId, traineeId, paging, status));
             }
             catch (ApiException e)
             {

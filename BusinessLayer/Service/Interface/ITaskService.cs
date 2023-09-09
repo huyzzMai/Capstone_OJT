@@ -10,11 +10,13 @@ namespace BusinessLayer.Service.Interface
     {
         Task<BasePagingViewModel<TraineeTaskResponse>> GetAllTaskOfTrainee(int userId, PagingRequestModel paging);
 
-        //Task<IEnumerable<TraineeTaskResponse>> GetListUnFinishTaskOfTrainee(int userId);
-
         Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskAccomplished(int userId, PagingRequestModel paging);
 
-        Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskPendingOfTrainee(int trainerId, int traineeId, PagingRequestModel paging);  
+        Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskOfTrainee(int trainerId, int traineeId, PagingRequestModel paging, int? status);  
+
+        Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListAllTaskOfTrainees(int trainerId, PagingRequestModel paging, int? status);
+
+        Task<TaskAccomplishedResponse> GetTaskAccomplishedById(int taskId, int trainerId); 
 
         Task CreateFinishTask(string taskId);
 

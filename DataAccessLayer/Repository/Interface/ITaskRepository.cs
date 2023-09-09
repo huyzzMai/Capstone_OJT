@@ -10,6 +10,8 @@ namespace DataAccessLayer.Repository.Interface
     {
         Task<List<TaskAccomplished>> GetListTaskAccomplishedOfTrainee(int userId);
 
+        Task<TaskAccomplished> GetTaskAccomplishedById(int id); 
+
         Task<TaskAccomplished> GastTaskByIdAndStatusPending(int taskId);
 
         Task<TaskAccomplished> GetMatchingTask(string trelloTaskId, int userId);  

@@ -25,6 +25,15 @@ namespace DataAccessLayer.Repository.Implement
             return list;
         }
 
+        public async Task<TaskAccomplished> GetTaskAccomplishedById(int id)
+        {
+            var task = await _context.TaskAccomplisheds
+                                     .Where(u => u.Id == id) 
+                                     .Include(u => u.User)
+                                     .FirstOrDefaultAsync();    
+            return task;    
+        }
+
         public async Task<TaskAccomplished> GastTaskByIdAndStatusPending(int taskId)
         {
             var task = await _context.TaskAccomplisheds

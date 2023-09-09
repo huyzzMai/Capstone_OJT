@@ -103,18 +103,6 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        //public async Task<IEnumerable<TraineeTaskResponse>> GetListUnFinishTaskOfTrainee(int userId)
-        //{
-        //    try
-        //    {
-        //        return null;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
-
         public async Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskAccomplished(int userId, PagingRequestModel paging)
         {
             try
@@ -165,21 +153,23 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskPendingOfTrainee(int trainerId, int traineeId, PagingRequestModel paging)
+        public async Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListAllTaskOfTrainees(int trainerId, PagingRequestModel paging, int? status)
         {
             try
             {
-                var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
-                if (trainee == null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Trainee not found!");
-                }
-                if (trainee.UserReferenceId != trainerId)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "This is not your trainee!");
-                }
+                var trainees = await _unitOfWork.UserRepository.GetTraineeListByTrainerId(trainerId);
 
-                var tasks = await _unitOfWork.TaskRepository.GetListTaskPendingOfTrainee(traineeId);
+                List<TaskAccomplished> tasks = new();
+
+                foreach(var trainee in trainees)
+                {
+                    var listTask = await _unitOfWork.TaskRepository.GetListTaskAccomplishedOfTrainee(trainee.Id);
+                    tasks.AddRange(listTask);   
+                }
+                if (status != null)
+                {
+                    tasks = tasks.Where(task => task.Status == status).ToList();
+                }
 
                 List<TaskAccomplishedResponse> res = tasks.Select(
                 task =>
@@ -212,6 +202,98 @@ namespace BusinessLayer.Service.Implement
                     Data = res
                 };
                 return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+        public async Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskOfTrainee(int trainerId, int traineeId, PagingRequestModel paging, int? status)
+        {
+            try
+            {
+                var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
+                if (trainee == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Trainee not found!");
+                }
+                if (trainee.UserReferenceId != trainerId)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "This is not your trainee!");
+                }
+
+                var tasks = await _unitOfWork.TaskRepository.GetListTaskAccomplishedOfTrainee(traineeId);
+
+                if(status != null)
+                {
+                    tasks = tasks.Where(task => task.Status == status).ToList(); 
+                }
+
+                List<TaskAccomplishedResponse> res = tasks.Select(
+                task =>
+                {
+                    return new TaskAccomplishedResponse()
+                    {
+                        Id = task.Id,
+                        TrelloTaskId = task.TrelloTaskId,
+                        Name = task.Name,
+                        Description = task.Description,
+                        StartTime = task.StartDate,
+                        EndTime = task.DueDate,
+                        FinishTime = task.AccomplishDate,
+                        ProcessStatus = task.Status
+                    };
+                }
+                ).ToList();
+
+                int totalItem = res.Count;
+
+                res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                    .Take(paging.PageSize).ToList();
+
+                var result = new BasePagingViewModel<TaskAccomplishedResponse>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = res
+                };
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<TaskAccomplishedResponse> GetTaskAccomplishedById(int taskId, int trainerId)
+        {
+            try
+            {
+                var task = await _unitOfWork.TaskRepository.GetTaskAccomplishedById(taskId);
+                if (task == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Task Accomplished not found!");
+                }
+                if (task.User.UserReferenceId == null || task.User.UserReferenceId != trainerId)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "This task not belong to your trainee!");
+                }
+                TaskAccomplishedResponse res = new()
+                {
+                    Id = task.Id,
+                    TrelloTaskId = task.TrelloTaskId,
+                    Name = task.Name,
+                    Description = task.Description,
+                    StartTime = task.StartDate,
+                    EndTime = task.DueDate,
+                    FinishTime = task.AccomplishDate,
+                    ProcessStatus = task.Status
+                };
+                return res;
             }
             catch (Exception ex)
             {
