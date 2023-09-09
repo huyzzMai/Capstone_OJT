@@ -11,7 +11,7 @@ namespace BusinessLayer.Service.Interface
     {
         Task CreateNotificaion(int userId, string title, string message, int type);
         Task CreateBatchNotificationForTrainer(int batchId);
-        Task<List<NotificationResponse>> GetNotificationListForUser(int userId, int? status);  
+        Task<List<NotificationResponse>> GetNotificationListForUser(int userId, bool? status);  
         Task UpdateIsReadNotification(int notiId);
         Task UpdateIsReadNotificationList(int userId);
     }

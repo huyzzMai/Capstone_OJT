@@ -85,7 +85,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<List<NotificationResponse>> GetNotificationListForUser(int userId, int? status)
+        public async Task<List<NotificationResponse>> GetNotificationListForUser(int userId, bool? status)
         {
             try
             {

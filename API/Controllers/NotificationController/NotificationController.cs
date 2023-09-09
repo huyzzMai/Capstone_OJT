@@ -70,7 +70,7 @@ namespace API.Controllers.NotificationController
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetNotificationList([FromQuery] int? statusRead)
+        public async Task<IActionResult> GetNotificationList([FromQuery] bool? statusRead)
         {
             try
             {

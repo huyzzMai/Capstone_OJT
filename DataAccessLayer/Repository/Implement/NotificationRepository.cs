@@ -28,13 +28,20 @@ namespace DataAccessLayer.Repository.Implement
             return res;
         }
 
-        public async Task<List<Notification>> GetListNotificaitonWithFilter(int userId, int? status)
+        public async Task<List<Notification>> GetListNotificaitonWithFilter(int userId, bool? status)
         {
             List<Notification> notis = new();
-            if (status != null)
+            if (status == true)
             {
                 notis = await _context.Notifications
                                      .Where(u => u.UserId == userId && u.IsRead == true)
+                                     .OrderByDescending(u => u.CreatedAt)
+                                     .ToListAsync();
+            }
+            else if (status == false)
+            {
+                notis = await _context.Notifications
+                                     .Where(u => u.UserId == userId && u.IsRead == false)
                                      .OrderByDescending(u => u.CreatedAt)
                                      .ToListAsync();
             }
