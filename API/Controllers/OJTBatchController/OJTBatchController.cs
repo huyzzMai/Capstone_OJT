@@ -29,7 +29,7 @@ namespace API.Controllers.OJTBatchController
             _hubContext = hubContext;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Trainer")]
         [HttpGet]
         [Route("ongoing-batches")]
         public async Task<IActionResult> GetValidOJTBatchInformation([FromQuery] PagingRequestModel paging)
@@ -50,7 +50,7 @@ namespace API.Controllers.OJTBatchController
                   e.Message);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Trainer")]
         [HttpGet]
         [Route("status-grade-batches-trainer")]
         public async Task<IActionResult> GetStatusGradeBatch()
@@ -71,7 +71,7 @@ namespace API.Controllers.OJTBatchController
                   e.Message);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Trainer")]
         [HttpGet]
         [Route("export-status-batches")]
         public async Task<IActionResult> GetOjtStatusExport([FromQuery] PagingRequestModel paging, string Status)
@@ -92,7 +92,7 @@ namespace API.Controllers.OJTBatchController
                   e.Message);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Trainer")]
         [HttpGet("{id}")]        
         public async Task<IActionResult> GetDetailOJTBatchInformation(int id)
         {
