@@ -169,7 +169,7 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-        public List<ListOjtExport> SearchOjt(string Status,List<ListOjtExport> list)
+        public List<ListOjtExport> SearchOjt(string Status,string searchTerm,List<ListOjtExport> list)
         {
             if (!string.IsNullOrEmpty(Status))
             {
@@ -177,7 +177,11 @@ namespace BusinessLayer.Service.Implement
             }
 
             var query = list.AsQueryable();
-
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                searchTerm=searchTerm.ToLower();
+                query = query.Where(c=>c.UniversityName.ToLower().Contains(searchTerm) ||c.Name.ToLower().Contains(searchTerm));
+            }
             if (!string.IsNullOrEmpty(Status))
             {
                 query = query.Where(c =>
@@ -186,7 +190,7 @@ namespace BusinessLayer.Service.Implement
             }          
             return query.ToList();
         }
-        public async Task<BasePagingViewModel<ListOjtExport>> getListOjtbatchExportStatus(PagingRequestModel paging,string Status)
+        public async Task<BasePagingViewModel<ListOjtExport>> getListOjtbatchExportStatus(PagingRequestModel paging,string searchTerm, string Status)
         {
             try
             {
@@ -226,9 +230,9 @@ namespace BusinessLayer.Service.Implement
                         }
                     }
                     ).ToList();
-                if (!string.IsNullOrEmpty(Status))
+                if (!string.IsNullOrEmpty(Status)|| !string.IsNullOrEmpty(searchTerm))
                 {
-                    res = SearchOjt(Status, res);
+                    res = SearchOjt(Status,searchTerm ,res);
                 }
                 int totalItem =res.Count;
                 res = res.Skip((paging.PageIndex - 1) * paging.PageSize)

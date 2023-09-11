@@ -29,7 +29,7 @@ namespace API.Controllers.OJTBatchController
             _hubContext = hubContext;
         }
 
-        [Authorize(Roles = "Admin,Trainer")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("ongoing-batches")]
         public async Task<IActionResult> GetValidOJTBatchInformation([FromQuery] PagingRequestModel paging)
@@ -71,15 +71,15 @@ namespace API.Controllers.OJTBatchController
                   e.Message);
             }
         }
-        [Authorize(Roles = "Admin,Trainer")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("export-status-batches")]
-        public async Task<IActionResult> GetOjtStatusExport([FromQuery] PagingRequestModel paging, string Status)
+        public async Task<IActionResult> GetOjtStatusExport([FromQuery] PagingRequestModel paging,string searchTerm ,string status)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                var list = await _ojtService.getListOjtbatchExportStatus(paging,Status);
+                var list = await _ojtService.getListOjtbatchExportStatus(paging,searchTerm, status);
                 return Ok(list);
             }
             catch (ApiException ex)
