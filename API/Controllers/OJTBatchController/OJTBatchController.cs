@@ -71,7 +71,7 @@ namespace API.Controllers.OJTBatchController
                   e.Message);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Manager")]
         [HttpGet]
         [Route("export-status-batches")]
         public async Task<IActionResult> GetOjtStatusExport([FromQuery] PagingRequestModel paging,string searchTerm ,string status)

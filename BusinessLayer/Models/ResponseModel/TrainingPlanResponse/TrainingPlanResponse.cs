@@ -1,4 +1,4 @@
-﻿using BusinessLayer.Models.RequestModel.TrainingPLanRequest;
+﻿using BusinessLayer.Models.ResponseModel.TrainingPlanResponse;
 using System;
 using System.Collections.Generic;
 using System.Linq;
