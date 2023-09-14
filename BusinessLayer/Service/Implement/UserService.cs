@@ -504,6 +504,9 @@ namespace BusinessLayer.Service.Implement
                     Gender = trainer.Gender ?? default(int),
                     AvatarURL = trainer.AvatarURL,
                     PositionName = trainer.Position.Name,
+                    PhoneNumber = trainer.PhoneNumber,
+                    Address = trainer.Address,
+                    Birthday = trainer.Birthday ?? default,
                     Status = trainer.Status
                 };
                 return res;
@@ -700,6 +703,9 @@ namespace BusinessLayer.Service.Implement
                         AvatarURL = trainee.AvatarURL,  
                         Gender = trainee.Gender ?? default(int),
                         PositionName = trainee.Position.Name,
+                        PhoneNumber = trainee.PhoneNumber,  
+                        Address = trainee.Address,
+                        Birthday = trainee.Birthday ?? default,
                         Status = trainee.Status
                     };
                     return res; 
@@ -725,6 +731,9 @@ namespace BusinessLayer.Service.Implement
                         AvatarURL = trainee.AvatarURL,
                         Gender = trainee.Gender ?? default(int),
                         PositionName = trainee.Position.Name,
+                        PhoneNumber = trainee.PhoneNumber,
+                        Address = trainee.Address,
+                        Birthday = trainee.Birthday ?? default,
                         Status = trainee.Status
                     };
                     return res;
