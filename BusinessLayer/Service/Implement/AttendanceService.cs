@@ -63,6 +63,8 @@ namespace BusinessLayer.Service.Implement
                 var attendanceresponse = new AttendanceUserResponse()
                 {
                     userId = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
                     presentDay = listattend.Where(c => c.UserId == user.Id).Select(c => new AttendanceDetail
                     {
                         day = DateTimeService.ConvertToDateString(c.PresentDate),

@@ -30,7 +30,7 @@ namespace API.Controllers.TemplateController
             _hubContext = hubContext;
         }
 
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager,Trainer")]
         [Route("template-header/criteriaheader/{templateId}")]
         [HttpGet]
         public async Task<IActionResult> GetListcriteriaheader(int templateId)

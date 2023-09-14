@@ -23,7 +23,7 @@ namespace API.Controllers.ReportController
             _service = service;
             _httpClient = httpClientFactory.CreateClient();
         }
-        [Authorize(Roles ="Admin,Manager,Trainer")]
+        [Authorize(Roles ="Manager")]
         [HttpPut]
         public async Task<IActionResult> GetExcelReportFile([FromBody] ReportRequest request)
         {

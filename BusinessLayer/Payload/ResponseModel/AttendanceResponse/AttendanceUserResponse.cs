@@ -12,6 +12,10 @@ namespace BusinessLayer.Payload.ResponseModel.ExcelResponse
     {
         public int userId { get; set; }
 
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
         public int? numberOfDateforget { get; set; }
 
         public List<AttendanceDetail> presentDay { get; set; }     
