@@ -446,9 +446,15 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
                 }
                 var trelloUserId = user.TrelloId;
+                if (trelloUserId == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "User does not have a Trello Account!");
+                }
                 var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
 
                 var boards = await client.GetBoardsForMemberAsync(trelloUserId);
+                boards = boards.Where(b => b.Closed ==false).ToList();  
+
                 if (boards == null || boards.Count == 0)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "You have not create any Board!");
@@ -483,6 +489,127 @@ namespace BusinessLayer.Service.Implement
                     response.Add(a);    
                 }
                 return response;    
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<WebhookBoardsResponse>> GetListOpenBoard(int userId)
+        {
+            try
+            {
+                var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userId);
+                if (user == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found!");
+                }
+                var trelloUserId = user.TrelloId;
+                if (trelloUserId == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "User does not have a Trello Account!");
+                }
+                var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+
+                var boards = await client.GetBoardsForMemberAsync(trelloUserId);
+                boards = boards.Where(b => b.Closed == false).ToList();
+
+                if (boards == null || boards.Count == 0)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "You have not create any Board!");
+                }
+                var response = new List<WebhookBoardsResponse>();
+                var webhooks = await client.GetWebhooksForCurrentTokenAsync();
+
+                foreach (var board in boards)
+                {
+                    var check = webhooks.FirstOrDefault(u => u.IdOfTypeYouWishToMonitor == board.Id);
+                    if (check == null)
+                    {
+                        string description = "Webhook of Board : " + board.Name;
+                        var newWebhook = new Webhook(description, _configuration["TrelloWorkspace:URLCallBack"], board.Id);
+                        try
+                        {
+                            var addedWebhook = await client.AddWebhookAsync(newWebhook);
+                        }
+                        catch (Exception webhookEx)
+                        {
+                            // Handle exception specific to adding webhook
+                            Console.WriteLine($"An error occurred while adding a webhook: {webhookEx.Message}");
+                            throw new ApiException(CommonEnums.CLIENT_ERROR.REQUEST_TIMEOUT, "Trello server took too much time to process the request. Please try to reattempt to send this request!");
+                        }
+                    }
+                    WebhookBoardsResponse a = new()
+                    {
+                        BoardTrelloId = board.Id,
+                        BoardName = board.Name,
+                        BoardURL = board.Url,
+                    };
+                    response.Add(a);
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<BasePagingViewModel<TaskAccomplishedWithTraineeInfoResponse>> GetListTaskAccomplishOfBoard(string boardId, PagingRequestModel paging)
+        {
+            try
+            {
+                var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
+                var cards = await client.GetCardsOnBoardAsync(boardId);
+                if (cards == null || cards.Count == 0)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "There is no task in this Board!");
+                }
+                List<TaskAccomplished> tasks = new();
+                foreach (var card in cards)
+                {
+                    var task = await _unitOfWork.TaskRepository.GetTaskAccomplishedByTrelloTaskId(card.Id); 
+                    if (task == null)
+                    {
+                        continue;
+                    }
+                    tasks.Add(task);
+                }
+                List<TaskAccomplishedWithTraineeInfoResponse> res = tasks.Select(
+                task =>
+                {
+                    return new TaskAccomplishedWithTraineeInfoResponse()
+                    {
+                        Id = task.Id,
+                        TrelloTaskId = task.TrelloTaskId,
+                        Name = task.Name,
+                        Description = task.Description,
+                        StartTime = task.StartDate,
+                        EndTime = task.DueDate,
+                        FinishTime = task.AccomplishDate,
+                        ProcessStatus = task.Status,
+                        TraineeFirstName = task.User.FirstName,
+                        TraineeLastName = task.User.LastName,
+                        TraineeRollNumber = task.User.RollNumber
+                    };
+                }
+                ).ToList();
+
+                int totalItem = res.Count;
+
+                res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                    .Take(paging.PageSize).ToList();
+
+                var result = new BasePagingViewModel<TaskAccomplishedWithTraineeInfoResponse>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = res
+                };
+                return result;
             }
             catch (Exception ex)
             {

@@ -18,6 +18,10 @@ namespace BusinessLayer.Service.Interface
 
         Task<TaskAccomplishedResponse> GetTaskAccomplishedById(int taskId, int trainerId); 
 
+        Task<List<WebhookBoardsResponse>> GetListOpenBoard(int userId);
+
+        Task<BasePagingViewModel<TaskAccomplishedWithTraineeInfoResponse>> GetListTaskAccomplishOfBoard(string boardId, PagingRequestModel paging);
+
         Task CreateFinishTask(string taskId);
 
         Task AcceptTraineeTask(int trainerId, int taskId);

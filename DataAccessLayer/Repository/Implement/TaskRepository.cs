@@ -43,6 +43,15 @@ namespace DataAccessLayer.Repository.Implement
             return task;
         }
 
+        public async Task<TaskAccomplished> GetTaskAccomplishedByTrelloTaskId(string trelloTaskId)
+        {
+            var task = await _context.TaskAccomplisheds
+                                     .Where(u => u.TrelloTaskId == trelloTaskId)
+                                     .Include(u => u.User)
+                                     .FirstOrDefaultAsync();
+            return task;
+        }
+
         public async Task<TaskAccomplished> GetMatchingTask(string trelloTaskId, int userId)
         {
             var task = await _context.TaskAccomplisheds

@@ -91,6 +91,44 @@ namespace API.Controllers.TaskController
             }
         }
 
+        [HttpGet("open-board")]
+        public async Task<IActionResult> GetListCurrentOpenBoard()
+        {
+            try
+            {
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await taskService.GetListOpenBoard(userId));
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [HttpGet("open-board/{boardId}/task-accomplished")]
+        public async Task<IActionResult> GetListAccomplishedTaskOfBoard(string boardId, [FromQuery] PagingRequestModel paging)
+        {
+            try
+            {
+                paging = PagingUtil.checkDefaultPaging(paging);
+                return Ok(await taskService.GetListTaskAccomplishOfBoard(boardId, paging));
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
         [HttpPut("task-accept/{taskId}")]
         public async Task<IActionResult> AcceptTraineeTask(int taskId)
         {

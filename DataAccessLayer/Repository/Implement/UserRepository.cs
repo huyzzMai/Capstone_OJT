@@ -43,7 +43,10 @@ namespace DataAccessLayer.Repository.Implement
 
         public async Task<User> GetUserByIdAndStatusActive(int id)
         {
-            User user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && u.Status == CommonEnums.USER_STATUS.ACTIVE);
+            User user = await _context.Users
+                                      .Where(u => u.Id == id && u.Status == CommonEnums.USER_STATUS.ACTIVE)
+                                      .Include(u => u.Position)
+                                      .FirstOrDefaultAsync();
             return user;
         }
 
