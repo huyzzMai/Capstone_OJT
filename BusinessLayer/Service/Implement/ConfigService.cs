@@ -49,21 +49,25 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task UpdateConfig(int configId, UpdateConfigRequest request)
+        public async Task UpdateConfig(List<UpdateConfigRequest> list)
         {
             try
-            {
-                var config = await _unitOfWork.ConfigRepository.GetFirst(c => c.Id == configId);
-                if (config == null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Config not found");
-                }
-                if (request.value < 0)
+            {            
+                if (list.Any(c=>c.value<0))
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Value can not lower than 0");
                 }
-                config.Value = request.value;
-                await _unitOfWork.ConfigRepository.Update(config);
+              foreach(var item in list)
+                {
+                    var tmp = await _unitOfWork.ConfigRepository.GetFirst(c=>c.Id==item.Id);
+                    if (tmp == null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Config not found");
+                    }
+                    tmp.Value = item.value;
+                    await _unitOfWork.ConfigRepository.Update(tmp);
+                }
+               
             }
             catch (ApiException ex)
             {

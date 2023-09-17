@@ -10,6 +10,9 @@ namespace BusinessLayer.Payload.RequestModel.ConfigRequest
     public class UpdateConfigRequest
     {
         [Required]
-        public int value { get; set; }
+        public int Id { get; set; }
+        [Required]
+        public double value { get; set; }
+
     }
 }
