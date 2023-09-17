@@ -38,7 +38,7 @@ namespace API.Controllers.CetificateController
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                return Ok(await _service.GetListCertificateOfTrainee(traineeId, paging));
+                return Ok(await _service.GetListCertificateOfTraineeForTrainer(traineeId, paging));
             }
             catch (ApiException ex)
             {

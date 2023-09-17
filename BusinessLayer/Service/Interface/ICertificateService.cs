@@ -12,9 +12,10 @@ namespace BusinessLayer.Service.Interface
 {
     public interface ICertificateService
     {
-        Task<CertificateResponse> GetCertificateOfTrainee(int traineeId, int courseId);
-        Task<CertificateResponse> GetCertificateOfTraineeForTrainer(int trainerId, int traineeId, int courseId);
-        Task<BasePagingViewModel<CertificateResponse>> GetListCertificateOfTrainee(int traineeId, PagingRequestModel paging);
+        Task<TraineeCertificateResponse> GetCertificateOfTrainee(int traineeId, int courseId);
+        Task<TrainerCertificateResponse> GetCertificateOfTraineeForTrainer(int trainerId, int traineeId, int courseId);
+        Task<BasePagingViewModel<TraineeCertificateResponse>> GetListCertificateOfTrainee(int traineeId, PagingRequestModel paging);
+        Task<BasePagingViewModel<TrainerCertificateResponse>> GetListCertificateOfTraineeForTrainer(int traineeId, PagingRequestModel paging);
         Task AcceptCertificate(EvaluateCertificateRequest request);
         Task DenyCertificate(EvaluateCertificateRequest request);
         Task SubmitCertificate(int userid, SubmitCertificateRequest request);

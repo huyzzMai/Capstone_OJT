@@ -27,7 +27,7 @@ namespace BusinessLayer.Service.Implement
             _notificationService = notificationService;
         }
 
-        public async Task<CertificateResponse> GetCertificateOfTrainee(int traineeId, int courseId)
+        public async Task<TraineeCertificateResponse> GetCertificateOfTrainee(int traineeId, int courseId)
         {
             try
             {
@@ -37,9 +37,11 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Certificate not found!");
                 }
 
-                CertificateResponse res = new()
+                TraineeCertificateResponse res = new()
                 {
+                    CourseId = certificate.CourseId,
                     CourseName = certificate.Course.Name,
+                    CourseImg = certificate.Course.ImageURL,
                     UserName = certificate.User.FirstName,
                     EnrollDate = certificate.EnrollDate ?? default,
                     SubmitDate = certificate.SubmitDate ?? default,    
@@ -54,7 +56,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<CertificateResponse> GetCertificateOfTraineeForTrainer(int trainerId, int traineeId, int courseId)
+        public async Task<TrainerCertificateResponse> GetCertificateOfTraineeForTrainer(int trainerId, int traineeId, int courseId)
         {
             try
             {
@@ -68,14 +70,19 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Not your trainee's certificate!");
                 }
 
-                CertificateResponse res = new()
+                TrainerCertificateResponse res = new()
                 {
+                    CourseId = certificate.CourseId,
                     CourseName = certificate.Course.Name,
-                    UserName = certificate.User.FirstName,
+                    CourseImg = certificate.Course.ImageURL,
                     EnrollDate = certificate.EnrollDate ?? default,
                     SubmitDate = certificate.SubmitDate ?? default,
                     LinkCertificate = certificate.Link,
-                    Status = certificate.Status ?? default
+                    Status = certificate.Status ?? default,
+                    UserId = certificate.UserId,
+                    FirstName = certificate.User.FirstName,
+                    LastName = certificate.User.LastName,
+                    AvatarURL = certificate.User.AvatarURL
                 };
                 return res;
             }
@@ -85,22 +92,24 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<BasePagingViewModel<CertificateResponse>> GetListCertificateOfTrainee(int traineeId, PagingRequestModel paging)
+        public async Task<BasePagingViewModel<TraineeCertificateResponse>> GetListCertificateOfTrainee(int traineeId, PagingRequestModel paging)
         {
             try
             {
                 var items = await _unitOfWork.CertificateRepository.GetListCertificateOfTraineeWithUserAndCourse(traineeId);
-                List<CertificateResponse> res = items.Select(
-                    item =>
+                List<TraineeCertificateResponse> res = items.Select(
+                    certificate =>
                     {
-                        return new CertificateResponse()
+                        return new TraineeCertificateResponse()
                         {
-                            CourseName = item.Course.Name,
-                            UserName = item.User.FirstName,
-                            EnrollDate = item.EnrollDate ?? default,
-                            SubmitDate = item.SubmitDate ?? default,
-                            LinkCertificate = item.Link,
-                            Status = item.Status ?? default
+                            CourseId = certificate.CourseId,
+                            CourseName = certificate.Course.Name,
+                            CourseImg = certificate.Course.ImageURL,
+                            UserName = certificate.User.FirstName,
+                            EnrollDate = certificate.EnrollDate ?? default,
+                            SubmitDate = certificate.SubmitDate ?? default,
+                            LinkCertificate = certificate.Link,
+                            Status = certificate.Status ?? default
                         };
                     }
                 ).ToList();
@@ -110,7 +119,7 @@ namespace BusinessLayer.Service.Implement
                 res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
                         .Take(paging.PageSize).ToList();
 
-                var result = new BasePagingViewModel<CertificateResponse>()
+                var result = new BasePagingViewModel<TraineeCertificateResponse>()
                 {
                     PageIndex = paging.PageIndex,
                     PageSize = paging.PageSize,
@@ -123,6 +132,52 @@ namespace BusinessLayer.Service.Implement
             catch (Exception e)
             {
                 throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<BasePagingViewModel<TrainerCertificateResponse>> GetListCertificateOfTraineeForTrainer(int traineeId, PagingRequestModel paging)
+        {
+            try
+            {
+                var items = await _unitOfWork.CertificateRepository.GetListCertificateOfTraineeWithUserAndCourse(traineeId);
+                List<TrainerCertificateResponse> res = items.Select(
+                    certificate =>
+                    {
+                        return new TrainerCertificateResponse()
+                        {
+                            CourseId = certificate.CourseId,
+                            CourseName = certificate.Course.Name,
+                            CourseImg = certificate.Course.ImageURL,
+                            EnrollDate = certificate.EnrollDate ?? default,
+                            SubmitDate = certificate.SubmitDate ?? default,
+                            LinkCertificate = certificate.Link,
+                            Status = certificate.Status ?? default,
+                            UserId = certificate.UserId,
+                            FirstName = certificate.User.FirstName,
+                            LastName = certificate.User.LastName,
+                            AvatarURL = certificate.User.AvatarURL
+                        };
+                    }
+                ).ToList();
+
+                int totalItem = res.Count;
+
+                res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                        .Take(paging.PageSize).ToList();
+
+                var result = new BasePagingViewModel<TrainerCertificateResponse>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = res
+                };
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);    
             }
         }
 
