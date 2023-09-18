@@ -21,7 +21,7 @@ namespace DataAccessLayer.Repository.Implement
         public async Task<Registration> GetCertificateWithUserAndCourse(int userId, int couseId)
         {
             Registration certificate = await _context.Certificates
-                .Where(u => u.UserId == userId && u.CourseId == couseId && u.Status != CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT)
+                .Where(u => u.UserId == userId && u.CourseId == couseId && u.Status != CommonEnums.CERTIFICATE_STATUS.DELETED)
                 .Include(u => u.User)
                 .Include(u => u.Course)
                 .FirstOrDefaultAsync();
@@ -31,7 +31,7 @@ namespace DataAccessLayer.Repository.Implement
         public async Task<List<Registration>> GetListCertificateOfTraineeWithUserAndCourse(int userId)
         {
             List<Registration> list = await _context.Certificates
-                .Where(u => u.UserId == userId && u.Status != CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT)
+                .Where(u => u.UserId == userId && u.Status != CommonEnums.CERTIFICATE_STATUS.DELETED)
                 .Include(u => u.User)
                 .Include(u => u.Course)
                 .OrderByDescending(u => u.SubmitDate)
