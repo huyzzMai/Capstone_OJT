@@ -164,6 +164,10 @@ namespace API.Controllers.CetificateController
                 await _service.SubmitCertificate(userid, request);
                 return Ok("Certificate submit successfully.");
             }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
@@ -179,6 +183,10 @@ namespace API.Controllers.CetificateController
                 var userid = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
                 await _service.ReSubmitCertificate(userid, request);
                 return Ok("Certificate resubmit successfully.");
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {

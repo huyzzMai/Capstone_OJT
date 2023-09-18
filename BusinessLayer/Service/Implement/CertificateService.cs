@@ -289,15 +289,15 @@ namespace BusinessLayer.Service.Implement
                 var user= await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userid);
                 if (cer == null)
                 {
-                    throw new Exception("Certificate is already submited or User did not enroll course");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Certificate is already submited or User did not enroll course");
                 }
                 if (string.IsNullOrEmpty(request.link))
                 {
-                    throw new Exception("Link can not be empty");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Link can not be empty");
                 }
                 if (cour == null)
                 {
-                    throw new Exception("Course not found");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Course not found");
                 }
                 cer.Link = request.link;
                 cer.Status = CommonEnums.CERTIFICATE_STATUS.PENDING;
@@ -319,9 +319,13 @@ namespace BusinessLayer.Service.Implement
             {
                 var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == request.CourseId && c.Status == CommonEnums.COURSE_STATUS.ACTIVE, "CoursePositions");
                 var cer = await _unitOfWork.CertificateRepository.GetFirst(c => c.CourseId == request.CourseId && c.UserId == userid);
-                if (cer != null && cer.Status != CommonEnums.CERTIFICATE_STATUS.DENY)
+                if (cer == null)
                 {
-                    throw new Exception("This is not a deny certificate");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Not found certificate");
+                }
+                if (cer.Status != CommonEnums.CERTIFICATE_STATUS.DENY && cer.Status != CommonEnums.CERTIFICATE_STATUS.PENDING)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "This is not a valid certificate to re-submit");
                 }
                 if (string.IsNullOrEmpty(request.link))
                 {
