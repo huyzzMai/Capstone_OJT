@@ -23,7 +23,7 @@ namespace API.Controllers.TemplateController
         private readonly ITemplateService _service;
         private readonly ITemplateHeaderService _headerservice;
         private readonly IHubContext<SignalHub> _hubContext;
-        public TemplateController(ITemplateService service,ITemplateHeaderService headerService ,IHubContext<SignalHub> hubContext)
+        public TemplateController(ITemplateService service, ITemplateHeaderService headerService, IHubContext<SignalHub> hubContext)
         {
             _service = service;
             _headerservice = headerService;
@@ -59,7 +59,29 @@ namespace API.Controllers.TemplateController
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                var list = await _service.GetTemplateList(paging, searchTerm,filterStatus);
+                var list = await _service.GetTemplateList(paging, searchTerm, filterStatus);
+                return Ok(list);
+
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        [Route("list-active-template-by-university/{universityId}")]
+        public async Task<IActionResult> GetListUniversityTemplate(int universityId)
+        {
+            try
+            {
+               
+                var list = await _service.GetTemplateUniversityList(universityId);
                 return Ok(list);
 
             }

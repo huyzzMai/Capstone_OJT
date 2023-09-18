@@ -175,7 +175,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {         
-                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId && c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
+                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId);
                 if (skill == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Skill not found");

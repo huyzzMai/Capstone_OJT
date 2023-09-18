@@ -315,5 +315,36 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
+
+        public async Task<List<ListTemplateUniversityResponse>> GetTemplateUniversityList(int uniId)
+        {
+            try
+            {
+                var list = await _unitOfWork.TemplateRepository.Get(c => c.Status == CommonEnums.UNIVERSITY_STATUS.ACTIVE && c.University.Id==uniId ,"University");
+                if (list == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Template list not found");
+                }                
+                var listresponse = list.OrderByDescending(c => c.CreatedAt).Select(c =>
+                {
+                    return new ListTemplateUniversityResponse()
+                    {
+                        Id = c.Id,
+                        Name = c.Name                     
+                    };
+                }
+                ).ToList();
+               
+                return listresponse;
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }

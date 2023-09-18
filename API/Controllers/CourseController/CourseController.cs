@@ -146,7 +146,7 @@ namespace API.Controllers.CourseController
                   e.Message);
             }
         }
-        [Authorize(Roles = "Admin,Trainee")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetListCourse([FromQuery] PagingRequestModel paging, string sortField, string sortOrder, string searchTerm, int? filterSkill, int? filterPosition, int? filterStatus)
         {
@@ -154,6 +154,29 @@ namespace API.Controllers.CourseController
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
                 var list = await _service.GetCourseList(paging,sortField,sortOrder,searchTerm,filterSkill,filterPosition,filterStatus);
+                return Ok(list);
+
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize(Roles = "Trainee")]
+        [HttpGet]
+        [Route("list-course-trainee")]
+        public async Task<IActionResult> GetListCourseforTrainee([FromQuery] PagingRequestModel paging, string sortField, string sortOrder, string searchTerm, int? filterSkill, int? filterPosition, int? filterStatus)
+        {
+            try
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
+                paging = PagingUtil.checkDefaultPaging(paging);
+                var list = await _service.GetCourseListForTrainee(paging,int.Parse(userIdClaim.Value), sortField, sortOrder, searchTerm, filterSkill, filterPosition, filterStatus);
                 return Ok(list);
 
             }
@@ -191,13 +214,13 @@ namespace API.Controllers.CourseController
         }
         [Authorize(Roles = "Trainee")]
         [HttpGet("recommendation-courses")]
-        public async Task<IActionResult> GetListCourseRecommendForUser([FromQuery] PagingRequestModel paging)
+        public async Task<IActionResult> GetListCourseRecommendForUser([FromQuery] PagingRequestModel paging, string searchTerm, int? filterskill)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
                 var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
-                var list = await _service.GetCourserecommendListForUser(int.Parse(userIdClaim.Value),paging);
+                var list = await _service.GetCourserecommendListForUser(int.Parse(userIdClaim.Value),paging, searchTerm,filterskill);
                 return Ok(list);
 
             }

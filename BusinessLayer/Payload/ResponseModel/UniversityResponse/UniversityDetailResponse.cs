@@ -29,9 +29,6 @@ namespace BusinessLayer.Payload.ResponseModel.UniversityResponse
         public string JoinDate { get; set; }
 
         public string UniversityCode { get; set; }
-
-        public bool? IsDeleted { get; set; }
-
        
         public string CreatedAt { get; set; }
 

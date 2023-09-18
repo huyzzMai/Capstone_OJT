@@ -24,7 +24,7 @@ namespace API.Controllers.UniversityController
             _service = service;
             _hubContext = hubContext;
         }
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetListUniversity([FromQuery] PagingRequestModel paging, string searchTerm,int? filterStaus)
         {

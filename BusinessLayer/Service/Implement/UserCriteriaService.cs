@@ -166,7 +166,7 @@ namespace BusinessLayer.Service.Implement
             {
                 foreach (var request in requests)
                 {
-                    var user = await _unitOfWork.UserRepository.GetFirst(c=>c.Id==request.UserId && c.Status==CommonEnums.USER_STATUS.ACTIVE);
+                    var user = await _unitOfWork.UserRepository.GetFirst(c=>c.Id==request.UserId);
                     if (user==null)
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND,"Trainee not found");
