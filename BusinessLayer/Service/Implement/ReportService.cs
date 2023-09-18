@@ -80,7 +80,16 @@ namespace BusinessLayer.Service.Implement
 
 
 
-
+        public List<string> GetTotal(List<User> list)
+        {
+            List<string> totalist = new List<string>();
+            foreach (var user in list)
+            {
+                var total=user.UserCriterias.Sum(c => c.Point);
+                totalist.Add(total.ToString());
+            }
+            return totalist;
+        }
         public async Task<List<List<string>>> GenerateData(Template headers,OJTBatch ojt)
         {
             List<List<string>> dataMap = new List<List<string>>();
@@ -90,9 +99,18 @@ namespace BusinessLayer.Service.Implement
                 List<string> list = new List<string>();
                 if (h.IsCriteria == true)
                 {
-                    h.UserCriterias = h.UserCriterias.Where(c=>ojt.Trainees.Any(o=>o.Id==c.UserId)).ToList();
-                    list = GetPropertyDataforCriteria(h.MatchedAttribute, h.UserCriterias.ToList());
-                    dataMap.Add(list);
+                     if (h.MatchedAttribute == "Total")
+                    {
+                        List<string> totallist = GetTotal(ojt.Trainees.ToList());
+                        dataMap.Add(totallist);
+
+                    } else
+                    {
+                        h.UserCriterias = h.UserCriterias.Where(c => ojt.Trainees.Any(o => o.Id == c.UserId)).ToList();
+                        list = GetPropertyDataforCriteria(h.MatchedAttribute, h.UserCriterias.ToList());
+                        dataMap.Add(list);
+                    }
+                    
                 }
                 else
                 {
@@ -101,7 +119,7 @@ namespace BusinessLayer.Service.Implement
                         List<string> indexList = GetIndexList(ojt.Trainees.Count());
                         dataMap.Add(indexList);
 
-                    }
+                    }                  
                     else
                     {
                         var users = await _unitOfWork.UserRepository.Get(c => c.Status == CommonEnums.USER_STATUS.ACTIVE && c.OJTBatch.UniversityId == headers.UniversityId, "OJTBatch");

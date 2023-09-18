@@ -23,7 +23,9 @@ namespace BusinessLayer.Service.Interface
 
         Task<BasePagingViewModel<CourseResponse>> GetCourseList(PagingRequestModel paging, string sortField, string sortOrder,string searchTerm,int? filterskill, int? filterposition,int? filterstatus);
 
-        Task<BasePagingViewModel<CourseResponse>> GetCourserecommendListForUser(int userid,PagingRequestModel paging);
+        Task<BasePagingViewModel<CourseResponse>> GetCourseListForTrainee(PagingRequestModel paging, int userid, string sortField, string sortOrder, string searchTerm, int? filterskill, int? filterposition, int? filterstatus);
+
+        Task<BasePagingViewModel<CourseResponse>> GetCourserecommendListForUser(int userid,PagingRequestModel paging, string searchTerm, int? filterskill);
 
         Task<BasePagingViewModel<CourseResponse>> GetCourseCompulsoryForUser(int userid, PagingRequestModel paging);
 

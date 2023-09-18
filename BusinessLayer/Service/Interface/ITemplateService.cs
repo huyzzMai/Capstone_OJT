@@ -23,6 +23,8 @@ namespace BusinessLayer.Service.Interface
 
         Task<BasePagingViewModel<ListTemplateResponse>> GetTemplateList(PagingRequestModel paging,string searchTerm, int? filterstatus);
 
+        Task<List<ListTemplateUniversityResponse>> GetTemplateUniversityList(int uniId);
+
         Task<TemplateDetailResponse> GetTemplateDetail(int templateId);
 
         Task AddTemplateHeader(int templateId, CreateTemplateHeaderRequest request);

@@ -219,9 +219,7 @@ namespace BusinessLayer.Service.Implement
             try
             {
                 var formula = await _unitOfWork.FormulaRepository.
-                   GetFirst(c => c.Status == CommonEnums.FORMULA_STATUS.ACTIVE
-                   && c.Id == formulaId
-                   );
+                   GetFirst(c => c.Id == formulaId);
                 if (formula == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "formula not found");

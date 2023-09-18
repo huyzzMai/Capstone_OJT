@@ -170,7 +170,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var position = await _unitOfWork.PositionRepository.GetFirst(c => c.Id == id && c.Status == CommonEnums.POSITION_STATUS.ACTIVE);
+                var position = await _unitOfWork.PositionRepository.GetFirst(c => c.Id == id);
                 if (position == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Position not found");

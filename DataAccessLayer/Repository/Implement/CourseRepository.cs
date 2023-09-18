@@ -36,15 +36,19 @@ namespace DataAccessLayer.Repository.Implement
                 .Include(course => course.CourseSkills)              
                 .ThenInclude(cs => cs.Skill)
                 .Include(course => course.CoursePositions)
+                .ThenInclude(cp => cp.Position)
+                .Include(re=> re.Certificates)
                 .ToListAsync();
 
             var filteredCourses = matchingCourses
-                .Where(course => course.CourseSkills
-                    .Any(cs => userSkills.Any(userSkill =>
-                        cs.SkillId == userSkill.SkillId &&
-                        cs.RecommendedLevel == userSkill.CurrentLevel))
-                    && course.CoursePositions.Any(cp =>cp.PositionId==user.PositionId))
-                .ToList();
+            .Where(course =>
+            course.CourseSkills.Any(cs => userSkills.Any(userSkill =>
+            cs.SkillId == userSkill.SkillId &&
+            cs.RecommendedLevel == userSkill.CurrentLevel))
+            && course.CoursePositions.Any(cp => cp.PositionId == user.PositionId)
+            && (!course.Certificates.Any() || course.Certificates.All(c => c.UserId != user.Id)))
+            .ToList();
+
             return filteredCourses;
         }
     }

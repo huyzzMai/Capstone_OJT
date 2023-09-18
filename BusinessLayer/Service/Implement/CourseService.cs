@@ -342,7 +342,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<BasePagingViewModel<CourseResponse>> GetCourserecommendListForUser(int userid, PagingRequestModel paging)
+        public async Task<BasePagingViewModel<CourseResponse>> GetCourserecommendListForUser(int userid, PagingRequestModel paging, string searchTerm, int? filterskill)
         {
             try
             {
@@ -351,11 +351,11 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found");
                 }
-                if (user.Role != CommonEnums.ROLE.TRAINEE)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "User is not a trainee");
-                }
                 var listcour = await _unitOfWork.CourseRepository.GetrecommendCoursesForUser(user);
+                if (!string.IsNullOrEmpty(searchTerm) || filterskill != null )
+                {
+                    listcour = SearchCourses(searchTerm, filterskill, null, null, listcour.ToList());
+                }
                 if (listcour == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
@@ -563,6 +563,76 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "No courses skill found");
                 }
                 await _unitOfWork.CourseSkillRepository.Delete(cour);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<BasePagingViewModel<CourseResponse>> GetCourseListForTrainee(PagingRequestModel paging,int userid ,string sortField, string sortOrder, string searchTerm, int? filterskill, int? filterposition, int? filterstatus)
+        {
+            try
+            {
+                var listcour = await _unitOfWork.CourseRepository.Get(c=>c.Status==CommonEnums.COURSE_STATUS.ACTIVE
+                && (!c.Certificates.Any()|| c.Certificates.All(c=>c.UserId!=userid))
+                , "CoursePositions", "CourseSkills", "Certificates");
+                if (listcour == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
+                }
+                if (!string.IsNullOrEmpty(searchTerm) || filterskill != null || filterposition != null || filterstatus != null)
+                {
+                    listcour = SearchCourses(searchTerm, filterskill, filterposition, filterstatus, listcour.ToList());
+                }
+                var listresponse = listcour.OrderByDescending(c => c.CreatedAt).Select(c =>
+                {
+                    return new CourseResponse()
+                    {
+                        Id = c.Id,
+                        Description = c.Description,
+                        Link = c.Link,
+                        Name = c.Name,
+                        PlatformName = c.PlatformName,
+                        ImageURL = c.ImageURL,
+                        TotalEnrollment = c.Certificates.Count,
+                        TotalActiveEnrollment = c.Certificates.Where(c => c.Status != CommonEnums.CERTIFICATE_STATUS.DELETED).Count(),
+                        coursePositions = c.CoursePositions.Select(cp =>
+                        new CoursePositionResponse()
+                        {
+                            PositionId = cp.Id,
+                            PositionName = cp.Position.Name,
+                            IsCompulsory = cp.IsCompulsory
+
+                        }).ToList(),
+                        courseSkills = c.CourseSkills.Select(cp =>
+                        new CourseSkillResponse()
+                        {
+                            SkillId = cp.SkillId,
+                            SkillName = cp.Skill.Name,
+                            AfterwardLevel = cp.AfterwardLevel,
+                            RecommendedLevel = cp.RecommendedLevel
+                        }).ToList()
+                    };
+                }
+            ).ToList();
+                listresponse = SortingHelper.ApplySorting(listresponse.AsQueryable(), sortField, sortOrder).ToList();
+                int totalItem = listresponse.Count;
+                listresponse = listresponse.Skip((paging.PageIndex - 1) * paging.PageSize)
+                   .Take(paging.PageSize).ToList();
+                var result = new BasePagingViewModel<CourseResponse>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = listresponse
+                };
+                return result;
             }
             catch (ApiException ex)
             {
