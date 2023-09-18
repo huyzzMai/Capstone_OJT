@@ -36,6 +36,7 @@ namespace BusinessLayer.Service.Interface
         int GetCurrentLoginUserId(string authHeader);
         //Task<CreateUserResponse> CreateUser(CreateUserRequest request);
         Task CreateUser(CreateUserRequest request);
+        Task UpdateUserPassword(int id, UpdateUserPasswordRequest model);
         Task UpdateUserInformation(int id, UpdateUserInformationRequest model);
 
         Task <UserDetailResponse> GetUserDetail(int id);

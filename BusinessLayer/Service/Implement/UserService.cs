@@ -861,68 +861,101 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
+        public async Task UpdateUserPassword(int id, UpdateUserPasswordRequest model)
+        {
+            try
+            {
+                var u = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(id);    
+                if (u == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "This user cannot be found!");
+                }
+
+                var realOldPassword = DecryptPassword(u.Password);  
+                if (model.OldPassword != realOldPassword)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "The old password is not correct!");
+                }
+                var encryptPassword = EncryptPassword(model.NewPassord);
+                u.Password = encryptPassword;
+                u.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                await _unitOfWork.UserRepository.Update(u);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task UpdateUserInformation(int id, UpdateUserInformationRequest model)
         {
-            var u = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(id);
-
-            if (u == null)
+            try
             {
-                throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "This user cannot be found!");
+                var u = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(id);
+
+                if (u == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "This user cannot be found!");
+                }
+                #region Old method
+                //var check = await _unitOfWork.UserRepository.GetUserByEmailAndDeleteIsFalse(model.Email);
+                //if (check != null)
+                //{
+                //    throw new Exception("This email existed!");
+                //}
+
+                //if (model.FullName == null)
+                //{
+                //    u.Name = u.Name;
+                //}
+                //else
+                //{
+                //    u.Name = model.FullName;
+                //}
+
+                #endregion
+
+                if (model.FirstName != null)
+                {
+                    u.FirstName = model.FirstName;
+                }
+
+                if (model.LastName != null)
+                {
+                    u.LastName = model.LastName;
+                }
+
+                if (model.Birthday != null)
+                {
+                    u.Birthday = model.Birthday;
+                }
+
+                if (model.PhoneNumber != null)
+                {
+                    u.PhoneNumber = model.PhoneNumber;
+                }
+
+                if (model.Gender != null)
+                {
+                    u.Gender = model.Gender;
+                }
+
+                if (model.Address != null)
+                {
+                    u.Address = model.Address;
+                }
+
+                if (model.AvatarURL != null)
+                {
+                    u.AvatarURL = model.AvatarURL;
+                }
+                u.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                await _unitOfWork.UserRepository.Update(u);
             }
-            #region Old method
-            //var check = await _unitOfWork.UserRepository.GetUserByEmailAndDeleteIsFalse(model.Email);
-            //if (check != null)
-            //{
-            //    throw new Exception("This email existed!");
-            //}
-
-            //if (model.FullName == null)
-            //{
-            //    u.Name = u.Name;
-            //}
-            //else
-            //{
-            //    u.Name = model.FullName;
-            //}
-            
-            #endregion
-
-            if (model.FirstName != null)
+            catch (Exception ex)
             {
-                u.FirstName = model.FirstName;
+                throw new Exception(ex.Message);
             }
-
-            if (model.LastName != null)
-            {
-                u.LastName = model.LastName;
-            }
-
-            if (model.Birthday != null)
-            {
-                u.Birthday = model.Birthday;
-            }
-
-            if (model.PhoneNumber != null)
-            {
-                u.PhoneNumber = model.PhoneNumber;
-            }
-
-            if (model.Gender != null)
-            {
-                u.Gender = model.Gender;
-            }
-
-            if (model.Address != null)
-            {
-                u.Address = model.Address;
-            }
-
-            if (model.AvatarURL != null)
-            {
-                u.AvatarURL = model.AvatarURL;
-            }
-            u.UpdatedAt = DateTime.UtcNow.AddHours(7);
-            await _unitOfWork.UserRepository.Update(u);
         }
         public List<User> SearchUsers(string searchTerm, int? role,int? filterStatus,List<User> userList)
         {

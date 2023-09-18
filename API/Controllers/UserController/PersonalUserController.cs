@@ -72,5 +72,25 @@ namespace API.Controllers.UserController
                     ex.Message);
             }
         }
+
+        [HttpPut("password")]
+        public async Task<IActionResult> UpdateUserPassword([FromBody] UpdateUserPasswordRequest model)
+        {
+            try
+            {
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                await userService.UpdateUserPassword(userId, model);
+                return StatusCode(StatusCodes.Status204NoContent);  
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
     }
 }
