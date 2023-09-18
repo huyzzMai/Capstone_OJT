@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using System;
 using BusinessLayer.Payload.RequestModel.ConfigRequest;
+using System.Collections.Generic;
 
 namespace API.Controllers.ConfigController
 {
@@ -44,12 +45,12 @@ namespace API.Controllers.ConfigController
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPut("{configId}")]
-        public async Task<IActionResult> UpdateConfig(int configId, [FromBody] UpdateConfigRequest value)
+        [HttpPut]
+        public async Task<IActionResult> UpdateConfig([FromBody] List<UpdateConfigRequest> list)
         {
             try
             {
-                await _service.UpdateConfig(configId,value);
+                await _service.UpdateConfig(list);
                 return Ok("Update config successfully.");
             }
             catch (ApiException ex)

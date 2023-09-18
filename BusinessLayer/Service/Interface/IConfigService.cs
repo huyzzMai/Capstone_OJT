@@ -14,7 +14,7 @@ namespace BusinessLayer.Service.Interface
 {
     public interface IConfigService
     {
-        Task UpdateConfig(int configId, UpdateConfigRequest request);
+        Task UpdateConfig(List<UpdateConfigRequest> list);
 
         Task<List<ConfigListResponse>> GetConfigList();
     }
