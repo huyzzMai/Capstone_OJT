@@ -12,5 +12,6 @@ namespace DataAccessLayer.Repository.Interface
     {
         Task<Registration> GetCertificateWithUserAndCourse(int userId, int couseId);
         Task<List<Registration>> GetListCertificateOfTraineeWithUserAndCourse(int userId);
+        Task<List<Registration>> GetlistCertificatePendingOfTraineeWithUserAndCourse(int userId);    
     }
 }

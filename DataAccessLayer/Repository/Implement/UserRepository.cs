@@ -88,6 +88,15 @@ namespace DataAccessLayer.Repository.Implement
             return user;
         }
 
+        public async Task<User> GetTrainerWithListTraineeByIdAndStatusActive(int id)
+        {
+            User user = await _context.Users
+                        .Where(u => u.Id == id && u.Status == CommonEnums.USER_STATUS.ACTIVE)
+                        .Include(u => u.Trainees)    
+                        .FirstOrDefaultAsync();
+            return user;
+        }
+
         public async Task<List<User>> GetTraineeList(string keyword, int? positionId)
         {
             List<User> users = new();

@@ -33,12 +33,12 @@ namespace API.Controllers.CetificateController
 
         [Authorize(Roles = "Trainer")]
         [HttpGet("trainer/{traineeId}")]
-        public async Task<IActionResult> GetListCertificatesOfTraineeForTrainer(int traineeId, [FromQuery] PagingRequestModel paging)
+        public async Task<IActionResult> GetListCertificatesOfTraineeForTrainer(int traineeId, [FromQuery] PagingRequestModel paging, [FromQuery] int? status)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                return Ok(await _service.GetListCertificateOfTraineeForTrainer(traineeId, paging));
+                return Ok(await _service.GetListCertificateOfTraineeForTrainer(traineeId, paging, status));
             }
             catch (ApiException ex)
             {
@@ -71,15 +71,37 @@ namespace API.Controllers.CetificateController
             }
         }
 
-        [Authorize(Roles = "Trainee")]
-        [HttpGet]
-        public async Task<IActionResult> GetListCertificatesOfTrainee([FromQuery] PagingRequestModel paging)
+
+        [Authorize(Roles = "Trainer")]
+        [HttpGet("trainer/pending-certificate")]
+        public async Task<IActionResult> GetListCertificatePendingOffAllTraineesForTrainer([FromQuery] PagingRequestModel paging)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
                 int id = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                return Ok(await _service.GetListCertificateOfTrainee(id, paging));
+                return Ok(await _service.GetListCertificatePendingOffAllTraineesForTrainer(id, paging));
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainee")]
+        [HttpGet]
+        public async Task<IActionResult> GetListCertificatesOfTrainee([FromQuery] PagingRequestModel paging, [FromQuery] int? status)
+        {
+            try
+            {
+                paging = PagingUtil.checkDefaultPaging(paging);
+                int id = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await _service.GetListCertificateOfTrainee(id, paging, status));
             }
             catch (ApiException ex)
             {

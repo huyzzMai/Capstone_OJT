@@ -100,7 +100,7 @@ namespace API
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("https://ojt-management-system.onrender.com",
+                    builder.WithOrigins("http://localhost:3000/",
                         "https://trello.com",
                         "https://api.trello.com"
                         )

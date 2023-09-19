@@ -29,6 +29,8 @@ namespace DataAccessLayer.Repository.Interface
 
         Task<List<User>> GetTrainerList(string keyword, int? position);
 
+        Task<User> GetTrainerWithListTraineeByIdAndStatusActive(int id);
+
         Task<List<User>> GetTraineeList(string keyword, int? position);
 
         Task<List<User>> GetTraineeListByBatch(int batchid);

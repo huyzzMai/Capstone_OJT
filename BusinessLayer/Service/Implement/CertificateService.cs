@@ -8,6 +8,7 @@ using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
+using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,11 +93,15 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<BasePagingViewModel<TraineeCertificateResponse>> GetListCertificateOfTrainee(int traineeId, PagingRequestModel paging)
+        public async Task<BasePagingViewModel<TraineeCertificateResponse>> GetListCertificateOfTrainee(int traineeId, PagingRequestModel paging, int? status)
         {
             try
             {
                 var items = await _unitOfWork.CertificateRepository.GetListCertificateOfTraineeWithUserAndCourse(traineeId);
+                if (status != null)
+                {
+                    items = items.Where(x => x.Status == status).ToList();   
+                }
                 List<TraineeCertificateResponse> res = items.Select(
                     certificate =>
                     {
@@ -135,11 +140,15 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<BasePagingViewModel<TrainerCertificateResponse>> GetListCertificateOfTraineeForTrainer(int traineeId, PagingRequestModel paging)
+        public async Task<BasePagingViewModel<TrainerCertificateResponse>> GetListCertificateOfTraineeForTrainer(int traineeId, PagingRequestModel paging, int? status)
         {
             try
             {
                 var items = await _unitOfWork.CertificateRepository.GetListCertificateOfTraineeWithUserAndCourse(traineeId);
+                if (status != null)
+                {
+                    items = items.Where(x => x.Status == status).ToList();
+                }
                 List<TrainerCertificateResponse> res = items.Select(
                     certificate =>
                     {
@@ -178,6 +187,69 @@ namespace BusinessLayer.Service.Implement
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);    
+            }
+        }
+
+        public async Task<BasePagingViewModel<TrainerCertificateResponse>> GetListCertificatePendingOffAllTraineesForTrainer(int trainerId, PagingRequestModel paging)
+        {
+            try
+            {
+                var trainer = await _unitOfWork.UserRepository.GetTrainerWithListTraineeByIdAndStatusActive(trainerId);
+                if (trainer == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found");
+                }
+                if (trainer.Trainees == null || trainer.Trainees.Count == 0)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Trainer does not have any trainees!");
+                }
+
+                List<Registration> certis = new();
+                foreach (var trainee in trainer.Trainees)
+                {
+                    var items = await _unitOfWork.CertificateRepository.GetlistCertificatePendingOfTraineeWithUserAndCourse(trainee.Id);
+                    certis.AddRange(items);
+                }
+                certis = certis.OrderByDescending(x => x.SubmitDate).ToList();
+
+                List<TrainerCertificateResponse> res = certis.Select(
+                    certificate =>
+                    {
+                        return new TrainerCertificateResponse()
+                        {
+                            CourseId = certificate.CourseId,
+                            CourseName = certificate.Course.Name,
+                            CourseImg = certificate.Course.ImageURL,
+                            EnrollDate = certificate.EnrollDate ?? default,
+                            SubmitDate = certificate.SubmitDate ?? default,
+                            LinkCertificate = certificate.Link,
+                            Status = certificate.Status ?? default,
+                            UserId = certificate.UserId,
+                            FirstName = certificate.User.FirstName,
+                            LastName = certificate.User.LastName,
+                            AvatarURL = certificate.User.AvatarURL
+                        };
+                    }
+                ).ToList();
+
+                int totalItem = res.Count;
+
+                res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                        .Take(paging.PageSize).ToList();
+
+                var result = new BasePagingViewModel<TrainerCertificateResponse>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = res
+                };
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 

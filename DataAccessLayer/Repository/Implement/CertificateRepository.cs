@@ -38,5 +38,15 @@ namespace DataAccessLayer.Repository.Implement
                 .ToListAsync();
             return list;    
         }
+
+        public async Task<List<Registration>> GetlistCertificatePendingOfTraineeWithUserAndCourse(int userId)
+        {
+            List<Registration> list = await _context.Certificates
+                                      .Where(u => u.UserId == userId && u.Status == CommonEnums.CERTIFICATE_STATUS.PENDING)
+                .Include(u => u.User)
+                .Include(u => u.Course)
+                .ToListAsync();
+            return list;
+        }
     }
 }

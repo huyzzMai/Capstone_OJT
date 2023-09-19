@@ -820,7 +820,8 @@ namespace BusinessLayer.Service.Implement
                     }
                     var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
                     var trelloUsers = await client.GetMembersOfOrganizationAsync(_configuration["TrelloWorkspace:WorkspaceId"]); 
-                    var target = trelloUsers.FirstOrDefault(x => x.Username == user.RollNumber);
+                    //var target = trelloUsers.FirstOrDefault(x => x.Username == user.RollNumber);
+                    var target = trelloUsers.FirstOrDefault(x => string.Equals(x.Username, user.RollNumber, StringComparison.OrdinalIgnoreCase));
                     if (target == null)
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Trainee or Trainer had not been created a Trello Accout!");

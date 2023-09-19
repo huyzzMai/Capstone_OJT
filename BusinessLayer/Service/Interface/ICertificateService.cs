@@ -14,8 +14,9 @@ namespace BusinessLayer.Service.Interface
     {
         Task<TraineeCertificateResponse> GetCertificateOfTrainee(int traineeId, int courseId);
         Task<TrainerCertificateResponse> GetCertificateOfTraineeForTrainer(int trainerId, int traineeId, int courseId);
-        Task<BasePagingViewModel<TraineeCertificateResponse>> GetListCertificateOfTrainee(int traineeId, PagingRequestModel paging);
-        Task<BasePagingViewModel<TrainerCertificateResponse>> GetListCertificateOfTraineeForTrainer(int traineeId, PagingRequestModel paging);
+        Task<BasePagingViewModel<TraineeCertificateResponse>> GetListCertificateOfTrainee(int traineeId, PagingRequestModel paging, int? status);
+        Task<BasePagingViewModel<TrainerCertificateResponse>> GetListCertificateOfTraineeForTrainer(int traineeId, PagingRequestModel paging, int? status);
+        Task<BasePagingViewModel<TrainerCertificateResponse>> GetListCertificatePendingOffAllTraineesForTrainer(int trainerId, PagingRequestModel paging);
         Task AcceptCertificate(EvaluateCertificateRequest request);
         Task DenyCertificate(EvaluateCertificateRequest request);
         Task SubmitCertificate(int userid, SubmitCertificateRequest request);

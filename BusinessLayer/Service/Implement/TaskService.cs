@@ -308,36 +308,40 @@ namespace BusinessLayer.Service.Implement
                 var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
                 var card = await client.GetCardAsync(taskId);
                 var memberIds = card.MemberIds;
+
                 if (memberIds == null || memberIds.Count == 0)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "There is no user for this Task!");
                 }
-                var memId = memberIds.FirstOrDefault();
+                //var memId = memberIds.FirstOrDefault();
 
-                var trainee = await _unitOfWork.UserRepository.GetUserByTrelloIdAndStatusActive(memId);
-                if (trainee == null)
+                foreach (var memId in memberIds)
                 {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found or User have not update TrelloId!");
+                    var trainee = await _unitOfWork.UserRepository.GetUserByTrelloIdAndStatusActive(memId);
+                    if (trainee == null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found or User have not update TrelloId!");
+                    }
+                    var matchingTask = await _unitOfWork.TaskRepository.GetMatchingTask(taskId, trainee.Id);
+                    if (matchingTask != null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "This task had been submit to the system!");
+                    }
+
+                    TaskAccomplished ta = new()
+                    {
+                        TrelloTaskId = taskId,
+                        Name = card.Name,
+                        Description = card.Description,
+                        StartDate = card.Start,
+                        DueDate = card.Due,
+                        AccomplishDate = DateTimeOffset.UtcNow.AddHours(7),
+                        Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.PENDING,
+                        UserId = trainee.Id
+                    };
+
+                    await _unitOfWork.TaskRepository.Add(ta);
                 }
-                var matchingTask = await _unitOfWork.TaskRepository.GetMatchingTask(taskId, trainee.Id);
-                if (matchingTask != null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "This task had been submit to the system!");
-                }
-
-                TaskAccomplished ta = new()
-                {
-                    TrelloTaskId = taskId,
-                    Name = card.Name,
-                    Description = card.Description,
-                    StartDate = card.Start,
-                    DueDate = card.Due,
-                    AccomplishDate = DateTimeOffset.UtcNow.AddHours(7),
-                    Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.PENDING,
-                    UserId = trainee.Id
-                };
-
-                await _unitOfWork.TaskRepository.Add(ta);
             }
             catch (Exception ex)
             {
