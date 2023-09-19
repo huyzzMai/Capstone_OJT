@@ -98,8 +98,7 @@ namespace BusinessLayer.Service.Implement
                  UniversityName=batch.University.Name,
                  TemplateId= batch.TemplateId,
                  CreatedAt= DateTimeService.ConvertToDateString(batch.CreatedAt),
-                 UpdatedAt= DateTimeService.ConvertToDateString(batch.UpdatedAt),
-                 IsDeleted= batch.IsDeleted
+                 UpdatedAt= DateTimeService.ConvertToDateString(batch.UpdatedAt)
                 };
                 return batchresponse;
             }
@@ -262,7 +261,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var list = await _unitOfWork.OJTBatchRepository.Get(c => c.IsDeleted == false && c.EndTime > DateTime.UtcNow.AddHours(7));
+                var list = await _unitOfWork.OJTBatchRepository.Get(c => c.EndTime > DateTime.UtcNow.AddHours(7),"Template");
                 if (list == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Empty List OJTBatch");
@@ -275,7 +274,9 @@ namespace BusinessLayer.Service.Implement
                             Id = ojt.Id,
                             Name = ojt.Name,
                             StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
-                            EndTime = DateTimeService.ConvertToDateString(ojt.EndTime)
+                            EndTime = DateTimeService.ConvertToDateString(ojt.EndTime),
+                            TemplateId = ojt.TemplateId,
+                            TemplateName=ojt.Template.Name
                         };
                     }
                     ).ToList();
@@ -305,7 +306,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var list = await _unitOfWork.OJTBatchRepository.Get(c => c.IsDeleted == false && c.UniversityId == id);
+                var list = await _unitOfWork.OJTBatchRepository.Get(c => c.UniversityId == id,"Template");
                 if (list == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Empty List OJTBatch");
@@ -319,7 +320,8 @@ namespace BusinessLayer.Service.Implement
                             Name = ojt.Name,
                             TemplateId=ojt.TemplateId,
                             StartTime = DateTimeService.ConvertToDateString(ojt.StartTime),
-                            EndTime = DateTimeService.ConvertToDateString(ojt.EndTime)
+                            EndTime = DateTimeService.ConvertToDateString(ojt.EndTime),
+                            TemplateName=ojt.Template.Name
                         };
                     }
                     ).ToList();

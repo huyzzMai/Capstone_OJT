@@ -35,6 +35,6 @@ namespace BusinessLayer.Payload.ResponseModel.UniversityResponse
         
         public string UpdatedAt { get; set; }
 
-        public List<ValidOJTBatchResponse> validOJTBatchResponses { get; set; }
+        public List<UniversityOjtbatches> UniversityOjtbatches { get; set; }
     }
 }

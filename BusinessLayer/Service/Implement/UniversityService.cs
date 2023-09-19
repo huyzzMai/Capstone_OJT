@@ -33,7 +33,8 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var uni = await _unitOfWork.UniversityRepository.GetFirst(c => c.Id==Id, "OJTBatches");
+                var uni = await _unitOfWork.UniversityRepository.GetFirst(c => c.Id==Id, "OJTBatches","Templates");
+               
                 if (uni == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "University not found");
@@ -49,13 +50,14 @@ namespace BusinessLayer.Service.Implement
                     CreatedAt = DateTimeService.ConvertToDateString(uni.CreatedAt),
                     UpdatedAt = DateTimeService.ConvertToDateString(uni.UpdatedAt),
                     Status = uni.Status,
-                    validOJTBatchResponses = uni.OJTBatches.Select(cp =>
-                        new ValidOJTBatchResponse()
+                    UniversityOjtbatches = uni.OJTBatches.Select(cp =>
+                        new UniversityOjtbatches()
                         {
                             Id = cp.Id,
                             Name = cp.Name,
                             StartTime = DateTimeService.ConvertToDateString(cp.StartTime),
-                            EndTime = DateTimeService.ConvertToDateString(cp.EndTime)
+                            EndTime = DateTimeService.ConvertToDateString(cp.EndTime),
+                            TemplateName=uni.Templates.Where(t=>t.Id==cp.TemplateId).FirstOrDefault()?.Name,
                         }).ToList()
                 };
                 return uniresponse;
