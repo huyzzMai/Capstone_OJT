@@ -19,11 +19,13 @@ namespace API.Controllers.CourseController
     public class CourseController : ControllerBase
     {
         private readonly ICourseService _service;
+        private readonly IUserService userService;
         private readonly IHubContext<SignalHub> _hubContext;
-        public CourseController(ICourseService service, IHubContext<SignalHub> hubContext)
+        public CourseController(ICourseService service, IHubContext<SignalHub> hubContext, IUserService userService)
         {
            _service= service;
            _hubContext= hubContext;
+           this.userService = userService;
         }
         [Authorize(Roles = "Admin")]
         [HttpPost]
@@ -246,6 +248,29 @@ namespace API.Controllers.CourseController
                 var list = await _service.GetCourseCompulsoryForUser(int.Parse(userIdClaim.Value),paging);
                 return Ok(list);
 
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainer")]
+        [HttpPost("assign-course/{traineeId}/{courseId}")]
+        public async Task<IActionResult> AssignCourseForTraineeByTrainer(int traineeId, int courseId)
+        {
+            try
+            {
+                // Get id of current log in user 
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                await _service.AssginCourseToTrainee(userId, traineeId, courseId);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.COURSE_SIGNALR_MESSAGE.ASSIGNED);
+                return Ok("Assign course to trainee successfully.");
             }
             catch (ApiException ex)
             {

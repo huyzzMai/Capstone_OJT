@@ -30,6 +30,7 @@ namespace BusinessLayer.Service.Interface
         Task<BasePagingViewModel<UserListResponse>> GetUserList(PagingRequestModel paging,string searchTerm,int? role,int? filterStatus);
         Task<BasePagingViewModel<TraineeResponse>> GetTraineeList(PagingRequestModel paging, string keyword, int? position);
         Task<BasePagingViewModel<TraineeResponse>> GetTraineeListByTrainer(int id, PagingRequestModel paging);
+        Task<List<UnassignedTraineeResponse>> GetUnassignedTraineeList();
         Task<TraineeResponse> GetTraineeDetail(int roleId, int traineeId);
         Task<TrainerResponse> GetTrainerDetail(int trainerId);
         Task AssignTraineeToTrainer(AssignTraineesRequest request);

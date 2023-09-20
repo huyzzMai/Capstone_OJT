@@ -13,6 +13,7 @@ namespace DataAccessLayer.Commons
             public const string CREATED = "New Course Created";
             public const string UPDATED = "New Course Updated";
             public const string DELETED = "New Course Deleted";
+            public const string ASSIGNED = "Trainer assigned Course to Trainee. Load get notification for Trainee.";
         }
 
         public class SKILL_SIGNALR_MESSAGE

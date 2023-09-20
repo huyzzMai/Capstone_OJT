@@ -142,6 +142,21 @@ namespace API.Controllers.UserController
             }
         }
 
+        [Authorize(Roles = "Manager")]
+        [HttpGet("unassigned-trainee")]
+        public async Task<IActionResult> GetUnassignedTraineeList()
+        {
+            try
+            {
+                return Ok(await userService.GetUnassignedTraineeList());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
         [Authorize(Roles = "Trainer,Manager")]
         [HttpGet("trainee/{traineeId}")]
         public async Task<IActionResult> GetTraineeDetail (int traineeId)

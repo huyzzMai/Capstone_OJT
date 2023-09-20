@@ -22,9 +22,11 @@ namespace BusinessLayer.Service.Implement
     public class CourseService : ICourseService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public CourseService(IUnitOfWork unitOfWork)
+        private readonly INotificationService _notificationService;
+        public CourseService(IUnitOfWork unitOfWork, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
+            _notificationService = notificationService;
         }
 
         public async Task CreateCourse(CreateCourseRequest request)
@@ -181,6 +183,37 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
+        public async Task AssginCourseToTrainee(int trainerId, int traineeId, int courseId)
+        {
+            try
+            {
+                var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == traineeId && c.Status == CommonEnums.USER_STATUS.ACTIVE
+                && c.Role == CommonEnums.ROLE.TRAINEE, "UserSkills");
+                var course = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId && c.Status == CommonEnums.COURSE_STATUS.ACTIVE);
+                if (user == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Invalid user");
+                }
+                if (course == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Course not found");
+                }
+                if (trainerId != user.UserReferenceId)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "This is not your assigned Trainee!");
+                }
+                // Add student to code here
+                ;
+
+                // Create notification for assigned trainee
+                await _notificationService.CreateNotificaion(traineeId, "New Course Assigned For You",
+                      "Your have been assigned a new course by your trainer.", CommonEnums.NOTIFICATION_TYPE.COURSE_TYPE);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
 
         public async Task<BasePagingViewModel<CourseResponse>> GetCourseCompulsoryForUser(int userid, PagingRequestModel paging)
         {

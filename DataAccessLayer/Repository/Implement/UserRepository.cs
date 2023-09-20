@@ -97,6 +97,15 @@ namespace DataAccessLayer.Repository.Implement
             return user;
         }
 
+        public async Task<List<User>> GetUnassignedTraineeList()
+        {
+            List<User> users = await _context.Users
+                               .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE && u.UserReferenceId == null)
+                               .Include(u => u.Position)
+                               .ToListAsync();
+            return users;
+        }
+
         public async Task<List<User>> GetTraineeList(string keyword, int? positionId)
         {
             List<User> users = new();

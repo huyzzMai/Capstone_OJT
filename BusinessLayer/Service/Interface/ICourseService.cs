@@ -33,5 +33,7 @@ namespace BusinessLayer.Service.Interface
         Task<BasePagingViewModel<CourseResponse>> GetEnrollCourse(int userid, PagingRequestModel paging);
 
         Task<CourseDetailResponse> GetDetailCoursebyId(int courseId);
+
+        Task AssginCourseToTrainee(int trainerId, int traineeId, int courseId);
     }
 }

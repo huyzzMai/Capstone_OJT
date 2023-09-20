@@ -126,6 +126,7 @@ namespace DataAccessLayer.Commons
             public const int CERTIFICATE_TYPE = 1;
             public const int TRAINING_PLAN_TYPE = 2;
             public const int BATCH_TYPE = 3;
+            public const int COURSE_TYPE = 4;
         }
 
         public class  CLIENT_ERROR

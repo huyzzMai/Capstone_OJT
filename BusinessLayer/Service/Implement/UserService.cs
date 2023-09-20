@@ -677,6 +677,33 @@ namespace BusinessLayer.Service.Implement
             return result;
         }
 
+        public async Task<List<UnassignedTraineeResponse>> GetUnassignedTraineeList()
+        {
+            try
+            {
+                var users = await _unitOfWork.UserRepository.GetUnassignedTraineeList();
+                List<UnassignedTraineeResponse> res = users.Select(
+                user =>
+                {
+                    return new UnassignedTraineeResponse()
+                    {
+                        Id = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Email = user.Email,
+                        AvatarURL = user.AvatarURL,
+                        PositionName = user.Position.Name
+                    };
+                }
+                ).ToList();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<TraineeResponse> GetTraineeDetail(int roleId, int traineeId)
         {
             try
