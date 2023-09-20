@@ -42,8 +42,7 @@ namespace BusinessLayer.Service.Implement
                     TemplateId = request.TemplateId,
                     CreatedAt = DateTime.UtcNow.AddHours(7),
                     UpdatedAt = DateTime.UtcNow.AddHours(7),
-                    UniversityId = request.UniversityId,
-                    IsDeleted=false
+                    UniversityId = request.UniversityId
                 };
                 await _unitOfWork.OJTBatchRepository.Add(newbatch);
             }
@@ -57,27 +56,27 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task DeleteOjtBatch(int id)
-        {
-           try
-            {
-                var batch = await _unitOfWork.OJTBatchRepository.GetFirst(c => c.IsDeleted == false && c.Id == id);
-                if (batch==null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET,"Ojt batch not found");
-                }
-                batch.IsDeleted = true;
-                await _unitOfWork.OJTBatchRepository.Update(batch);
-            }
-            catch (ApiException ex)
-            {
-                throw ex;
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-        }
+        //public async Task DeleteOjtBatch(int id)
+        //{
+        //   try
+        //    {
+        //        var batch = await _unitOfWork.OJTBatchRepository.GetFirst(c => c.Id == id);
+        //        if (batch==null)
+        //        {
+        //            throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET,"Ojt batch not found");
+        //        }
+        //        batch.IsDeleted = true;
+        //        await _unitOfWork.OJTBatchRepository.Update(batch);
+        //    }
+        //    catch (ApiException ex)
+        //    {
+        //        throw ex;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw new Exception(e.Message);
+        //    }
+        //}
 
         public async Task<OjtBatchDetailResponse> GetDetailOjtBatch(int batchId)
         {
@@ -117,7 +116,7 @@ namespace BusinessLayer.Service.Implement
            try
             {
                 var listOjt = await _unitOfWork.OJTBatchRepository.Get(c=>c.Trainees.Any(c=>c.UserReferenceId == trainerId) 
-                && c.IsDeleted==false 
+                //&& c.IsDeleted==false 
                 && c.EndTime.Value.AddDays(7) >= DateTimeService.GetCurrentDateTime(),"Trainees","University");
                 if (listOjt == null)
                 {
@@ -193,7 +192,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var list = await _unitOfWork.OJTBatchRepository.Get(o=>o.IsDeleted==false,"Trainees","University", "Template");
+                var list = await _unitOfWork.OJTBatchRepository.Get(expression:null,"Trainees","University", "Template");
                 if (list == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Empty List OJTBatch");
@@ -352,7 +351,7 @@ namespace BusinessLayer.Service.Implement
         {
            try
             {
-                var batch = await _unitOfWork.OJTBatchRepository.GetFirst(c => c.IsDeleted == false && c.Id == id);
+                var batch = await _unitOfWork.OJTBatchRepository.GetFirst(c =>c.Id == id);
                 if (batch == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Ojt batch not found");
@@ -362,7 +361,7 @@ namespace BusinessLayer.Service.Implement
                 batch.StartTime=request.StartTime; 
                 batch.EndTime=request.EndTime;
                 batch.UniversityId = request.UniversityId;
-                batch.IsDeleted = request.IsDeleted;
+                //batch.IsDeleted = request.IsDeleted;
                 batch.TemplateId= request.TemplateId;
                 await _unitOfWork.OJTBatchRepository.Update(batch);
 

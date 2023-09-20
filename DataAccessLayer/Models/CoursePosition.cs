@@ -26,11 +26,11 @@ namespace DataAccessLayer.Models
 
         public bool? IsCompulsory { get; set; }
 
-        public int? CourseId { get; set; }
+        public int CourseId { get; set; }
         [ForeignKey("CourseId")]
         public Course Course { get; set; }
 
-        public int? PositionId { get; set; }
+        public int PositionId { get; set; }
         [ForeignKey("PositionId")]
         public Position Position { get; set; }
     }

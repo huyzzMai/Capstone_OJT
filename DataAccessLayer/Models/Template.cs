@@ -30,7 +30,7 @@ namespace DataAccessLayer.Models
 
         public DateTime? UpdatedAt { get; set; }
 
-        public int? UniversityId { get; set; }
+        public int UniversityId { get; set; }
         [ForeignKey("UniversityId")]
         public University University { get; set; }
 

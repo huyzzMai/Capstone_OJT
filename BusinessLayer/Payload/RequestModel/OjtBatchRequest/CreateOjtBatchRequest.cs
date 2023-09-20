@@ -16,8 +16,8 @@ namespace BusinessLayer.Payload.RequestModel.OjtBatchRequest
         [Required]
         public DateTime? EndTime { get; set; }
         [Required]
-        public int? UniversityId { get; set; }
+        public int UniversityId { get; set; }
         [Required]
-        public int? TemplateId { get; set; }
+        public int TemplateId { get; set; }
     }
 }

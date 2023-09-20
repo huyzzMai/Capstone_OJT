@@ -130,25 +130,25 @@ namespace API.Controllers.OJTBatchController
                   e.Message);
             }
         }
-        [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOjtBacth(int id)
-        {
-            try
-            {
-                await _ojtService.DeleteOjtBatch(id);
-                return Ok("Ojt batch is delete successfully.");
-            }
-            catch (ApiException ex)
-            {
-                return StatusCode(ex.StatusCode, ex.Message);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                  e.Message);
-            }
-        }
+        //[Authorize(Roles = "Admin")]
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteOjtBacth(int id)
+        //{
+        //    try
+        //    {
+        //        await _ojtService.DeleteOjtBatch(id);
+        //        return Ok("Ojt batch is delete successfully.");
+        //    }
+        //    catch (ApiException ex)
+        //    {
+        //        return StatusCode(ex.StatusCode, ex.Message);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //          e.Message);
+        //    }
+        //}
 
         [Authorize(Roles = "Admin")]
         [HttpPost]

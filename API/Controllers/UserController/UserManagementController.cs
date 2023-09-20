@@ -184,6 +184,7 @@ namespace API.Controllers.UserController
             try
             {
                 await userService.AssignTraineeToTrainer(request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.USER_MESSAGE.ASSIGNED);
                 return StatusCode(StatusCodes.Status201Created,
                     "Assign successfully.");
             }

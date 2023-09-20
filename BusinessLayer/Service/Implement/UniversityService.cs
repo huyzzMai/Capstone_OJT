@@ -145,7 +145,7 @@ namespace BusinessLayer.Service.Implement
                         UniversityCode=c.UniversityCode,
                         JoinDate = DateTimeService.ConvertToDateString(c.JoinDate),
                         Status = c.Status,
-                        TotalBatches = c.OJTBatches.Where(c => c.IsDeleted != false).ToList().Count,
+                        TotalBatches = c.OJTBatches.ToList().Count,
                         OjtTrainees = CountTotalUsersInUniversity(list.Where(cd => cd.Id == c.Id).ToList()),
                         OjtActiveTrainees = CountUsersWithStatusInUniversity(list.Where(cd => cd.Id == c.Id).ToList(), CommonEnums.USER_STATUS.ACTIVE)
                     };
@@ -220,11 +220,11 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "University not found");
                 }
-                var check = uni.OJTBatches.Any(c => c.IsDeleted == false);
-                if (check)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "University still have some active batches");
-                }
+                //var check = uni.OJTBatches.Any(c => c.IsDeleted == false);
+                //if (check)
+                //{
+                //    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "University still have some active batches");
+                //}
                 uni.Status = CommonEnums.UNIVERSITY_STATUS.INACTIVE;
                 await _unitOfWork.UniversityRepository.Update(uni);
             }

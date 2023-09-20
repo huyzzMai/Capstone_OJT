@@ -19,7 +19,7 @@ namespace BusinessLayer.Service.Interface
 
         Task UpdateOjtBatch(int id,UpdateOjtBatchRequest request);
 
-        Task DeleteOjtBatch(int id);
+        //Task DeleteOjtBatch(int id);
 
         Task<BasePagingViewModel<ValidOJTBatchResponse>> GetValidOJtList(PagingRequestModel paging);
 

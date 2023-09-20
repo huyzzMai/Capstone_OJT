@@ -33,7 +33,7 @@ namespace DataAccessLayer.Models
         public int? Status { get; set; }
 
         // Relation with User
-        public int? UserId { get; set; }
+        public int UserId { get; set; }
         [ForeignKey("UserId")]
         public User User { get; set; }
     }
