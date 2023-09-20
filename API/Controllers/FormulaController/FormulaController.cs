@@ -86,13 +86,32 @@ namespace API.Controllers.Formula
             }
         }
         [Authorize(Roles = "Manager")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFormula(int id)
+        [HttpDelete("disable-formula/{id}")]
+        public async Task<IActionResult> DisableFormula(int id)
         {
             try
             {
-                await _service.DeleteFormula(id);
-                return Ok("Formula is delete successfully.");
+                await _service.DisableFormula(id);
+                return Ok("Formula is disable successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize(Roles = "Manager")]
+        [HttpDelete("active-formula/{id}")]
+        public async Task<IActionResult> ActiveFormula(int id)
+        {
+            try
+            {
+                await _service.ActiveFormula(id);
+                return Ok("Formula is active successfully.");
             }
             catch (ApiException ex)
             {

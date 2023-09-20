@@ -58,7 +58,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task DeletePosition(int id)
+        public async Task DisablePosition(int id)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Position not found");
                 }                
-                position.Status = CommonEnums.POSITION_STATUS.ACTIVE;
+                position.Status = CommonEnums.POSITION_STATUS.INACTIVE;
                 await _unitOfWork.PositionRepository.Update(position);
             }
             catch (ApiException ex)
@@ -80,6 +80,27 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
+        public async Task ActivePosition(int id)
+        {
+            try
+            {
+                var position = await _unitOfWork.PositionRepository.GetFirst(c => c.Id == id, "CoursePositions", "Users");
+                if (position == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Position not found");
+                }
+                position.Status = CommonEnums.POSITION_STATUS.ACTIVE;
+                await _unitOfWork.PositionRepository.Update(position);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
         public async Task<PositionDetailResponse> GetPositionDetail(int id)
         {
             try

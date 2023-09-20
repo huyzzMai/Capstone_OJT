@@ -54,7 +54,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task DeleteSkill(int skillId)
+        public async Task DisableSkill(int skillId)
         {
             try
             {
@@ -74,6 +74,38 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! There are some active user which use this skill");
                 }
                 skill.Status = CommonEnums.SKILL_STATUS.INACTIVE;
+                await _unitOfWork.SkillRepository.Update(skill);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task ActiveSkill(int skillId)
+        {
+            try
+            {
+                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId, "CourseSkills", "UserSkills");
+                if (skill == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Skill not found");
+                }
+                var ck = skill.CourseSkills.Any(c => c.Course.Status == CommonEnums.COURSE_STATUS.ACTIVE);
+                if (ck)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! There are some active course which use this skill");
+                }
+                var uk = skill.UserSkills.Any(c => c.User.Status == CommonEnums.USER_STATUS.ACTIVE);
+                if (uk)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! There are some active user which use this skill");
+                }
+                skill.Status = CommonEnums.SKILL_STATUS.ACTIVE;
                 await _unitOfWork.SkillRepository.Update(skill);
             }
             catch (ApiException ex)

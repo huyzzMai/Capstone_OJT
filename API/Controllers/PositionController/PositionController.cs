@@ -68,14 +68,34 @@ namespace API.Controllers.PositionController
             }
         }
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePosition(int id)
+        [HttpPut("disable-position/{id}")]
+        public async Task<IActionResult> DisablePosition(int id)
         {
             try
             {
-                await _service.DeletePosition(id);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.POSITION_SIGNALR_MESSAGE.DELETED);
-                return Ok("Position is delete successfully.");
+                await _service.DisablePosition(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.POSITION_SIGNALR_MESSAGE.UPDATED);
+                return Ok("Position is disable successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPut("active-position/{id}")]
+        public async Task<IActionResult> ActivePosition(int id)
+        {
+            try
+            {
+                await _service.ActivePosition(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.POSITION_SIGNALR_MESSAGE.UPDATED);
+                return Ok("Position is active successfully.");
             }
             catch (ApiException ex)
             {

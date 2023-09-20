@@ -67,14 +67,14 @@ namespace API.Controllers.SkillController
             }
         }
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSkill(int id)
+        [HttpPut("disable-skill/{id}")]
+        public async Task<IActionResult> DisableSkill(int id)
         {
             try
             {
-                await _service.DeleteSkill(id);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.SKILL_SIGNALR_MESSAGE.DELETED);
-                return Ok("Skill is delete successfully.");
+                await _service.DisableSkill(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.SKILL_SIGNALR_MESSAGE.UPDATED);
+                return Ok("Skill is disable successfully.");
             }
             catch (ApiException ex)
             {
@@ -86,6 +86,28 @@ namespace API.Controllers.SkillController
                   e.Message);
             }
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("active-skill/{id}")]
+        public async Task<IActionResult> ActiveSkill(int id)
+        {
+            try
+            {
+                await _service.ActiveSkill(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.SKILL_SIGNALR_MESSAGE.UPDATED);
+                return Ok("Skill is active successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetListSkill([FromQuery] PagingRequestModel paging,string searchTerm,int? filterStatus)
