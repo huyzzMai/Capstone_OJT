@@ -197,14 +197,34 @@ namespace API.Controllers.TemplateController
             }
         }       
         [Authorize(Roles = "Manager")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTemplate(int id)
+        [HttpPut("disable-template/{id}")]
+        public async Task<IActionResult> DisableTemplate(int id)
         {
             try
             {
-                await _service.DeleteTemplate(id);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATE_SIGNALR_MESSAGE.DELETED);
-                return Ok("Template is delete successfully.");
+                await _service.DisableTemplate(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATE_SIGNALR_MESSAGE.UPDATED);
+                return Ok("Template is disable successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize(Roles = "Manager")]
+        [HttpPut("active-template/{id}")]
+        public async Task<IActionResult> ActiveTemplate(int id)
+        {
+            try
+            {
+                await _service.ActiveTemplate(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATE_SIGNALR_MESSAGE.UPDATED);
+                return Ok("Template is active successfully.");
             }
             catch (ApiException ex)
             {

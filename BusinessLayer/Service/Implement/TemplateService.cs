@@ -125,7 +125,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task DeleteTemplate(int templateId)
+        public async Task DisableTemplate(int templateId)
         {
             try
             {
@@ -135,6 +135,28 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template not found");
                 }
                 temp.Status = CommonEnums.TEMPLATE_STATUS.INACTIVE;
+                await _unitOfWork.TemplateRepository.Update(temp);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task ActiveTemplate(int templateId)
+        {
+            try
+            {
+                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId);
+                if (temp == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template not found");
+                }
+                temp.Status = CommonEnums.TEMPLATE_STATUS.ACTIVE;
                 await _unitOfWork.TemplateRepository.Update(temp);
             }
             catch (ApiException ex)

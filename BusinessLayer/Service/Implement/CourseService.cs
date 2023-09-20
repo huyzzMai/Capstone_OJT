@@ -110,7 +110,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task DeleteCourse(int courseId)
+        public async Task DisableCourse(int courseId)
         {
             try
             {
@@ -137,7 +137,33 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-
+        public async Task ActiveCourse(int courseId)
+        {
+            try
+            {
+                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId, "Certificates");
+                if (cour == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Course not found");
+                }
+                cour.Status = CommonEnums.COURSE_STATUS.ACTIVE;
+                await _unitOfWork.CourseRepository.Update(cour);
+                var cercour = cour.Certificates.Where(c => c.Status != CommonEnums.CERTIFICATE_STATUS.DELETED);
+                foreach (var cert in cercour)
+                {
+                    cert.Status = CommonEnums.CERTIFICATE_STATUS.DELETED;
+                    await _unitOfWork.CertificateRepository.Update(cert);
+                }
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
         public async Task EnrollCourse(int userid, int courseId)
         {
             try

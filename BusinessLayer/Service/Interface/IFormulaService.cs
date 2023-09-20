@@ -18,7 +18,9 @@ namespace BusinessLayer.Service.Interface
 
         Task UpdateFormula(int formulaId, UpdateFormulaRequest request);
 
-        Task DeleteFormula(int formulaId);
+        Task DisableFormula(int formulaId);
+
+        Task ActiveFormula(int formulaId);
 
         Task<BasePagingViewModel<FormulaResponse>> GetFormulaList(PagingRequestModel paging, string searchTerm, int? filterStatus);
 

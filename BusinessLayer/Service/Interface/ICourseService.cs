@@ -19,7 +19,9 @@ namespace BusinessLayer.Service.Interface
 
         Task DeleteCourseSkill(int courseId, int skillid);
 
-        Task DeleteCourse(int courseId);
+        Task DisableCourse(int courseId);
+
+        Task ActiveCourse(int courseId);
 
         Task<BasePagingViewModel<CourseResponse>> GetCourseList(PagingRequestModel paging, string sortField, string sortOrder,string searchTerm,int? filterskill, int? filterposition,int? filterstatus);
 

@@ -12,7 +12,9 @@ namespace BusinessLayer.Service.Interface
 
         Task UpdateSkill(int skillId, UpdateSkillRequest request);
 
-        Task DeleteSkill(int skillId);
+        Task DisableSkill(int skillId);
+
+        Task ActiveSkill(int skillId);
 
         Task<BasePagingViewModel<SkillResponse>> GetSkillList(PagingRequestModel paging,string searchTerm,int? filterStatus);
 

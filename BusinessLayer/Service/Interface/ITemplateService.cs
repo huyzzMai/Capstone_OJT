@@ -19,8 +19,9 @@ namespace BusinessLayer.Service.Interface
 
         Task UpdateTemplate(int templateId, UpdateTemplateRequest request);
 
-        Task DeleteTemplate(int templateId);
+        Task DisableTemplate(int templateId);
 
+        Task ActiveTemplate(int templateId);
         Task<BasePagingViewModel<ListTemplateResponse>> GetTemplateList(PagingRequestModel paging,string searchTerm, int? filterstatus);
 
         Task<List<ListTemplateUniversityResponse>> GetTemplateUniversityList(int uniId);

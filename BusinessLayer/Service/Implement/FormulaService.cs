@@ -98,7 +98,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task DeleteFormula(int formulaId)
+        public async Task DisableFormula(int formulaId)
         {
             try
             {
@@ -122,7 +122,30 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-
+        public async Task ActiveFormula(int formulaId)
+        {
+            try
+            {
+                var formula = await _unitOfWork.FormulaRepository.
+                    GetFirst(c => c.Status == CommonEnums.FORMULA_STATUS.ACTIVE
+                    && c.Id == formulaId
+                    );
+                if (formula == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "formula not found");
+                }
+                formula.Status = CommonEnums.FORMULA_STATUS.ACTIVE;
+                await _unitOfWork.FormulaRepository.Update(formula);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
         public async Task<FormularDetailResponse> GetFormulaDetail(int formulaId)
         {
             try

@@ -16,8 +16,9 @@ namespace BusinessLayer.Service.Interface
 
         Task UpdatePositon(int id, UpdatePositionRequest request);
 
-        Task DeletePosition(int id);
+        Task DisablePosition(int id);
 
+        Task ActivePosition(int id);
         Task<BasePagingViewModel<ListPostionResponse>> GetPositionList(PagingRequestModel paging, string searchTerm, int? filterStatus);
 
         Task<PositionDetailResponse> GetPositionDetail(int id);
