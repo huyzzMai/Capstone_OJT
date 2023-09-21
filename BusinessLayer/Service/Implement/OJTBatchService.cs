@@ -200,7 +200,7 @@ namespace BusinessLayer.Service.Implement
                 var res = list.Select(
                     ojt =>
                     {
-                        if (ojt.Trainees.Any(c => c.UserCriterias.Any(c => c.Point == null) || c.UserCriterias.Count < 1 ))
+                        if (ojt.Trainees.Any(c => c.UserCriterias.Any(c => c.Point == null) || c.UserCriterias.Count < 1 || c.Trainees.Count <1 ))
                         {
                             return new ListOjtExport()
                             {
@@ -253,7 +253,6 @@ namespace BusinessLayer.Service.Implement
             {
                 throw new Exception(e.Message);
             }
-
         }
 
         public async Task<BasePagingViewModel<ValidOJTBatchResponse>> GetValidOJtList(PagingRequestModel paging)
