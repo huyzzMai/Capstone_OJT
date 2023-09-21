@@ -560,7 +560,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<BasePagingViewModel<TaskAccomplishedWithTraineeInfoResponse>> GetListTaskAccomplishOfBoard(string boardId, PagingRequestModel paging)
+        public async Task<BasePagingViewModel<TaskAccomplishedWithTraineeInfoResponse>> GetListTaskAccomplishOfBoard(string boardId, PagingRequestModel paging, int? status)
         {
             try
             {
@@ -580,6 +580,12 @@ namespace BusinessLayer.Service.Implement
                     }
                     tasks.Add(task);
                 }
+
+                if (status != null)
+                {
+                    tasks = tasks.Where(task => task.Status == status).ToList();
+                }
+
                 List<TaskAccomplishedWithTraineeInfoResponse> res = tasks.Select(
                 task =>
                 {

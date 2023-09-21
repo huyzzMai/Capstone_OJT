@@ -111,12 +111,12 @@ namespace API.Controllers.TaskController
         }
 
         [HttpGet("open-board/{boardId}/task-accomplished")]
-        public async Task<IActionResult> GetListAccomplishedTaskOfBoard(string boardId, [FromQuery] PagingRequestModel paging)
+        public async Task<IActionResult> GetListAccomplishedTaskOfBoard(string boardId, [FromQuery] PagingRequestModel paging, [FromQuery] int? status)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                return Ok(await taskService.GetListTaskAccomplishOfBoard(boardId, paging));
+                return Ok(await taskService.GetListTaskAccomplishOfBoard(boardId, paging, status));
             }
             catch (ApiException e)
             {
@@ -136,7 +136,7 @@ namespace API.Controllers.TaskController
             {
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await taskService.AcceptTraineeTask(userId, taskId);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TASK_MESSAGE.UPDATE_PROCESS);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.CREATE_NOTI);
                 return Ok("Process task successfully.");
             }
             catch (ApiException e)
@@ -157,7 +157,7 @@ namespace API.Controllers.TaskController
             {
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await taskService.RejectTraineeTask(userId, taskId);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TASK_MESSAGE.UPDATE_PROCESS);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.CREATE_NOTI);
                 return Ok("Process task successfully.");
             }
             catch (ApiException e)

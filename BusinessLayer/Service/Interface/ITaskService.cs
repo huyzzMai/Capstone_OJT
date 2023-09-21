@@ -20,7 +20,7 @@ namespace BusinessLayer.Service.Interface
 
         Task<List<WebhookBoardsResponse>> GetListOpenBoard(int userId);
 
-        Task<BasePagingViewModel<TaskAccomplishedWithTraineeInfoResponse>> GetListTaskAccomplishOfBoard(string boardId, PagingRequestModel paging);
+        Task<BasePagingViewModel<TaskAccomplishedWithTraineeInfoResponse>> GetListTaskAccomplishOfBoard(string boardId, PagingRequestModel paging, int? status);
 
         Task CreateFinishTask(string taskId);
 
