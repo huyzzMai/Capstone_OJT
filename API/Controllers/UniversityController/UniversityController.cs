@@ -103,14 +103,34 @@ namespace API.Controllers.UniversityController
             }
         }
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUniversity(int id)
+        [HttpPut("disable-university/{id}")]
+        public async Task<IActionResult> DisableUniversity(int id)
         {
             try
             {
-                await _service.DeleteUniversity(id);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.UNIVERSITY_SIGNALR_MESSAGE.DELETED);
-                return Ok("University is deleted successfully.");
+                await _service.DisableUniversity(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.UNIVERSITY_SIGNALR_MESSAGE.UPDATED);
+                return Ok("University is disable successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPut("active-university/{id}")]
+        public async Task<IActionResult> ActiveUniversity(int id)
+        {
+            try
+            {
+                await _service.ActiveUniversity(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.UNIVERSITY_SIGNALR_MESSAGE.UPDATED);
+                return Ok("University is active successfully.");
             }
             catch (ApiException ex)
             {

@@ -211,7 +211,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task DeleteUniversity(int universityId)
+        public async Task DisableUniversity(int universityId)
         {
             try
             {
@@ -219,11 +219,6 @@ namespace BusinessLayer.Service.Implement
                 if (uni == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "University not found");
-                }
-                var check = uni.OJTBatches.Any(c => c.IsDeleted == false);
-                if (check)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "University still have some active batches");
                 }
                 uni.Status = CommonEnums.UNIVERSITY_STATUS.INACTIVE;
                 await _unitOfWork.UniversityRepository.Update(uni);
@@ -237,7 +232,27 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-
+        public async Task ActiveUniversity(int universityId)
+        {
+            try
+            {
+                var uni = await _unitOfWork.UniversityRepository.GetFirst(c => c.Id == universityId, "OJTBatches");
+                if (uni == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "University not found");
+                }
+                uni.Status = CommonEnums.UNIVERSITY_STATUS.ACTIVE;
+                await _unitOfWork.UniversityRepository.Update(uni);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
         public async Task CreateUniversuty(CreateUniversityRequest request)
         {
             try

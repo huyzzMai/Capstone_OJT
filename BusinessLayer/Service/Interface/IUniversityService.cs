@@ -19,7 +19,9 @@ namespace BusinessLayer.Service.Interface
 
         Task UpdateUniversity (int universityId,UpdateUniversityRequest request);
 
-        Task DeleteUniversity(int universityId);
+        Task DisableUniversity(int universityId);
+
+        Task ActiveUniversity(int universityId);
 
         Task CreateUniversuty(CreateUniversityRequest request);
     }
