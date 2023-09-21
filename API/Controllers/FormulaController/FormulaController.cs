@@ -86,7 +86,7 @@ namespace API.Controllers.Formula
             }
         }
         [Authorize(Roles = "Manager")]
-        [HttpDelete("disable-formula/{id}")]
+        [HttpPut("disable-formula/{id}")]
         public async Task<IActionResult> DisableFormula(int id)
         {
             try
@@ -105,7 +105,7 @@ namespace API.Controllers.Formula
             }
         }
         [Authorize(Roles = "Manager")]
-        [HttpDelete("active-formula/{id}")]
+        [HttpPut("active-formula/{id}")]
         public async Task<IActionResult> ActiveFormula(int id)
         {
             try

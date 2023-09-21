@@ -1094,6 +1094,49 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-        
+
+        public async Task ActiveUser(int id)
+        {
+            try
+            {
+                var user = await _unitOfWork.UserRepository.GetFirst(c=>c.Id==id);
+                if(user==null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "User not found");
+                }
+                user.Status = CommonEnums.USER_STATUS.ACTIVE;
+                await _unitOfWork.UserRepository.Update(user);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task DisableUser(int id)
+        {
+            try
+            {
+                var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == id);
+                if (user == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "User not found");
+                }
+                user.Status = CommonEnums.USER_STATUS.INACTIVE;
+                await _unitOfWork.UserRepository.Update(user);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }
