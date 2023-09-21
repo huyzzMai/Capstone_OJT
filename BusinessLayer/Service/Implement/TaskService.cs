@@ -153,7 +153,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListAllTaskOfTrainees(int trainerId, PagingRequestModel paging, int? status)
+        public async Task<BasePagingViewModel<TaskAccomplishedWithTraineeInfoResponse>> GetListAllTaskOfTrainees(int trainerId, PagingRequestModel paging, int? status)
         {
             try
             {
@@ -171,10 +171,10 @@ namespace BusinessLayer.Service.Implement
                     tasks = tasks.Where(task => task.Status == status).ToList();
                 }
 
-                List<TaskAccomplishedResponse> res = tasks.Select(
+                List<TaskAccomplishedWithTraineeInfoResponse> res = tasks.Select(
                 task =>
                 {
-                    return new TaskAccomplishedResponse()
+                    return new TaskAccomplishedWithTraineeInfoResponse()
                     {
                         Id = task.Id,
                         TrelloTaskId = task.TrelloTaskId,
@@ -183,7 +183,11 @@ namespace BusinessLayer.Service.Implement
                         StartTime = task.StartDate,
                         EndTime = task.DueDate,
                         FinishTime = task.AccomplishDate,
-                        ProcessStatus = task.Status
+                        ProcessStatus = task.Status,
+                        TraineeFirstName = task.User.FirstName,
+                        TraineeLastName = task.User.LastName,
+                        AvatarURL = task.User.AvatarURL,
+                        TraineeRollNumber = task.User.RollNumber
                     };
                 }
                 ).ToList();
@@ -193,7 +197,7 @@ namespace BusinessLayer.Service.Implement
                 res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
                     .Take(paging.PageSize).ToList();
 
-                var result = new BasePagingViewModel<TaskAccomplishedResponse>()
+                var result = new BasePagingViewModel<TaskAccomplishedWithTraineeInfoResponse>()
                 {
                     PageIndex = paging.PageIndex,
                     PageSize = paging.PageSize,
