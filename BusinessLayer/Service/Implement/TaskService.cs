@@ -601,6 +601,7 @@ namespace BusinessLayer.Service.Implement
                         ProcessStatus = task.Status,
                         TraineeFirstName = task.User.FirstName,
                         TraineeLastName = task.User.LastName,
+                        AvatarURL = task.User.AvatarURL,
                         TraineeRollNumber = task.User.RollNumber
                     };
                 }

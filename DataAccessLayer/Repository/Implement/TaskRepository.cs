@@ -20,7 +20,9 @@ namespace DataAccessLayer.Repository.Implement
 
         public async Task<List<TaskAccomplished>> GetListTaskAccomplishedOfTrainee(int userId)
         {
-            var list = await _context.TaskAccomplisheds.Where(u => u.UserId == userId)
+            var list = await _context.TaskAccomplisheds
+                       .Where(u => u.UserId == userId)
+                       .Include(u => u.User)
                        .ToListAsync();
             return list;
         }

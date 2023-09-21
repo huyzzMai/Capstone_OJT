@@ -28,6 +28,8 @@ namespace BusinessLayer.Payload.ResponseModel.TaskResponse
 
         public string TraineeFirstName { get; set; }
 
+        public string AvatarURL { get; set; }   
+
         public string TraineeRollNumber { get; set; }
     }
 }
