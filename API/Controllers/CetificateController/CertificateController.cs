@@ -186,6 +186,8 @@ namespace API.Controllers.CetificateController
             {
                 var userid = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
                 await _service.SubmitCertificate(userid, request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.CERTIFICATE_MESSAGE.UPDATE_PROCESS);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.CREATE_NOTI);
                 return Ok("Certificate submit successfully.");
             }
             catch (ApiException e)
@@ -206,6 +208,8 @@ namespace API.Controllers.CetificateController
             {
                 var userid = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
                 await _service.ReSubmitCertificate(userid, request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.CERTIFICATE_MESSAGE.UPDATE_PROCESS);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.CREATE_NOTI);
                 return Ok("Certificate resubmit successfully.");
             }
             catch (ApiException e)

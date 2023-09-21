@@ -101,6 +101,7 @@ namespace API.Controllers.TrainingPlanController
             {
                 await trainingService.AcceptTrainingPlan(id);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.PROCESS);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.CREATE_NOTI);
                 return Ok("Training plan is accepted.");
             }
             catch (ApiException e)
@@ -122,6 +123,7 @@ namespace API.Controllers.TrainingPlanController
             {
                 await trainingService.DenyTrainingPlan(id);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.PROCESS);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.CREATE_NOTI);
                 return Ok("Training plan is denied.");
             }
             catch (ApiException e)

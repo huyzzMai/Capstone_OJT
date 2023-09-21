@@ -391,6 +391,7 @@ namespace BusinessLayer.Service.Implement
             {
                 var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == request.CourseId && c.Status == CommonEnums.COURSE_STATUS.ACTIVE, "CoursePositions");
                 var cer = await _unitOfWork.CertificateRepository.GetFirst(c => c.CourseId == request.CourseId && c.UserId == userid);
+                var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(userid);
                 if (cer == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Not found certificate");
@@ -411,6 +412,8 @@ namespace BusinessLayer.Service.Implement
                 cer.Status = CommonEnums.CERTIFICATE_STATUS.PENDING;
                 cer.SubmitDate = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.CertificateRepository.Update(cer);
+                await _notificationService.CreateNotificaion(user.UserReferenceId ?? default, "Certificate submit",
+                    $"Trainee '{user.FirstName}' has submit certificate. Please evaluate", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
             }
             catch (Exception e)
             {
