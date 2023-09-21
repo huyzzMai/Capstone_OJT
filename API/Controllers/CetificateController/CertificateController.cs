@@ -142,6 +142,7 @@ namespace API.Controllers.CetificateController
             {
                 await _service.AcceptCertificate(request);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.CERTIFICATE_MESSAGE.PROCESS_CERTIFICATE);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.CREATE_NOTI);
                 return Ok("Certificate evaluate successfully.");
             }
             catch (ApiException e)
@@ -163,6 +164,7 @@ namespace API.Controllers.CetificateController
             {
                 await _service.DenyCertificate(request);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.CERTIFICATE_MESSAGE.PROCESS_CERTIFICATE);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.CREATE_NOTI);
                 return Ok("Certificate evaluate successfully.");
             }
             catch (ApiException e)
