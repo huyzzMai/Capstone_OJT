@@ -90,7 +90,47 @@ namespace API.Controllers.UserController
                 return StatusCode(StatusCodes.Status500InternalServerError,
                   e.Message);
             }
-        }      
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPut("disable-user/{id}")]
+        public async Task<IActionResult> DisableUser(int id)
+        {
+            try
+            {
+                await userService.DisableUser(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.USER_MESSAGE.UPDATE);
+                return Ok("User is updated successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPut("active-user/{id}")]
+        public async Task<IActionResult> ActiveUser(int id)
+        {
+            try
+            {
+                await userService.ActiveUser(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.USER_MESSAGE.UPDATE);
+                return Ok("User is updated successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
         [Authorize(Roles = "Admin,Manager")]
         [HttpGet("trainer")]
         public async Task<IActionResult> GetTrainerList([FromQuery] PagingRequestModel paging, [FromQuery] string keyword, [FromQuery] int? position)
