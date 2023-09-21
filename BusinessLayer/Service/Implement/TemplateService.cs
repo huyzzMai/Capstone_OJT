@@ -63,7 +63,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var activeoJTBatch = await _unitOfWork.OJTBatchRepository.GetFirst(c => c.UniversityId == request.UniversityId && c.IsDeleted == false && c.EndTime > DateTime.UtcNow.AddHours(7), "Trainees");
+                var activeoJTBatch = await _unitOfWork.OJTBatchRepository.GetFirst(c => c.UniversityId == request.UniversityId && c.EndTime > DateTime.UtcNow.AddHours(7), "Trainees");
                 if (activeoJTBatch == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "University is not in active batch");

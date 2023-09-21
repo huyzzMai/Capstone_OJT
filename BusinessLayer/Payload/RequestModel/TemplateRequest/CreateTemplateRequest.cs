@@ -17,7 +17,7 @@ namespace BusinessLayer.Payload.RequestModel.TemplateRequest
         [Required]
         public string StartCell { get; set; }
         [Required]
-        public int? UniversityId { get; set; }
+        public int UniversityId { get; set; }
 
         public List<CreateTemplateHeaderRequest> TemplateHeaders { get; set; }
 

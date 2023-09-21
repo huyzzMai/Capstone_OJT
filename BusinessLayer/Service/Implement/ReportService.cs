@@ -209,7 +209,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var ojtbatch = await _unitOfWork.OJTBatchRepository.GetFirst(c=>c.IsDeleted==false && c.Id==batchId,"Trainees");
+                var ojtbatch = await _unitOfWork.OJTBatchRepository.GetFirst(c=>c.Id==batchId,"Trainees");
                 if (ojtbatch == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Ojt batch not found");

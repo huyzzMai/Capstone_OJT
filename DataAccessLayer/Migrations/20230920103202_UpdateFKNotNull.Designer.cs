@@ -4,14 +4,16 @@ using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(OJTDbContext))]
-    partial class OJTDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230920103202_UpdateFKNotNull")]
+    partial class UpdateFKNotNull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,6 +223,9 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(100)");
@@ -799,7 +804,7 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataAccessLayer.Models.University", "University")
                         .WithMany("Templates")
                         .HasForeignKey("UniversityId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("University");

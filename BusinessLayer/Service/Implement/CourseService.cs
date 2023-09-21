@@ -10,6 +10,7 @@ using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
 using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Office2016.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -228,8 +229,27 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "This is not your assigned Trainee!");
                 }
+
                 // Add student to code here
-                ;
+                var checkmatch = course.CourseSkills.Any(c => c.RecommendedLevel > 0
+                && user.UserSkills.Any(uk => uk.SkillId == c.SkillId && uk.CurrentLevel == c.RecommendedLevel));
+                if (!checkmatch)
+                {
+                    var checklevelzero = course.CourseSkills.Any(c => c.RecommendedLevel > 0);
+                    if (checklevelzero)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "The trainee is not eligible to take this course");
+                    }
+                }
+
+                var newcer = new Registration()
+                {
+                    Status = CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT,
+                    EnrollDate = DateTimeService.GetCurrentDateTime(),
+                    CourseId = courseId,
+                    UserId = traineeId,
+                };
+                await _unitOfWork.CertificateRepository.Add(newcer);
 
                 // Create notification for assigned trainee
                 await _notificationService.CreateNotificaion(traineeId, "New Course Assigned For You",

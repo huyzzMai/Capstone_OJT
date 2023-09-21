@@ -489,7 +489,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan detail not found !");
                 }
-                var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(userId, detail.TrainingPlanId ?? default(int));
+                var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(userId, detail.TrainingPlanId);
                 if (check == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "You are not the owner of this training plan detail !");

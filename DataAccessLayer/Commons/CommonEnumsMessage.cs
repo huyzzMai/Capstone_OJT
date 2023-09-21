@@ -27,6 +27,7 @@ namespace DataAccessLayer.Commons
         {
             public const string CREATE = "New User Created";
             public const string UPDATE = "User Profile Updated";
+            public const string ASSIGNED = "Trainees have been assigned to a Trainer";
         }
 
         public class TRAINING_PLAN_MESSAGE

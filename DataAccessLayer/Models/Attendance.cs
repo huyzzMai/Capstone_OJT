@@ -18,7 +18,7 @@ namespace DataAccessLayer.Models
 
         public TimeSpan? TotalTime { get; set; }
 
-        public int? UserId { get; set; }
+        public int UserId { get; set; }
         [ForeignKey("UserId")]
         public User User { get; set; }
     }
