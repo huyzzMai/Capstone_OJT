@@ -148,15 +148,78 @@ namespace API.Controllers.CourseController
             }
         }
         [Authorize(Roles = "Admin")]
-        [HttpDelete]
-        [Route("deletion-courseskill/{courseId}/{skillId}")]
-        public async Task<IActionResult> DeleteCourseSkill(int courseId,int skillId)
+        [HttpPost]
+        [Route("courseskill/{courseId}")]
+        public async Task<IActionResult> CreateCourseSkill(int courseId,CourseSkillRequest request)
         {
             try
             {
-                await _service.DeleteCourseSkill(courseId,skillId);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.COURSE_SIGNALR_MESSAGE.DELETED);
-                return Ok("Course skill is delete successfully.");
+                await _service.CreateCourseSkill(courseId,request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.COURSE_SIGNALR_MESSAGE.UPDATED);
+                return Ok("Course skill is create successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        [Route("courseskill/{courseId}")]
+        public async Task<IActionResult> UpdateCourseSkill(int courseId, CourseSkillRequest request)
+        {
+            try
+            {
+                await _service.UpdateCourseSkill(courseId, request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.COURSE_SIGNALR_MESSAGE.UPDATED);
+                return Ok("Course skill is update successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [Route("courseposition/{courseId}")]
+        public async Task<IActionResult> CreateCoursePosition(int courseId, CoursePositionRequest request)
+        {
+            try
+            {
+                await _service.CreateCoursePosition(courseId, request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.COURSE_SIGNALR_MESSAGE.UPDATED);
+                return Ok("Course position is create successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        [Route("courseposition/{courseId}")]
+        public async Task<IActionResult> UpdateCoursePosition(int courseId, CoursePositionRequest request)
+        {
+            try
+            {
+                await _service.UpdateCoursePosition(courseId, request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.COURSE_SIGNALR_MESSAGE.UPDATED);
+                return Ok("Course position is update successfully.");
             }
             catch (ApiException ex)
             {

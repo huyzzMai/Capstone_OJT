@@ -17,7 +17,13 @@ namespace BusinessLayer.Service.Interface
 
         Task UpdateCourse(int courseId, UpdateCourseRequest request);
 
-        Task DeleteCourseSkill(int courseId, int skillid);
+        Task CreateCourseSkill(int courseId, CourseSkillRequest request);
+
+        Task UpdateCourseSkill(int courseId, CourseSkillRequest request);
+
+        Task CreateCoursePosition(int courseId, CoursePositionRequest request);
+
+        Task UpdateCoursePosition(int courseId, CoursePositionRequest request);
 
         Task DisableCourse(int courseId);
 

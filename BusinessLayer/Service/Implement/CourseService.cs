@@ -517,7 +517,7 @@ namespace BusinessLayer.Service.Implement
                     CoursePositions = c.CoursePositions.Select(cp =>
                     new CoursePositionResponse()
                     {
-                        PositionId = cp.Id,
+                        PositionId = cp.PositionId,
                         PositionName = cp.Position.Name,
                         IsCompulsory = cp.IsCompulsory
 
@@ -632,16 +632,23 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task DeleteCourseSkill(int courseId, int skillid)
+        public async Task CreateCourseSkill(int courseId, CourseSkillRequest request)
         {
             try
             {
-                var cour = await _unitOfWork.CourseSkillRepository.GetFirst(c => c.CourseId == courseId && c.SkillId == skillid);
-                if (cour == null)
+                var courskill = await _unitOfWork.CourseSkillRepository.GetFirst(c => c.CourseId == courseId && c.SkillId == request.SkillId);
+                if (courskill != null)
                 {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "No courses skill found");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Course skill is duplicated");
                 }
-                await _unitOfWork.CourseSkillRepository.Delete(cour);
+                var newskill = new CourseSkill()
+                {
+                    CourseId=courseId,
+                    SkillId=request.SkillId,
+                    AfterwardLevel=request.AfterwardLevel,
+                    RecommendedLevel= request.RecommendedLevel
+                };
+                await _unitOfWork.CourseSkillRepository.Add(newskill);
             }
             catch (ApiException ex)
             {
@@ -652,7 +659,95 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-
+        public async Task UpdateCourseSkill(int courseId, CourseSkillRequest request)
+        {
+            try
+            {
+                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId, "CourseSkills", "Certificates");
+                var skilllist = await _unitOfWork.SkillRepository.GetFirst(c=>c.Id==request.SkillId && c.Status==CommonEnums.SKILL_STATUS.ACTIVE);
+                if(skilllist == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Skill not found");
+                }           
+                var courskill = cour.CourseSkills.FirstOrDefault(c=>c.SkillId==request.SkillId);
+                if (courskill == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Course skill not found");
+                }
+                if(cour.Certificates.Any(c=>c.Status==CommonEnums.CERTIFICATE_STATUS.PENDING || c.Status == CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT || c.Status == CommonEnums.CERTIFICATE_STATUS.DENY))
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Some submission is not verified yet");
+                }
+                courskill.RecommendedLevel= request.RecommendedLevel;
+                courskill.AfterwardLevel= request.AfterwardLevel;           
+                await _unitOfWork.CourseSkillRepository.Update(courskill);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+        public async Task CreateCoursePosition(int courseId, CoursePositionRequest request)
+        {
+            try
+            {
+                var courposition = await _unitOfWork.CoursePositionRepository.GetFirst(c => c.CourseId == courseId && c.PositionId == request.PositionId);
+                var positionlist = await _unitOfWork.PositionRepository.GetFirst(c => c.Id == request.PositionId && c.Status == CommonEnums.POSITION_STATUS.ACTIVE);
+                if (positionlist == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Position not found");
+                }
+                if (courposition != null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Course position is duplicated");
+                }
+                var newpo = new CoursePosition()
+                {
+                    CourseId = courseId,
+                    PositionId = request.PositionId,
+                    IsCompulsory = request.IsCompulsory
+                };
+                await _unitOfWork.CoursePositionRepository.Add(newpo);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+        public async Task UpdateCoursePosition(int courseId, CoursePositionRequest request)
+        {
+            try
+            {
+                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId, "CoursePositions", "Certificates");
+                var courpo = cour.CoursePositions.FirstOrDefault(c => c.PositionId == request.PositionId);
+                if (courpo == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Course position not found");
+                }
+                if (cour.Certificates.Any(c => c.Status == CommonEnums.CERTIFICATE_STATUS.PENDING || c.Status == CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT || c.Status == CommonEnums.CERTIFICATE_STATUS.DENY))
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Some submission is not verified yet");
+                }
+                courpo.IsCompulsory = request.IsCompulsory;
+                await _unitOfWork.CoursePositionRepository.Update(courpo);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
         public async Task<BasePagingViewModel<CourseResponse>> GetCourseListForTrainee(PagingRequestModel paging,int userid ,string sortField, string sortOrder, string searchTerm, int? filterskill, int? filterposition, int? filterstatus)
         {
             try
