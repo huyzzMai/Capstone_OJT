@@ -353,6 +353,7 @@ namespace API.Controllers.CourseController
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await _service.AssginCourseToTrainee(userId, traineeId, courseId);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.COURSE_SIGNALR_MESSAGE.ASSIGNED);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.CREATE_NOTI);
                 return Ok("Assign course to trainee successfully.");
             }
             catch (ApiException ex)

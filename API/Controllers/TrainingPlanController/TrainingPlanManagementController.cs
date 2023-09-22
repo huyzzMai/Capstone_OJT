@@ -297,15 +297,16 @@ namespace API.Controllers.TrainingPlanController
         //}
 
         [Authorize(Roles = "Trainer")]
-        [HttpPost("{id}/trainee/{traineeId}")]
-        public async Task<IActionResult> AssignTraineeToTrainingPlan(int id, int traineeId)
+        [HttpPost("assign-trainee")]
+        public async Task<IActionResult> AssignTraineeToTrainingPlan([FromBody] AssignTrainingPlanForTraineeRequest request)
         {
             try
             {
                 // Get id of current log in user 
                 int trainerId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                await trainingService.AssignTraineeToTrainingPlan(trainerId, traineeId, id);
+                await trainingService.AssignTraineeToTrainingPlan(trainerId, request);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TRAINING_PLAN_MESSAGE.ASSIGN);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.CREATE_NOTI);
                 return StatusCode(StatusCodes.Status201Created, "Assign trainee to training plan successfully.");
             }
             catch (ApiException e)

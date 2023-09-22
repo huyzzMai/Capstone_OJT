@@ -291,7 +291,9 @@ namespace BusinessLayer.Service.Implement
                         {
                             Id = tplan.Id,
                             Name = tplan.Name,
-                            Status = tplan.Status
+                            Status = tplan.Status,
+                            CreateDate = tplan.CreatedAt ?? default,
+                            UpdateDate = tplan.UpdatedAt ?? default 
                         };
                     }
                     ).ToList();
@@ -342,37 +344,40 @@ namespace BusinessLayer.Service.Implement
         //    }
         //}
 
-        public async Task AssignTraineeToTrainingPlan(int trainerId, int traineeId, int planId)
+        public async Task AssignTraineeToTrainingPlan(int trainerId, AssignTrainingPlanForTraineeRequest request)
         {
             try
             {
-                var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
-                if (trainee == null || trainee.UserReferenceId != trainerId)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Not found trainee or this is not your assiged trainee!");
-                }
-
-                var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(trainerId, planId);
+                var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(trainerId, request.TrainingPlanId);
                 if (check == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan not found or you not the owner of this training plan!");
                 }
 
-                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndStatusActive(planId);
+                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndStatusActive(request.TrainingPlanId);
                 if (tp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Not found training plan!");
                 }
 
-                UserTrainingPlan utp = new()
+                foreach (var item in request.Trainees)
                 {
-                    UserId = traineeId,
-                    TrainingPlanId = planId,
-                    IsOwner = false
-                };
-                await _unitOfWork.UserTrainingPlanRepository.Add(utp);
-                await _notificationService.CreateNotificaion(traineeId, "Training Plan Assigned",
-                                            "You have been assigned to a training plan.", CommonEnums.NOTIFICATION_TYPE.TRAINING_PLAN_TYPE);
+                    var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(item.TraineeId);
+                    if (trainee == null || trainee.UserReferenceId != trainerId)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Not found trainee or this is not your assiged trainee!");
+                    }
+
+                    UserTrainingPlan utp = new()
+                    {
+                        UserId = item.TraineeId,
+                        TrainingPlanId = request.TrainingPlanId,
+                        IsOwner = false
+                    };
+                    await _unitOfWork.UserTrainingPlanRepository.Add(utp);
+                    await _notificationService.CreateNotificaion(item.TraineeId, "Training Plan Assigned",
+                                                "You have been assigned to a training plan.", CommonEnums.NOTIFICATION_TYPE.TRAINING_PLAN_TYPE);
+                }
             }
             catch (Exception ex)
             {
