@@ -200,7 +200,7 @@ namespace BusinessLayer.Service.Implement
                 var res = list.Select(
                     ojt =>
                     {
-                        if (ojt.Trainees.Any(c => c.UserCriterias.Any(c => c.Point == null) || c.UserCriterias.Count < 1 || c.Trainees.Count <1 ))
+                        if (ojt.Trainees.Any(c => c.UserCriterias.Any(uc => uc.Point == null) || !c.UserCriterias.Any()) || !ojt.Trainees.Any())
                         {
                             return new ListOjtExport()
                             {
