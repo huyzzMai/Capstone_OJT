@@ -23,6 +23,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using static DataAccessLayer.Commons.CommonEnums;
+using BusinessLayer.Payload.ResponseModel.AttendanceResponse;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace BusinessLayer.Service.Implement
 {
@@ -128,6 +130,85 @@ namespace BusinessLayer.Service.Implement
                 var userlist = await _unitOfWork.UserRepository.Get(c => c.Status != CommonEnums.USER_STATUS.DELETED);
                 data = GetListResponseAttendUser(attendances, userlist.ToList());
                 return data;
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+         
+        public async Task<AttendanceByMonthResponse> GetAttendanceByMonth(int month, int year)
+        {
+            try
+            {
+                var attendance= await _unitOfWork.AttendanceRepository.Get();
+                var attendancebymonth = attendance.ToList().Where(c=>c.PresentDate.Value.Month==month && c.PresentDate.Value.Year==year);
+                var uniqueAttendance = attendancebymonth.DistinctBy(a => a.PresentDate).ToList();
+
+                if (!uniqueAttendance.Any())
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND,"Attendance not found");
+                }
+                var attendanceResponse = new AttendanceByMonthResponse()
+                {
+                    Month = month,
+                    Year = year,
+                    attendanceInMonth= uniqueAttendance.ToList().OrderBy(c => c.PresentDate.Value.Date).Select(a=>
+                    new AttendanceInMonth()
+                    {
+                        Day= a.PresentDate.Value.Day,
+                        totalRecords = attendance.Count(c => c.PresentDate.HasValue 
+                        && c.PresentDate.Value.Day == a.PresentDate.Value.Day 
+                        && c.PresentDate.Value.Month == month 
+                        && c.PresentDate.Value.Year == year)
+                    }).ToList()
+                };
+                return attendanceResponse;
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<AttendanceByDateResponse> GetAttendanceByDate(DateTime date)
+        {
+            try
+            {
+                var attendance = await _unitOfWork.AttendanceRepository.Get(expression:null,"User");
+                var attendancebyDate = attendance
+                    .Where(a => a.PresentDate.HasValue &&
+                                a.PresentDate.Value.Date == date.Date)
+                    .ToList();
+                if (!attendancebyDate.Any())
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Attendance not found");
+                }
+                var attendanceResponse = new AttendanceByDateResponse()
+                {
+                    Day=DateTimeService.ConvertToDateString(date.Date),                   
+                    attendanceUsers = attendancebyDate.ToList().OrderBy(c => c.UserId).Select(a =>
+                    new AttendanceUser()
+                    {
+                        UserId = a.UserId,
+                        FirstName = a.User.FirstName, 
+                        LastName = a.User.LastName,
+                        Email = a.User.Email,
+                        RollNumber = a.User.RollNumber,
+                        AvatarURL = a.User.AvatarURL,
+                        totalWorkingHours = a.TotalTime
+
+                    }).ToList()
+                };
+                return attendanceResponse;
             }
             catch (ApiException ex)
             {
