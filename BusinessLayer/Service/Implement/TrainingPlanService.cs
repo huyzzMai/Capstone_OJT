@@ -197,17 +197,35 @@ namespace BusinessLayer.Service.Implement
                     tplans = list.Where(u => u.Status == status).ToList();
                 }
 
-                    List<TrainingPlanResponse> res = tplans.Select(
-                tplan =>
+                List<TrainingPlanResponse> res = new();
+                foreach (var  tpl in tplans)
                 {
-                    return new TrainingPlanResponse()
+                    TrainingPlanResponse a = new()
                     {
-                        Id = tplan.Id,
-                        Name = tplan.Name,
-                        Status = tplan.Status
+                        Id = tpl.Id,
+                        Name = tpl.Name,
+                        Status = tpl.Status,
+                        CreateDate = tpl.CreatedAt ?? default,
+                        UpdateDate = tpl.UpdatedAt ?? default
                     };
+
+                    var trainer = await _unitOfWork.TrainingPlanRepository.GetOwnerByTrainingPlanId(tpl.Id);
+                    a.TrainerId = trainer.Id;
+                    a.FirstName = trainer.FirstName;
+                    a.LastName = trainer.LastName;
+                    res.Add(a);
                 }
-                ).ToList();
+                //List<TrainingPlanResponse> res = tplans.Select(
+                //tplan =>
+                //{
+                //    return new TrainingPlanResponse()
+                //    {
+                //        Id = tplan.Id,
+                //        Name = tplan.Name,
+                //        Status = tplan.Status
+                //    };
+                //}
+                //).ToList();
 
                 int totalItem = res.Count;
 
