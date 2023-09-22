@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Payload.RequestModel;
 using BusinessLayer.Payload.ResponseModel;
+using BusinessLayer.Payload.ResponseModel.AttendanceResponse;
 using BusinessLayer.Payload.ResponseModel.ExcelResponse;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -14,6 +15,9 @@ namespace BusinessLayer.Service.Interface
     {
         Task<List<AttendanceUserResponse>> ProcessAttendanceFile(IFormFile file);
 
-        //Task<string> SaveTempFile(IFormFile file);
+        Task<AttendanceByMonthResponse> GetAttendanceByMonth(int month,int year);
+
+        Task<AttendanceByDateResponse> GetAttendanceByDate(DateTime date);
+
     }
 }

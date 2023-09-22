@@ -45,5 +45,47 @@ namespace API.Controllers.AttendanceController
                   e.Message);
             }
         }
+
+
+        [Authorize(Roles = "Manager")]
+        [HttpGet("attendance-by-month/{month}/{year}")]
+        public async Task<IActionResult> GetAttendanceByMonth(int month, int year)
+        {           
+            try
+            {
+                
+                var attendanceData = await _attendanceService.GetAttendanceByMonth(month, year);
+                return Ok(attendanceData);
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+
+        [Authorize(Roles = "Manager")]
+        [HttpGet("attendance-by-date/{date}")]
+        public async Task<IActionResult> GetAttendanceByMonth(DateTime date)
+        {
+            try
+            {
+                var attendanceData = await _attendanceService.GetAttendanceByDate(date);
+                return Ok(attendanceData);
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
     }
 }
