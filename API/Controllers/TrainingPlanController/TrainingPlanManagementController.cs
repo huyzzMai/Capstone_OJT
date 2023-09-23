@@ -1,18 +1,15 @@
-﻿using BusinessLayer.Service.Implement;
+﻿using API.Hubs;
+using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.RequestModel.TrainingPLanRequest;
 using BusinessLayer.Service.Interface;
+using BusinessLayer.Utilities;
+using DataAccessLayer.Commons;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System;
-using BusinessLayer.Payload.RequestModel.TrainingPLanRequest;
-using BusinessLayer.Payload.RequestModel;
-using BusinessLayer.Utilities;
 using Microsoft.AspNetCore.SignalR;
-using API.Hubs;
-using DataAccessLayer.Commons;
-using System.Collections.Generic;
-using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
+using System;
+using System.Threading.Tasks;
 
 namespace API.Controllers.TrainingPlanController
 {
@@ -42,6 +39,27 @@ namespace API.Controllers.TrainingPlanController
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 return Ok(await trainingService.GetTrainingPlanForAllRole(userId, id));
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainee")]
+        [HttpGet("personal-trainee")]
+        public async Task<IActionResult> GetTrainingPlanForPersonalTrainee()
+        {
+            try
+            {
+                // Get id of current log in user 
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await trainingService.GetTrainingPlanForTrainee(userId));
             }
             catch (ApiException e)
             {

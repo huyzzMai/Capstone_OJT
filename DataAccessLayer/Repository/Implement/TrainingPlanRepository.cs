@@ -36,6 +36,17 @@ namespace DataAccessLayer.Repository.Implement
             return utp;
         }
 
+        public async Task<TrainingPlan> GetTrainingPlanByTraineeIdAndStatusActive(int traineeId)
+        {
+            var tp = await _context.UserTrainingPlans
+                     .Where(u => u.TrainingPlanId == traineeId)
+                     .Select(u => u.TrainingPlan)
+                     .Where(u => u.Status == CommonEnums.TRAINING_PLAN_STATUS.ACTIVE)
+                     .Include(u => u.TrainingPlanDetails)
+                     .FirstOrDefaultAsync();
+            return tp;
+        }
+
         public async Task<TrainingPlan> GetTrainingPLanByIdAndStatusActive(int id)
         {
             var tp = await _context.TrainingPlans

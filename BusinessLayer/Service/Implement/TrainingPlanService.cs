@@ -156,6 +156,51 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
+        public async Task<TrainingPlanResponse> GetTrainingPlanForTrainee(int userId)
+        {
+            try
+            {
+                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanByTraineeIdAndStatusActive(userId);
+                if (tp == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found!");
+                }
+
+                List<TrainingPlanDetail> l = tp.TrainingPlanDetails.ToList();
+                var detailList = l
+                                 .Where(u => u.Status == CommonEnums.TRAINING_PLAN_DETAIL_STATUS.ACTIVE)
+                                 .Select(
+                                 detail =>
+                                 {
+                                     return new TrainingPlanDetailResponse()
+                                     {
+                                         Id = detail.Id,
+                                         Name = detail.Name,
+                                         Description = detail.Description,
+                                         StartTime = detail.StartTime,
+                                         EndTime = detail.EndTime,
+                                         //IsEvaluativeTask = detail.IsEvaluativeTask
+                                     };
+                                 }
+                                 ).ToList()
+                                 ;
+
+                var res = new TrainingPlanResponse()
+                {
+                    Id = tp.Id,
+                    Name = tp.Name,
+                    Status = tp.Status,
+                    CreateDate = tp.CreatedAt ?? default,
+                    Details = detailList
+                };
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanList(PagingRequestModel paging, string keyword, int? status)
         {
             try
@@ -359,6 +404,12 @@ namespace BusinessLayer.Service.Implement
                     if (trainee == null || trainee.UserReferenceId != trainerId)
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Not found trainee or this is not your assiged trainee!");
+                    }
+
+                    var checkExist = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanById(item.TraineeId, request.TrainingPlanId);
+                    if (checkExist != null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Trainee "+ trainee.FirstName + " has been assigned to a training plan!");
                     }
 
                     UserTrainingPlan utp = new()

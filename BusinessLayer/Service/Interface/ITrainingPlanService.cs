@@ -2,12 +2,7 @@
 using BusinessLayer.Payload.RequestModel.TrainingPLanRequest;
 using BusinessLayer.Payload.ResponseModel;
 using BusinessLayer.Payload.ResponseModel.TrainingPlanResponse;
-using BusinessLayer.Payload.ResponseModel.UserResponse;
-using DataAccessLayer.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLayer.Service.Interface
@@ -15,6 +10,8 @@ namespace BusinessLayer.Service.Interface
     public interface ITrainingPlanService
     {
         Task<TrainingPlanResponse> GetTrainingPlanForAllRole(int userId, int id);
+
+        Task<TrainingPlanResponse> GetTrainingPlanForTrainee(int userId);
 
         Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanList(PagingRequestModel paging, string keyword, int? status);
 
