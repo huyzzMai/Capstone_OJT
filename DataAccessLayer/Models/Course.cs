@@ -25,10 +25,10 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(500)")]
         public string Description { get; set; }
 
-        [Column(TypeName = "nvarchar(500)")]
+        [Column(TypeName = "nvarchar(700)")]
         public string Link { get; set; }
 
-        [Column(TypeName = "nvarchar(500)")]
+        [Column(TypeName = "nvarchar(700)")]
         public string ImageURL { get; set; }
 
         public int? Status { get; set; }

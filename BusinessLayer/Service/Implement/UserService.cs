@@ -9,6 +9,7 @@ using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -458,6 +459,7 @@ namespace BusinessLayer.Service.Implement
                             Email = user.Email,
                             Gender = user.Gender ?? default(int),
                             AvatarURL = user.AvatarURL,
+                            RollNumber = user.RollNumber,
                             PositionName = user.Position.Name,
                             Status = user.Status
                         };
@@ -502,6 +504,7 @@ namespace BusinessLayer.Service.Implement
                     Email = trainer.Email,
                     Gender = trainer.Gender ?? default(int),
                     AvatarURL = trainer.AvatarURL,
+                    RollNumber = trainer.RollNumber,
                     PositionName = trainer.Position.Name,
                     PhoneNumber = trainer.PhoneNumber,
                     Address = trainer.Address,
@@ -531,6 +534,7 @@ namespace BusinessLayer.Service.Implement
                     Email = user.Email,
                     Gender = user.Gender ?? default(int),
                     AvatarURL = user.AvatarURL,
+                    RollNumber = user.RollNumber,   
                     PositionName = user.Position.Name,
                     Status = user.Status
                 };
@@ -618,6 +622,7 @@ namespace BusinessLayer.Service.Implement
                     Email = user.Email,
                     Gender = user.Gender ?? default(int),
                     AvatarURL = user.AvatarURL,
+                    RollNumber = user.RollNumber,
                     PositionName = user.Position.Name,
                     Status = user.Status
                 };
@@ -704,7 +709,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<TraineeResponse> GetTraineeDetail(int roleId, int traineeId)
+        public async Task<PersonalTraineeResponse> GetTraineeDetail(int roleId, int traineeId)
         {
             try
             {
@@ -715,12 +720,12 @@ namespace BusinessLayer.Service.Implement
                 }
                 if (check.Role == CommonEnums.ROLE.MANAGER)
                 {
-                    var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
+                    var trainee = await _unitOfWork.UserRepository.GetUserByIdWithSkillList(traineeId);
                     if (trainee == null)
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Trainee not found!");
                     }
-                    TraineeResponse res = new()
+                    PersonalTraineeResponse res = new()
                     {
                         Id =trainee.Id,
                         FirstName = trainee.FirstName,
@@ -729,16 +734,30 @@ namespace BusinessLayer.Service.Implement
                         AvatarURL = trainee.AvatarURL,  
                         Gender = trainee.Gender ?? default(int),
                         PositionName = trainee.Position.Name,
+                        RollNumber = trainee.RollNumber,
                         PhoneNumber = trainee.PhoneNumber,  
                         Address = trainee.Address,
                         Birthday = trainee.Birthday ?? default,
                         Status = trainee.Status
                     };
+
+                    var listSkill = new List<PersonalTraineeResponse.PersonalSkillResponse>();
+
+                    foreach (var sa in trainee.UserSkills)
+                    {
+                        var s = new PersonalTraineeResponse.PersonalSkillResponse();
+                        s.Name = sa.Skill.Name;
+                        //s.Type = sa.Skill.Type;
+                        s.CurrentLevel = sa.CurrentLevel ?? default(int);
+                        listSkill.Add(s);
+                    }
+                    res.Skills = listSkill;
+
                     return res; 
                 }
                 else
                 {
-                    var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
+                    var trainee = await _unitOfWork.UserRepository.GetUserByIdWithSkillList(traineeId);
                     if(trainee == null)
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Trainee not found!");
@@ -748,7 +767,7 @@ namespace BusinessLayer.Service.Implement
                         throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Not your assigned trainee!");
                     }
 
-                    TraineeResponse res = new()
+                    PersonalTraineeResponse res = new()
                     {
                         Id = trainee.Id,
                         FirstName = trainee.FirstName,
@@ -762,6 +781,19 @@ namespace BusinessLayer.Service.Implement
                         Birthday = trainee.Birthday ?? default,
                         Status = trainee.Status
                     };
+
+                    var listSkill = new List<PersonalTraineeResponse.PersonalSkillResponse>();
+
+                    foreach (var sa in trainee.UserSkills)
+                    {
+                        var s = new PersonalTraineeResponse.PersonalSkillResponse();
+                        s.Name = sa.Skill.Name;
+                        //s.Type = sa.Skill.Type;
+                        s.CurrentLevel = sa.CurrentLevel ?? default(int);
+                        listSkill.Add(s);
+                    }
+                    res.Skills = listSkill;
+
                     return res;
                 }
             }

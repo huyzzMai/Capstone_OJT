@@ -18,7 +18,7 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(100)")]
         public string Name { get; set; }
 
-        [Column(TypeName = "nvarchar(MAX)")]
+        [Column(TypeName = "nvarchar(1000)")]
         public string Url { get; set; }
 
         [Column(TypeName = "nvarchar(5)")]

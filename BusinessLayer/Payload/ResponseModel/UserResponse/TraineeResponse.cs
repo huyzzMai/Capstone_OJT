@@ -13,6 +13,7 @@ namespace BusinessLayer.Payload.ResponseModel.UserResponse
         public string LastName { get; set; }
         public string Email { get; set; }
         public string PositionName { get; set; }
+        public string RollNumber {get; set; }   
         public string AvatarURL { get; set; }
         public int Gender { get; set; }
         public string PhoneNumber { get; set; } 

@@ -19,10 +19,10 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(100)")]
         public string Name { get; set; }
 
-        [Column(TypeName = "nvarchar(500)")]
+        [Column(TypeName = "nvarchar(700)")]
         public string ImgURL { get; set; }
 
-        [Column(TypeName = "nvarchar(MAX)")]
+        [Column(TypeName = "nvarchar(120)")]
         public string UniversityCode { get; set; }  
 
         [Column(TypeName = "nvarchar(500)")]

@@ -21,7 +21,7 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(200)")]
         public string Name { get; set; }
 
-        [Column(TypeName = "nvarchar(MAX)")]
+        [Column(TypeName = "nvarchar(2000)")]
         public string Description { get; set; }
 
         public DateTimeOffset? StartDate { get; set; }

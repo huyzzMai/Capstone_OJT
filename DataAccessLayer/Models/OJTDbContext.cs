@@ -91,6 +91,11 @@ namespace DataAccessLayer.Models
             new Config { Id = 1, Name = "Total Working Days Per Month",  Value = 20},
             new Config { Id = 2, Name = "Work Hours Required", Value = 8}
             );
+
+            modelBuilder.Entity<Template>()
+           .HasOne(e => e.University)
+           .WithMany(e => e.Templates)
+           .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

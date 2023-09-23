@@ -41,7 +41,7 @@ namespace DataAccessLayer.Models
 
         public DateTime? Birthday { get; set; }
 
-        [Column(TypeName = "nvarchar(500)")]
+        [Column(TypeName = "nvarchar(700)")]
         public string AvatarURL { get; set; }
 
         [Column(TypeName = "nvarchar(20)")]
@@ -63,7 +63,7 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(40)")]
         public string TrelloId { get; set; }
 
-        [Column(TypeName = "nvarchar(MAX)")]
+        [Column(TypeName = "nvarchar(1000)")]
         public string RefreshToken { get; set; }    
 
         public DateTime? CreatedAt { get; set; }
