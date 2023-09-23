@@ -130,10 +130,19 @@ namespace BusinessLayer.Service.Implement
             try
             {
                 var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId);
+                var tempheader = await _unitOfWork.TemplateHeaderRepository.Get(c =>c.TemplateId==templateId,"UserCriterias");                           
                 if (temp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template not found");
                 }
+                if (tempheader.Any())
+                {
+                    temp.TemplateHeaders = tempheader.ToList();
+                    if (temp.TemplateHeaders.Any(header => header.UserCriterias.Any()))
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "There are some trainees use this template");
+                    }
+                }             
                 temp.Status = CommonEnums.TEMPLATE_STATUS.INACTIVE;
                 await _unitOfWork.TemplateRepository.Update(temp);
             }
@@ -189,7 +198,7 @@ namespace BusinessLayer.Service.Implement
                     UpdatedAt = DateTimeService.ConvertToDateString(temp.UpdatedAt),
                     CreatedAt = DateTimeService.ConvertToDateString(temp.CreatedAt),
                     Url = temp.Url,
-                    templateHeaders = temp.TemplateHeaders.Select(cp =>
+                    templateHeaders = temp.TemplateHeaders.OrderBy(c=>c.Order).Select(cp =>
                         new TemplateHeaderResponse()
                         {
                             Id = cp.Id,
@@ -288,10 +297,23 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId, "TemplateHeaders");
+                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId);
                 if (temp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Template not found");
+                }
+                var tempheader = await _unitOfWork.TemplateHeaderRepository.Get(c => c.TemplateId == templateId, "UserCriterias");
+                if (temp == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template not found");
+                }
+                if (tempheader.Any())
+                {
+                    temp.TemplateHeaders = tempheader.ToList();
+                    if (temp.TemplateHeaders.Any(header => header.UserCriterias.Any()))
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "There are some trainees use this template");
+                    }
                 }
                 temp.Name = request.Name;
                 temp.Status = request.Status;
@@ -314,10 +336,14 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var temp = await _unitOfWork.TemplateHeaderRepository.GetFirst(c => c.Id == templateId);
+                var temp = await _unitOfWork.TemplateHeaderRepository.GetFirst(c => c.Id == templateId, "UserCriterias");
                 if (temp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template not found");
+                }           
+                if (temp.UserCriterias.Any())
+                {
+                   throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "There are some trainees use this template");
                 }
                 temp.MatchedAttribute = request.MatchedAttribute;
                 temp.Name=request.Name;

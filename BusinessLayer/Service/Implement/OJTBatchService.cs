@@ -56,28 +56,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        //public async Task DeleteOjtBatch(int id)
-        //{
-        //   try
-        //    {
-        //        var batch = await _unitOfWork.OJTBatchRepository.GetFirst(c => c.Id == id);
-        //        if (batch==null)
-        //        {
-        //            throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET,"Ojt batch not found");
-        //        }
-        //        batch.IsDeleted = true;
-        //        await _unitOfWork.OJTBatchRepository.Update(batch);
-        //    }
-        //    catch (ApiException ex)
-        //    {
-        //        throw ex;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        throw new Exception(e.Message);
-        //    }
-        //}
-
+       
         public async Task<OjtBatchDetailResponse> GetDetailOjtBatch(int batchId)
         {
             try
@@ -350,17 +329,23 @@ namespace BusinessLayer.Service.Implement
         {
            try
             {
-                var batch = await _unitOfWork.OJTBatchRepository.GetFirst(c =>c.Id == id);
+                var batch = await _unitOfWork.OJTBatchRepository.GetFirst(c =>c.Id == id, "Trainees");
                 if (batch == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Ojt batch not found");
                 }
+                if(request.TemplateId!=batch.TemplateId)
+                {
+                    if(batch.Trainees.Any())
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Ojt batch has trainees can not change template");
+                    }
+                }               
                 batch.Name = request.Name;
                 batch.UpdatedAt=DateTimeService.GetCurrentDateTime();
                 batch.StartTime=request.StartTime; 
                 batch.EndTime=request.EndTime;
                 batch.UniversityId = request.UniversityId;
-                //batch.IsDeleted = request.IsDeleted;
                 batch.TemplateId= request.TemplateId;
                 await _unitOfWork.OJTBatchRepository.Update(batch);
 

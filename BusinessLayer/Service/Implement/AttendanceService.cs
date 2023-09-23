@@ -151,7 +151,7 @@ namespace BusinessLayer.Service.Implement
 
                 if (!uniqueAttendance.Any())
                 {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND,"Attendance not found");
+                    return null;
                 }
                 var attendanceResponse = new AttendanceByMonthResponse()
                 {
@@ -190,7 +190,7 @@ namespace BusinessLayer.Service.Implement
                     .ToList();
                 if (!attendancebyDate.Any())
                 {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Attendance not found");
+                   return null;
                 }
                 var attendanceResponse = new AttendanceByDateResponse()
                 {

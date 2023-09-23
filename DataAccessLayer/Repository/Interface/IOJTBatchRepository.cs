@@ -10,5 +10,6 @@ namespace DataAccessLayer.Repository.Interface
 {
     public interface IOJTBatchRepository : IGenericRepository<OJTBatch>
     {
+        Task<List<OJTBatch>> GetlistOjtbatchWithFormula(int formulaId);
     }
 }

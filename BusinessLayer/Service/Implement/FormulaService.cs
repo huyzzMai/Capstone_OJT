@@ -103,12 +103,17 @@ namespace BusinessLayer.Service.Implement
             try
             {
                 var formula = await _unitOfWork.FormulaRepository.
-                    GetFirst(c=>c.Status==CommonEnums.FORMULA_STATUS.ACTIVE
+                    GetFirst(c=>c.Status == CommonEnums.FORMULA_STATUS.ACTIVE
                     && c.Id==formulaId
                     );
                 if(formula == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET,"formula not found");
+                }
+                var ojt= await _unitOfWork.OJTBatchRepository.GetlistOjtbatchWithFormula(formulaId);
+                if(ojt.Any())
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "formula in use some active batch");
                 }
                 formula.Status = CommonEnums.FORMULA_STATUS.INACTIVE;
                 await _unitOfWork.FormulaRepository.Update(formula);
@@ -127,7 +132,7 @@ namespace BusinessLayer.Service.Implement
             try
             {
                 var formula = await _unitOfWork.FormulaRepository.
-                    GetFirst(c => c.Status == CommonEnums.FORMULA_STATUS.ACTIVE
+                    GetFirst(c => c.Status != CommonEnums.FORMULA_STATUS.ACTIVE
                     && c.Id == formulaId
                     );
                 if (formula == null)
@@ -248,9 +253,13 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "formula not found");
 
                 }
+                var ojt = await _unitOfWork.OJTBatchRepository.GetlistOjtbatchWithFormula(formulaId);
+                if (ojt.Any())
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "formula in use some active batch");
+                }
                 var formulacheck = await _unitOfWork.FormulaRepository.GetFirst(c =>request.Name!=formula.Name && c.Name.ToLower() == request.Name.Trim().ToLower() 
                 );
-
                 if (formulacheck != null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Duplicate formula names");
