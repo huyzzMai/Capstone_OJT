@@ -70,6 +70,7 @@ namespace API
             services.AddScoped<IUserCriteriaService, UserCriteriaService>();
             services.AddScoped<IFormulaService, FormulaService>();
             services.AddScoped<IConfigService, ConfigService>();
+            services.AddScoped<IChartService, ChartService>();
             services.AddSingleton<OperandService>();
             services.AddHttpClient();
 
@@ -100,7 +101,7 @@ namespace API
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("http://localhost:3000/",
+                    builder.WithOrigins("https://kns-ojt-management.onrender.com",
                         "https://trello.com",
                         "https://api.trello.com"
                         )
