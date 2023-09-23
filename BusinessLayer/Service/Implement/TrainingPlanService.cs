@@ -1,23 +1,16 @@
 ﻿using BusinessLayer.Payload.RequestModel;
 using BusinessLayer.Payload.RequestModel.TrainingPLanRequest;
-using BusinessLayer.Payload.ResponseModel.TaskResponse;
 using BusinessLayer.Payload.ResponseModel;
 using BusinessLayer.Payload.ResponseModel.TrainingPlanResponse;
-using BusinessLayer.Payload.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
+using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
-using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
-using BusinessLayer.Utilities;
-using DocumentFormat.OpenXml.Bibliography;
 
 namespace BusinessLayer.Service.Implement
 {

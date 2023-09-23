@@ -2,17 +2,14 @@
 using BusinessLayer.Payload.RequestModel.CertificateRequest;
 using BusinessLayer.Payload.ResponseModel;
 using BusinessLayer.Payload.ResponseModel.CertificateResponse;
-using BusinessLayer.Payload.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
-using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLayer.Service.Implement

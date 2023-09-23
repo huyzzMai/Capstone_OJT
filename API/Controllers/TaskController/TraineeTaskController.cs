@@ -1,23 +1,18 @@
-﻿using BusinessLayer.Service.Interface;
+﻿using API.Hubs;
+using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Service.Interface;
+using BusinessLayer.Utilities;
+using DataAccessLayer.Commons;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System;
-using BusinessLayer.Payload.RequestModel;
-using BusinessLayer.Utilities;
-using API.Hubs;
 using Microsoft.AspNetCore.SignalR;
-using DataAccessLayer.Commons;
-using Microsoft.IdentityModel.Protocols;
-using System.IO;
-using System.Net;
-using TrelloDotNet.Model.Webhook;
-using TrelloDotNet.Model;
-using TrelloDotNet;
 using Microsoft.Extensions.Configuration;
-using System.Drawing.Text;
-using BusinessLayer.Service.Implement;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using TrelloDotNet;
+using TrelloDotNet.Model.Webhook;
 
 namespace API.Controllers.TaskController
 {
@@ -40,14 +35,14 @@ namespace API.Controllers.TaskController
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllTaskOfTrainee([FromQuery] PagingRequestModel paging)
+        public async Task<IActionResult> GetAllTaskOfTrainee([FromQuery] PagingRequestModel paging, [FromQuery] int? status)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                return Ok(await taskService.GetAllTaskOfTrainee(userId, paging));
+                return Ok(await taskService.GetAllTaskOfTrainee(userId, paging, status));
             }
             catch (ApiException e)
             {
@@ -61,14 +56,14 @@ namespace API.Controllers.TaskController
         }
 
         [HttpGet("accomplished-tasks")]
-        public async Task<IActionResult> GetListFinishTaskOfTrainee([FromQuery] PagingRequestModel paging)
+        public async Task<IActionResult> GetListFinishTaskOfTrainee([FromQuery] PagingRequestModel paging, [FromQuery] int? status)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                return Ok(await taskService.GetListTaskAccomplished(userId, paging));
+                return Ok(await taskService.GetListTaskAccomplished(userId, paging, status));
             }
             catch (ApiException e)
             {

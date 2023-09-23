@@ -6,7 +6,6 @@ using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -29,7 +28,7 @@ namespace BusinessLayer.Service.Implement
             _configuration = configuration;
         }
 
-        public async Task<BasePagingViewModel<TraineeTaskResponse>> GetAllTaskOfTrainee(int userId, PagingRequestModel paging)
+        public async Task<BasePagingViewModel<TraineeTaskResponse>> GetAllTaskOfTrainee(int userId, PagingRequestModel paging, int? status)
         {
             try
             {
@@ -81,6 +80,10 @@ namespace BusinessLayer.Service.Implement
 
                     res.Add(task);
                 }
+                if (status != null)
+                {
+                    res = res.Where(task => task.Status == status).ToList();
+                }
 
                 int totalItem = res.Count;
 
@@ -103,7 +106,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskAccomplished(int userId, PagingRequestModel paging)
+        public async Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskAccomplished(int userId, PagingRequestModel paging, int? status)
         {
             try
             {
@@ -114,6 +117,12 @@ namespace BusinessLayer.Service.Implement
                 }
 
                 var tasks = await _unitOfWork.TaskRepository.GetListTaskAccomplishedOfTrainee(userId);
+
+
+                if (status != null)
+                {
+                    tasks = tasks.Where(task => task.Status == status).ToList();
+                }
 
                 List<TaskAccomplishedResponse> res = tasks.Select(
                 task =>

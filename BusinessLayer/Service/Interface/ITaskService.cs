@@ -8,9 +8,9 @@ namespace BusinessLayer.Service.Interface
 {
     public interface ITaskService
     {
-        Task<BasePagingViewModel<TraineeTaskResponse>> GetAllTaskOfTrainee(int userId, PagingRequestModel paging);
+        Task<BasePagingViewModel<TraineeTaskResponse>> GetAllTaskOfTrainee(int userId, PagingRequestModel paging, int? status);
 
-        Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskAccomplished(int userId, PagingRequestModel paging);
+        Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskAccomplished(int userId, PagingRequestModel paging, int? status);
 
         Task<BasePagingViewModel<TaskAccomplishedResponse>> GetListTaskOfTrainee(int trainerId, int traineeId, PagingRequestModel paging, int? status);  
 
