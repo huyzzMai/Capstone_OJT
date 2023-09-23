@@ -9,7 +9,6 @@ using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -776,6 +775,7 @@ namespace BusinessLayer.Service.Implement
                         AvatarURL = trainee.AvatarURL,
                         Gender = trainee.Gender ?? default(int),
                         PositionName = trainee.Position.Name,
+                        RollNumber = trainee.RollNumber,
                         PhoneNumber = trainee.PhoneNumber,
                         Address = trainee.Address,
                         Birthday = trainee.Birthday ?? default,
