@@ -40,9 +40,9 @@ namespace DataAccessLayer.Repository.Implement
         {
             var tp = await _context.UserTrainingPlans
                      .Where(u => u.TrainingPlanId == traineeId)
+                     .Include(u => u.TrainingPlan.TrainingPlanDetails)
                      .Select(u => u.TrainingPlan)
                      .Where(u => u.Status == CommonEnums.TRAINING_PLAN_STATUS.ACTIVE)
-                     .Include(u => u.TrainingPlanDetails)
                      .FirstOrDefaultAsync();
             return tp;
         }
