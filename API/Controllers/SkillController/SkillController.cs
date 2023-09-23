@@ -108,7 +108,7 @@ namespace API.Controllers.SkillController
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetListSkill([FromQuery] PagingRequestModel paging,string searchTerm,int? filterStatus)
         {
