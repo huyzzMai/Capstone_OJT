@@ -2,6 +2,7 @@
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
 using DataAccessLayer.Repository.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,16 @@ namespace DataAccessLayer.Repository.Implement
                 item.Trainees = _unitOfWork.UserRepository.Get(c => c.OJTBatchId == item.Id, includeProperties: "UserCriterias").Result.ToList();             
             }
             return result;
+        }
+
+        public async Task<List<OJTBatch>> GetlistOjtbatchWithFormula(int formulaId)
+        {
+            var listojt = await _context.OJTBatches
+                .Where(o=>o.Template.TemplateHeaders.Any(th=>th.FormulaId==formulaId) && o.EndTime.Value.AddDays(10) > DateTime.UtcNow.AddHours(7))
+                .Include(c => c.Template)
+                .ThenInclude(c => c.TemplateHeaders)
+                .ToListAsync();
+            return listojt;
         }
     }
 }
