@@ -842,7 +842,7 @@ namespace BusinessLayer.Service.Implement
             var template = await _unitOfWork.TemplateRepository.GetFirst(c=>c.Id == ojtbatch.TemplateId, "TemplateHeaders");
             foreach (var item in template.TemplateHeaders)
             {
-                if(item.IsCriteria==true)
+                if(item.IsCriteria==true && item.Status==CommonEnums.TEMPLATEHEADER_STATUS.ACTIVE)
                 {
                     var usercriteria = new UserCriteria()
                     {
