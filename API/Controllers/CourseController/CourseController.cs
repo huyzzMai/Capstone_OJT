@@ -88,7 +88,7 @@ namespace API.Controllers.CourseController
         }
         [Authorize(Roles = "Trainee")]
         [HttpPost]
-        [Route("course-participation/{courseid}")]
+        [Route("course-participation-trainee/{courseid}")]
         public async Task<IActionResult> EnrollCourse(int courseid)
         {
             try
@@ -255,13 +255,35 @@ namespace API.Controllers.CourseController
         [Authorize(Roles = "Trainee")]
         [HttpGet]
         [Route("list-course-trainee")]
-        public async Task<IActionResult> GetListCourseforTrainee([FromQuery] PagingRequestModel paging, string sortField, string sortOrder, string searchTerm, int? filterSkill, int? filterPosition, int? filterStatus)
+        public async Task<IActionResult> GetListCourseforTrainee([FromQuery] PagingRequestModel paging, string sortField, string sortOrder, string searchTerm, int? filterSkill, int? filterPosition)
         {
             try
             {
                 var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
                 paging = PagingUtil.checkDefaultPaging(paging);
-                var list = await _service.GetCourseListForTrainee(paging,int.Parse(userIdClaim.Value), sortField, sortOrder, searchTerm, filterSkill, filterPosition, filterStatus);
+                var list = await _service.GetCourseListForTrainee(paging,int.Parse(userIdClaim.Value), sortField, sortOrder, searchTerm, filterSkill, filterPosition);
+                return Ok(list);
+
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize(Roles = "Trainer")]
+        [HttpGet]
+        [Route("list-course-trainer")]
+        public async Task<IActionResult> GetListCourseforTrainer([FromQuery] PagingRequestModel paging, string sortField, string sortOrder, string searchTerm, int? filterSkill)
+        {
+            try
+            {
+                paging = PagingUtil.checkDefaultPaging(paging);
+                var list = await _service.GetCourseListForTrainer(paging,sortField, sortOrder, searchTerm, filterSkill);
                 return Ok(list);
 
             }
