@@ -836,6 +836,25 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
+        public async void CreateUserCriteria(int userid,int batchId)
+        {
+            var ojtbatch = await _unitOfWork.OJTBatchRepository.GetFirst(c=>c.Id==batchId);
+            var template = await _unitOfWork.TemplateRepository.GetFirst(c=>c.Id == ojtbatch.TemplateId, "TemplateHeaders");
+            foreach (var item in template.TemplateHeaders)
+            {
+                if(item.IsCriteria==true)
+                {
+                    var usercriteria = new UserCriteria()
+                    {
+                        UserId = userid,
+                        TemplateHeaderId = item.Id,
+                        UpdatedDate = DateTime.UtcNow.AddHours(7),
+                        CreatedDate = DateTime.UtcNow.AddHours(7),
+                    };
+                    await _unitOfWork.UserCriteriaRepository.Add(usercriteria);
+                }            
+            }
+        }
         public async Task CreateUser(CreateUserRequest request)
         {
             try
@@ -885,9 +904,9 @@ namespace BusinessLayer.Service.Implement
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Trainee or Trainer had not been created a Trello Accout!");
                     }
-                    user.TrelloId = target.Id;  
+                    user.TrelloId = target.Id; 
                 }
-                
+               
                 if (request.CreateSkills != null && request.CreateSkills.Count != 0) 
                 {
                     ICollection<UserSkill> re = new List<UserSkill>();
@@ -911,7 +930,10 @@ namespace BusinessLayer.Service.Implement
                 }
                   
                 await _unitOfWork.UserRepository.Add(user);
-
+                if (user.Role == CommonEnums.ROLE.TRAINEE)
+                {
+                    CreateUserCriteria(user.Id, (int)user.OJTBatchId);
+                }
                 var sender = new MailSender();
                 sender.SendMailCreateAccount(user.Email, user.FirstName, user.Email, pwd);
             }
