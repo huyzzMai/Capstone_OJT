@@ -101,10 +101,7 @@ namespace API
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("https://kns-ojt-management.onrender.com",
-                        "https://trello.com",
-                        "https://api.trello.com"
-                        )
+                    builder.WithOrigins(Configuration["ClientSite:PublicSite"])
                            .AllowAnyHeader()
                            .AllowAnyMethod()
                            .AllowCredentials();
