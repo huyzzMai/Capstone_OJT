@@ -63,12 +63,12 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var activeoJTBatch = await _unitOfWork.OJTBatchRepository.GetFirst(c => c.UniversityId == request.UniversityId && c.EndTime > DateTime.UtcNow.AddHours(7), "Trainees");
-                if (activeoJTBatch == null)
+                var uni = await _unitOfWork.UniversityRepository.GetFirst(c => c.Id == request.UniversityId 
+                && c.Status==CommonEnums.UNIVERSITY_STATUS.ACTIVE);             
+                if(uni == null)
                 {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "University is not in active batch");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "University not found");
                 }
-                var listuser = activeoJTBatch.Trainees.ToList();
                 var Temp = new Template()
                 {
                     Name = request.Name,
@@ -98,20 +98,20 @@ namespace BusinessLayer.Service.Implement
 
                     };
                     await _unitOfWork.TemplateHeaderRepository.Add(newtemp);
-                    if (i.IsCriteria == true)
-                    {
-                        foreach (var j in listuser)
-                        {
-                            var usercriteria = new UserCriteria()
-                            {
-                                UserId = j.Id,
-                                TemplateHeaderId = newtemp.Id,
-                                UpdatedDate = DateTime.UtcNow.AddHours(7),
-                                CreatedDate = DateTime.UtcNow.AddHours(7),
-                            };
-                            await _unitOfWork.UserCriteriaRepository.Add(usercriteria);
-                        }
-                    }
+                    //if (i.IsCriteria == true)
+                    //{
+                    //    foreach (var j in listuser)
+                    //    {
+                    //        var usercriteria = new UserCriteria()
+                    //        {
+                    //            UserId = j.Id,
+                    //            TemplateHeaderId = newtemp.Id,
+                    //            UpdatedDate = DateTime.UtcNow.AddHours(7),
+                    //            CreatedDate = DateTime.UtcNow.AddHours(7),
+                    //        };
+                    //        await _unitOfWork.UserCriteriaRepository.Add(usercriteria);
+                    //    }
+                    //}
                 }
 
             }
