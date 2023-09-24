@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessLayer.Payload.ResponseModel.ChartResponse;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,10 @@ namespace BusinessLayer.Service.Interface
 {
     public interface IChartService
     {
+        Task<BatchAndTraineeResponse> getBatchAndTrainee(int year);
+
+        Task<List<ChartCircleResponse>> getTrainerWithMostTrainees(int number);
+
+        Task<List<ChartCircleResponse>> getTraineeByPosition();
     }
 }
