@@ -107,7 +107,7 @@ namespace API.Controllers.PositionController
                   e.Message);
             }
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet]
         public async Task<IActionResult> GetListPosition([FromQuery] PagingRequestModel paging, string searchTerm, int? filterStatus)
         {

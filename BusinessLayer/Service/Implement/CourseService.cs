@@ -636,10 +636,17 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var courskill = await _unitOfWork.CourseSkillRepository.GetFirst(c => c.CourseId == courseId && c.SkillId == request.SkillId);
+                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId, "CourseSkills", "Certificates");
+                var courskill = cour.CourseSkills.Where(c=>c.SkillId==request.SkillId).FirstOrDefault();
                 if (courskill != null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Course skill is duplicated");
+                }
+                if (cour.Certificates.Any(c => c.Status == CommonEnums.CERTIFICATE_STATUS.PENDING 
+                || c.Status == CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT 
+                || c.Status == CommonEnums.CERTIFICATE_STATUS.DENY))
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Some submission is not verified yet");
                 }
                 var newskill = new CourseSkill()
                 {
@@ -674,7 +681,9 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Course skill not found");
                 }
-                if(cour.Certificates.Any(c=>c.Status==CommonEnums.CERTIFICATE_STATUS.PENDING || c.Status == CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT || c.Status == CommonEnums.CERTIFICATE_STATUS.DENY))
+                if(cour.Certificates.Any(c=>c.Status==CommonEnums.CERTIFICATE_STATUS.PENDING 
+                || c.Status == CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT 
+                || c.Status == CommonEnums.CERTIFICATE_STATUS.DENY))
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Some submission is not verified yet");
                 }
@@ -695,7 +704,14 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var courposition = await _unitOfWork.CoursePositionRepository.GetFirst(c => c.CourseId == courseId && c.PositionId == request.PositionId);
+                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId, "CoursePositions", "Certificates");
+                if (cour.Certificates.Any(c => c.Status == CommonEnums.CERTIFICATE_STATUS.PENDING
+                || c.Status == CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT
+                || c.Status == CommonEnums.CERTIFICATE_STATUS.DENY))
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Some submission is not verified yet");
+                }
+                var courposition = cour.CoursePositions.Where(c=>c.CourseId==request.PositionId).FirstOrDefault();
                 var positionlist = await _unitOfWork.PositionRepository.GetFirst(c => c.Id == request.PositionId && c.Status == CommonEnums.POSITION_STATUS.ACTIVE);
                 if (positionlist == null)
                 {
@@ -748,7 +764,7 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-        public async Task<BasePagingViewModel<CourseResponse>> GetCourseListForTrainee(PagingRequestModel paging,int userid ,string sortField, string sortOrder, string searchTerm, int? filterskill, int? filterposition, int? filterstatus)
+        public async Task<BasePagingViewModel<CourseResponse>> GetCourseListForTrainee(PagingRequestModel paging,int userid ,string sortField, string sortOrder, string searchTerm, int? filterskill, int? filterposition)
         {
             try
             {
@@ -759,9 +775,9 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
                 }
-                if (!string.IsNullOrEmpty(searchTerm) || filterskill != null || filterposition != null || filterstatus != null)
+                if (!string.IsNullOrEmpty(searchTerm) || filterskill != null || filterposition != null)
                 {
-                    listcour = SearchCourses(searchTerm, filterskill, filterposition, filterstatus, listcour.ToList());
+                    listcour = SearchCourses(searchTerm, filterskill, filterposition, null, listcour.ToList());
                 }
                 var listresponse = listcour.OrderByDescending(c => c.CreatedAt).Select(c =>
                 {
@@ -817,5 +833,75 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
+
+        public async Task<BasePagingViewModel<CourseResponse>> GetCourseListForTrainer(PagingRequestModel paging, string sortField, string sortOrder, string searchTerm, int? filterskill)
+        {
+            try
+            {
+                var listcour = await _unitOfWork.CourseRepository.Get(c => c.Status == CommonEnums.COURSE_STATUS.ACTIVE   
+                                                                        , "CoursePositions", "CourseSkills", "Certificates");
+                if (listcour == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
+                }
+                if (!string.IsNullOrEmpty(searchTerm) || filterskill != null)
+                {
+                    listcour = SearchCourses(searchTerm, filterskill, null, null, listcour.ToList());
+                }
+                var listresponse = listcour.OrderByDescending(c => c.CreatedAt).Select(c =>
+                {
+                    return new CourseResponse()
+                    {
+                        Id = c.Id,
+                        Description = c.Description,
+                        Link = c.Link,
+                        Name = c.Name,
+                        PlatformName = c.PlatformName,
+                        ImageURL = c.ImageURL,
+                        TotalEnrollment = c.Certificates.Count,
+                        TotalActiveEnrollment = c.Certificates.Where(c => c.Status != CommonEnums.CERTIFICATE_STATUS.DELETED).Count(),
+                        coursePositions = c.CoursePositions.Select(cp =>
+                        new CoursePositionResponse()
+                        {
+                            PositionId = cp.Id,
+                            PositionName = cp.Position.Name,
+                            IsCompulsory = cp.IsCompulsory
+
+                        }).ToList(),
+                        courseSkills = c.CourseSkills.Select(cp =>
+                        new CourseSkillResponse()
+                        {
+                            SkillId = cp.SkillId,
+                            SkillName = cp.Skill.Name,
+                            AfterwardLevel = cp.AfterwardLevel,
+                            RecommendedLevel = cp.RecommendedLevel
+                        }).ToList()
+                    };
+                }
+            ).ToList();
+                listresponse = SortingHelper.ApplySorting(listresponse.AsQueryable(), sortField, sortOrder).ToList();
+                int totalItem = listresponse.Count;
+                listresponse = listresponse.Skip((paging.PageIndex - 1) * paging.PageSize)
+                   .Take(paging.PageSize).ToList();
+                var result = new BasePagingViewModel<CourseResponse>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = listresponse
+                };
+                return result;
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
     }
 }
