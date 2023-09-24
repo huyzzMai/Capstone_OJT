@@ -209,5 +209,20 @@ namespace DataAccessLayer.Repository.Implement
             return users;
         }
       
+        public async Task<List<User>> GetListStatisticSkillTrainee(int userId)
+        {
+            var topSkills = await _context.UserSkills
+            .Where(us => us.UserId == userId)
+            .OrderByDescending(us => us.CurrentLevel - us.InitLevel)
+            .Select(us => new
+            {
+            Skill = us.Skill,
+            LevelRange = us.CurrentLevel - us.InitLevel
+            })
+           .Take(10)
+           .ToListAsync();
+
+
+        }
     }
 }
