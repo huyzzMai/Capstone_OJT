@@ -209,5 +209,23 @@ namespace DataAccessLayer.Repository.Implement
             return users;
         }
       
+        public async Task<List<UserSkill>> GetListUserSkillTrainee(int userId)
+        {
+            var topSkills = await _context.UserSkills
+            .Where(us => us.UserId == userId)
+            .Include (us => us.Skill)   
+           .ToListAsync();
+
+            return topSkills;   
+        }
+
+        public async Task<List<User>> GetListTraineeByTrainerIdWithTaskAccomplishedList(int userId)
+        {
+            var trainees = await _context.Users
+                           .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE && u.UserReferenceId == userId)
+                           .Include(u => u.TaskAccomplished)
+                           .ToListAsync();
+            return trainees;    
+        }
     }
 }

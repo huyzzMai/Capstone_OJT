@@ -14,5 +14,9 @@ namespace BusinessLayer.Service.Interface
         Task<List<ChartCircleResponse>> getTrainerWithMostTrainees(int number);
 
         Task<List<ChartCircleResponse>> getTraineeByPosition();
+
+        Task<List<TopSkillTraineeResponse>> GetTopSkillByTrainee(int userId);
+
+        Task<List<TopTaskTraineeResponse>> GetTopTraineeWithMostApprovedTask(int userId); 
     }
 }

@@ -1,8 +1,11 @@
 ﻿using BusinessLayer.Payload.ResponseModel.ChartResponse;
+using BusinessLayer.Payload.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
+using DataAccessLayer.Commons.CommonModels;
 using DataAccessLayer.Interface;
+using DataAccessLayer.Models;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.FileSystemGlobbing;
 using System;
@@ -136,6 +139,85 @@ namespace BusinessLayer.Service.Implement
             catch (ApiException ex)
             {
                 throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<List<TopSkillTraineeResponse>> GetTopSkillByTrainee(int userId)
+        {
+            try
+            {
+                List<TopSkillTraineeResponse> res = new();
+                var topSkill = await _unitOfWork.UserRepository.GetListUserSkillTrainee(userId);
+                if (topSkill == null || topSkill.Count == 0)
+                {
+                    return res;
+                }
+                else
+                {
+                    var result = topSkill
+                                 .OrderByDescending(us => us.CurrentLevel - us.InitLevel)
+                                 .Take(6)
+                                 .ToList();
+                    res = result.Select(
+                    skill =>
+                    {
+                    return new TopSkillTraineeResponse()
+                    {
+                        SkillName = skill.Skill.Name,
+                        InitSkill = skill.InitLevel ?? default,
+                        CurrentSkill = skill.CurrentLevel ?? default
+                    };
+                    }
+                    ).ToList();
+                    return res;
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<List<TopTaskTraineeResponse>> GetTopTraineeWithMostApprovedTask(int userId)
+        {
+            try
+            {
+                List<TopTaskTraineeResponse> res = new();
+                var trainees = await _unitOfWork.UserRepository.GetListTraineeByTrainerIdWithTaskAccomplishedList(userId);
+                if(trainees == null || trainees.Count == 0)
+                {
+                    return res;
+                }
+                else
+                {
+                    var result = trainees
+                                 .OrderByDescending(trainee => trainee.TaskAccomplished.Count(task => task.Status == CommonEnums.ACCOMPLISHED_TASK_STATUS.DONE))
+                                 .Take(10)
+                                 .ToList();
+
+                    foreach (var trainee in trainees)
+                    {
+                        TopTaskTraineeResponse a = new()
+                        {
+                            TraineeName = trainee.LastName + trainee.FirstName
+                        };
+                        if(trainee.TaskAccomplished.Count(task => task.Status == CommonEnums.ACCOMPLISHED_TASK_STATUS.DONE) == 0)
+                        {
+                            a.TotalApprovedTask = 0;
+                        }
+                        else
+                        {
+                            a.TotalApprovedTask = trainee.TaskAccomplished.Count(task => task.Status == CommonEnums.ACCOMPLISHED_TASK_STATUS.DONE);
+                        }
+                        res.Add(a);
+                    }
+                    return res;
+                }
             }
             catch (Exception e)
             {

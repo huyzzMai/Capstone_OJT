@@ -13,10 +13,12 @@ namespace API.Controllers.ChartController
     public class ChartController : ControllerBase
     {
         private readonly IChartService _service;
+        private readonly IUserService userService;
 
-        public ChartController(IChartService service)
+        public ChartController(IChartService service, IUserService userService)
         {
             _service = service;
+            this.userService = userService;
         }
 
         [Authorize(Roles = "Admin")]
@@ -67,6 +69,48 @@ namespace API.Controllers.ChartController
             {
                 var list = await _service.getTraineeByPosition();
                 return Ok(list);
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainee")]
+        [HttpGet("trainee-top-skill")]
+        public async Task<IActionResult> GetTopSkillByTrainee()
+        {
+            try
+            {
+                // Get id of current log in user 
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await _service.GetTopSkillByTrainee(userId)); 
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainer")]
+        [HttpGet("trainee-top-done-task")]
+        public async Task<IActionResult> GetListTrainWithTheMostApprovedTask()
+        {
+            try
+            {
+                // Get id of current log in user 
+                int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await _service.GetTopTraineeWithMostApprovedTask(userId));
             }
             catch (ApiException ex)
             {
