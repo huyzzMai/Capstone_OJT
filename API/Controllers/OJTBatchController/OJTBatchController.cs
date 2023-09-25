@@ -29,7 +29,7 @@ namespace API.Controllers.OJTBatchController
             _hubContext = hubContext;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Manager")]
         [HttpGet]
         [Route("ongoing-batches")]
         public async Task<IActionResult> GetValidOJTBatchInformation([FromQuery] PagingRequestModel paging)

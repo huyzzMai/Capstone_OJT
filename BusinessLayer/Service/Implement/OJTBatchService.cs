@@ -238,7 +238,8 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var list = await _unitOfWork.OJTBatchRepository.Get(c => c.EndTime > DateTime.UtcNow.AddHours(7),"Template");
+                var list = await _unitOfWork.OJTBatchRepository.Get(c => 
+                c.EndTime.Value.Date.AddDays(10) >= DateTimeService.GetCurrentDateTime().Date ,"Template");
                 if (list == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Empty List OJTBatch");

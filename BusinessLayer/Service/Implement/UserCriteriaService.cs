@@ -65,6 +65,11 @@ namespace BusinessLayer.Service.Implement
             }
             else if (result is double doubleValue)
             {
+                
+                if(double.IsInfinity((double)result))
+                {
+                    return null;
+                }
                 finalResult = doubleValue;
             }
             return finalResult;
