@@ -20,6 +20,8 @@ namespace BusinessLayer.Payload.ResponseModel.UserResponse
         public string Address { get; set; }
         public DateTime Birthday { get; set; }
         public int? Status { get; set; }
+        public string TrainerName { get; set; } 
+        public string TrainerEmail { get; set; }    
 
         public class PersonalSkillResponse
         {

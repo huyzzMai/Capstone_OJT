@@ -734,18 +734,20 @@ namespace BusinessLayer.Service.Implement
                     }
                     PersonalTraineeResponse res = new()
                     {
-                        Id =trainee.Id,
+                        Id = trainee.Id,
                         FirstName = trainee.FirstName,
                         LastName = trainee.LastName,
-                        Email = trainee.Email,  
-                        AvatarURL = trainee.AvatarURL,  
+                        Email = trainee.Email,
+                        AvatarURL = trainee.AvatarURL,
                         Gender = trainee.Gender ?? default(int),
                         PositionName = trainee.Position.Name,
                         RollNumber = trainee.RollNumber,
-                        PhoneNumber = trainee.PhoneNumber,  
+                        PhoneNumber = trainee.PhoneNumber,
                         Address = trainee.Address,
                         Birthday = trainee.Birthday ?? default,
-                        Status = trainee.Status
+                        Status = trainee.Status,
+                        TrainerName = trainee.Trainer.LastName + trainee.Trainer.FirstName,
+                        TrainerEmail = trainee.Trainer.Email
                     };
 
                     var listSkill = new List<PersonalTraineeResponse.PersonalSkillResponse>();
