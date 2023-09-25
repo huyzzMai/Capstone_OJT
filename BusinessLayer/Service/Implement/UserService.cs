@@ -836,7 +836,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async void CreateUserCriteria(int userid,int batchId)
+        public async Task CreateUserCriteria(int userid,int batchId)
         {
             var ojtbatch = await _unitOfWork.OJTBatchRepository.GetFirst(c=>c.Id==batchId);
             var template = await _unitOfWork.TemplateRepository.GetFirst(c=>c.Id == ojtbatch.TemplateId, "TemplateHeaders");
@@ -932,7 +932,7 @@ namespace BusinessLayer.Service.Implement
                 await _unitOfWork.UserRepository.Add(user);
                 if (user.Role == CommonEnums.ROLE.TRAINEE)
                 {
-                    CreateUserCriteria(user.Id, (int)user.OJTBatchId);
+                    await CreateUserCriteria(user.Id, (int)user.OJTBatchId);
                 }
                 var sender = new MailSender();
                 sender.SendMailCreateAccount(user.Email, user.FirstName, user.Email, pwd);
