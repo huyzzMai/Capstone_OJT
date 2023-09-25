@@ -22,7 +22,7 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(500)")]
         public string Description { get; set; }
 
-        public bool? IsEvaluativeTask { get; set; } 
+        //public bool? IsEvaluativeTask { get; set; } 
 
         public int? Status { get; set; }
 
@@ -34,7 +34,7 @@ namespace DataAccessLayer.Models
 
         public DateTime? UpdatedAt { get; set; }
 
-        public int? TrainingPlanId { get; set; }
+        public int TrainingPlanId { get; set; }
         [ForeignKey("TrainingPlanId")]
         public TrainingPlan TrainingPlan { get; set; }
     }

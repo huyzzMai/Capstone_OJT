@@ -19,14 +19,20 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(100)")]
         public string Name { get; set; }
 
-        [Column(TypeName = "nvarchar(500)")]
+        [Column(TypeName = "nvarchar(700)")]
         public string ImgURL { get; set; }
+
+        [Column(TypeName = "nvarchar(120)")]
+        public string UniversityCode { get; set; }  
+
+        [Column(TypeName = "nvarchar(500)")]
+        public string Address { get; set; } 
 
         public int? Status { get; set; }
 
         public DateTime? JoinDate { get; set; }
 
-        public bool? IsDeleted { get; set; }
+        //public bool? IsDeleted { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 

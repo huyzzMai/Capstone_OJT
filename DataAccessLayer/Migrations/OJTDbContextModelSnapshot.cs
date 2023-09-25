@@ -32,7 +32,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<TimeSpan?>("TotalTime")
                         .HasColumnType("time");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -42,31 +42,36 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("Attendance");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.Certificate", b =>
+            modelBuilder.Entity("DataAccessLayer.Models.Config", b =>
                 {
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime?>("EnrollDate")
-                        .HasColumnType("datetime2");
+                    b.Property<double>("Value")
+                        .HasColumnType("float");
 
-                    b.Property<string>("Link")
-                        .HasColumnType("nvarchar(500)");
+                    b.HasKey("Id");
 
-                    b.Property<int?>("Status")
-                        .HasColumnType("int");
+                    b.ToTable("Config");
 
-                    b.Property<DateTime?>("SubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("CourseId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Certificate");
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Total Working Days Per Month",
+                            Value = 20.0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Work Hours Required",
+                            Value = 8.0
+                        });
                 });
 
             modelBuilder.Entity("DataAccessLayer.Models.Course", b =>
@@ -83,10 +88,10 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("ImageURL")
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(700)");
 
                     b.Property<string>("Link")
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(700)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(100)");
@@ -112,27 +117,20 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CourseId")
+                    b.Property<int>("CourseId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool?>("IsCompulsory")
                         .HasColumnType("bit");
 
-                    b.Property<bool?>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("Position")
+                    b.Property<int>("PositionId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
+
+                    b.HasIndex("PositionId");
 
                     b.ToTable("CoursePosition");
                 });
@@ -156,6 +154,27 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("CourseId");
 
                     b.ToTable("CourseSkill");
+                });
+
+            modelBuilder.Entity("DataAccessLayer.Models.Formula", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Calculation")
+                        .HasColumnType("nvarchar(700)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Formula");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Models.Notification", b =>
@@ -203,16 +222,16 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool?>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("StartTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UniversityId")
+                    b.Property<int>("TemplateId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UniversityId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -220,9 +239,62 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TemplateId");
+
                     b.HasIndex("UniversityId");
 
                     b.ToTable("OJTBatch");
+                });
+
+            modelBuilder.Entity("DataAccessLayer.Models.Position", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Position");
+                });
+
+            modelBuilder.Entity("DataAccessLayer.Models.Registration", b =>
+                {
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EnrollDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Link")
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("SubmitDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("CourseId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Registration");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Models.Skill", b =>
@@ -241,9 +313,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Type")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -254,14 +323,16 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataAccessLayer.Models.TaskAccomplished", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(40)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTimeOffset?>("AccomplishDate")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(MAX)");
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<DateTimeOffset?>("DueDate")
                         .HasColumnType("datetimeoffset");
@@ -275,7 +346,10 @@ namespace DataAccessLayer.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
+                    b.Property<string>("TrelloTaskId")
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -295,26 +369,23 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DataStartColumn")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("DataStartRow")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("StartCell")
+                        .HasColumnType("nvarchar(5)");
 
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UniversityId")
+                    b.Property<int>("UniversityId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Url")
-                        .HasColumnType("nvarchar(MAX)");
+                        .HasColumnType("nvarchar(1000)");
 
                     b.HasKey("Id");
 
@@ -332,6 +403,9 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("FormulaId")
+                        .HasColumnType("int");
 
                     b.Property<bool?>("IsCriteria")
                         .HasColumnType("bit");
@@ -358,6 +432,8 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FormulaId");
 
                     b.HasIndex("TemplateId");
 
@@ -404,9 +480,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool?>("IsEvaluativeTask")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(100)");
 
@@ -416,7 +489,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TrainingPlanId")
+                    b.Property<int>("TrainingPlanId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -436,14 +509,14 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ImgURL")
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<bool?>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("nvarchar(700)");
 
                     b.Property<DateTime?>("JoinDate")
                         .HasColumnType("datetime2");
@@ -453,6 +526,9 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<int?>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("UniversityCode")
+                        .HasColumnType("nvarchar(120)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -473,7 +549,7 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("AvatarURL")
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(700)");
 
                     b.Property<DateTime?>("Birthday")
                         .HasColumnType("datetime2");
@@ -484,10 +560,13 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<int?>("Gender")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("LastName")
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("OJTBatchId")
@@ -499,11 +578,11 @@ namespace DataAccessLayer.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<int?>("Position")
+                    b.Property<int?>("PositionId")
                         .HasColumnType("int");
 
                     b.Property<string>("RefreshToken")
-                        .HasColumnType("nvarchar(MAX)");
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("ResetPassordCode")
                         .HasColumnType("nvarchar(10)");
@@ -517,6 +596,9 @@ namespace DataAccessLayer.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
+                    b.Property<string>("StudentCode")
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("TrelloId")
                         .HasColumnType("nvarchar(40)");
 
@@ -529,6 +611,8 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OJTBatchId");
+
+                    b.HasIndex("PositionId");
 
                     b.HasIndex("UserReferenceId");
 
@@ -605,26 +689,9 @@ namespace DataAccessLayer.Migrations
                 {
                     b.HasOne("DataAccessLayer.Models.User", "User")
                         .WithMany("Attendances")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DataAccessLayer.Models.Certificate", b =>
-                {
-                    b.HasOne("DataAccessLayer.Models.Course", "Course")
-                        .WithMany("Certificates")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccessLayer.Models.User", "User")
-                        .WithMany("Certificates")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Course");
 
                     b.Navigation("User");
                 });
@@ -633,9 +700,19 @@ namespace DataAccessLayer.Migrations
                 {
                     b.HasOne("DataAccessLayer.Models.Course", "Course")
                         .WithMany("CoursePositions")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAccessLayer.Models.Position", "Position")
+                        .WithMany("CoursePositions")
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Course");
+
+                    b.Navigation("Position");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Models.CourseSkill", b =>
@@ -670,18 +747,49 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataAccessLayer.Models.OJTBatch", b =>
                 {
+                    b.HasOne("DataAccessLayer.Models.Template", "Template")
+                        .WithMany("OJTBatches")
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("DataAccessLayer.Models.University", "University")
                         .WithMany("OJTBatches")
-                        .HasForeignKey("UniversityId");
+                        .HasForeignKey("UniversityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Template");
 
                     b.Navigation("University");
+                });
+
+            modelBuilder.Entity("DataAccessLayer.Models.Registration", b =>
+                {
+                    b.HasOne("DataAccessLayer.Models.Course", "Course")
+                        .WithMany("Certificates")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAccessLayer.Models.User", "User")
+                        .WithMany("Certificates")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Models.TaskAccomplished", b =>
                 {
                     b.HasOne("DataAccessLayer.Models.User", "User")
                         .WithMany("TaskAccomplished")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -690,18 +798,26 @@ namespace DataAccessLayer.Migrations
                 {
                     b.HasOne("DataAccessLayer.Models.University", "University")
                         .WithMany("Templates")
-                        .HasForeignKey("UniversityId");
+                        .HasForeignKey("UniversityId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("University");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Models.TemplateHeader", b =>
                 {
+                    b.HasOne("DataAccessLayer.Models.Formula", "Formula")
+                        .WithMany()
+                        .HasForeignKey("FormulaId");
+
                     b.HasOne("DataAccessLayer.Models.Template", "Template")
                         .WithMany("TemplateHeaders")
                         .HasForeignKey("TemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Formula");
 
                     b.Navigation("Template");
                 });
@@ -710,7 +826,9 @@ namespace DataAccessLayer.Migrations
                 {
                     b.HasOne("DataAccessLayer.Models.TrainingPlan", "TrainingPlan")
                         .WithMany("TrainingPlanDetails")
-                        .HasForeignKey("TrainingPlanId");
+                        .HasForeignKey("TrainingPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("TrainingPlan");
                 });
@@ -721,11 +839,17 @@ namespace DataAccessLayer.Migrations
                         .WithMany("Trainees")
                         .HasForeignKey("OJTBatchId");
 
+                    b.HasOne("DataAccessLayer.Models.Position", "Position")
+                        .WithMany("Users")
+                        .HasForeignKey("PositionId");
+
                     b.HasOne("DataAccessLayer.Models.User", "Trainer")
                         .WithMany("Trainees")
                         .HasForeignKey("UserReferenceId");
 
                     b.Navigation("OJTBatch");
+
+                    b.Navigation("Position");
 
                     b.Navigation("Trainer");
                 });
@@ -801,6 +925,13 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Trainees");
                 });
 
+            modelBuilder.Entity("DataAccessLayer.Models.Position", b =>
+                {
+                    b.Navigation("CoursePositions");
+
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("DataAccessLayer.Models.Skill", b =>
                 {
                     b.Navigation("CourseSkills");
@@ -810,6 +941,8 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataAccessLayer.Models.Template", b =>
                 {
+                    b.Navigation("OJTBatches");
+
                     b.Navigation("TemplateHeaders");
                 });
 

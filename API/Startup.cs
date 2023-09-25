@@ -1,9 +1,11 @@
 using API.Hubs;
+using BusinessLayer.Service;
 using BusinessLayer.Service.Implement;
 using BusinessLayer.Service.Interface;
 using DataAccessLayer.Base;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
+using DataAccessLayer.Repository.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -62,6 +64,14 @@ namespace API
             services.AddScoped<ICertificateService, CertificateService>();
             services.AddScoped<ISkillService, SkillService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IUniversityService, UniversityService>();
+            services.AddScoped<ITemplateService, TemplateService>();
+            services.AddScoped<IPositionService, PositionService>();
+            services.AddScoped<IUserCriteriaService, UserCriteriaService>();
+            services.AddScoped<IFormulaService, FormulaService>();
+            services.AddScoped<IConfigService, ConfigService>();
+            services.AddScoped<IChartService, ChartService>();
+            services.AddSingleton<OperandService>();
             services.AddHttpClient();
 
 
@@ -91,7 +101,7 @@ namespace API
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("clientURL")
+                    builder.WithOrigins(Configuration["ClientSite:PublicSite"])
                            .AllowAnyHeader()
                            .AllowAnyMethod()
                            .AllowCredentials();
@@ -118,7 +128,7 @@ namespace API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                
+
             }
 
             app.UseSwagger();
@@ -140,7 +150,7 @@ namespace API
                 endpoints.MapControllers();
                 endpoints.MapHub<SignalHub>("/signalhub");
             });
-           
+
         }
     }
 }

@@ -1,16 +1,13 @@
 ﻿using BusinessLayer.Service.Interface;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
-using DataAccessLayer.Models;
-using System.Collections.Generic;
-using static DataAccessLayer.Commons.CommonEnums;
-using System.Linq;
-using DocumentFormat.OpenXml.Wordprocessing;
-using DocumentFormat.OpenXml.Vml.Office;
 using System.Net.Http;
+using System.IO;
+using BusinessLayer.Utilities;
+using BusinessLayer.Payload.RequestModel.ReportRequest;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers.ReportController
 {
@@ -23,39 +20,45 @@ namespace API.Controllers.ReportController
 
         public ReportController(IReportService service, IHttpClientFactory httpClientFactory)
         {
-            _service= service;
+            _service = service;
             _httpClient = httpClientFactory.CreateClient();
         }
-       
-        //[Authorize(Roles = "Manager, Trainer")]
-        //[HttpPost("export-excel-report-batch")]
-        //public async Task<IActionResult> CreateReportInformation(int batchid)
-        //{
-        //    try
-        //    {
-        //        var data = await _service.CreateReportExcelFileFromBatch(batchid);                           
-        //        return File(data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "FileReport.xlsx");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError,
-        //            ex.Message);
-        //    }
-        //}
-        [HttpGet]
-        public async Task<IActionResult> GetExcelFile(string url)
+        [Authorize(Roles ="Manager")]
+        [HttpPut]
+        public async Task<IActionResult> GetExcelReportFile([FromBody] ReportRequest request)
         {
-            var response = await _httpClient.GetAsync(url);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var stream = await response.Content.ReadAsStreamAsync();
-                return new FileStreamResult(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                using (var httpClient = new HttpClient())
                 {
-                    FileDownloadName = "YourExcelFile.xlsx"
-                };
-            }
+                    var response = await httpClient.GetAsync(request.url);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var stream = await response.Content.ReadAsStreamAsync();
+                        byte[] excelData;
 
-            return NotFound(); // Or any other appropriate error response
+                        using (MemoryStream memoryStream = new MemoryStream())
+                        {
+                            await stream.CopyToAsync(memoryStream);
+                            excelData = memoryStream.ToArray();
+                        }
+
+                        var updatedExcelData = await _service.ExportReportExcelFileFromUniversity(excelData, request.batchId);
+                        return File(updatedExcelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ReportExcelFile.xlsx");
+                    }
+                }
+                return NotFound();
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }           
         }
+
     }
 }

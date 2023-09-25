@@ -13,6 +13,7 @@ namespace DataAccessLayer.Base
     public class UnitOfWork : IUnitOfWork
     {
         private readonly OJTDbContext _context;
+
         public UnitOfWork(OJTDbContext context)
         {
             _context = context;
@@ -44,6 +45,20 @@ namespace DataAccessLayer.Base
 
         public ISkillRepository SkillRepository => new SkillRepository(_context, this);
 
-        public INotificationRepository NotificationRepository => new NotificationRepository(_context, this);    
+        public INotificationRepository NotificationRepository => new NotificationRepository(_context, this);
+
+        public IUniversityRepository UniversityRepository => new UniversityRepository(_context, this);
+
+        public ITemplateRepository TemplateRepository => new TemplateRepository(_context, this);
+
+        public IUserCriteriaRepository UserCriteriaRepository => new UserCriteriaRepository(_context, this);
+
+        public IAttendanceRepository AttendanceRepository => new AttendanceRepository(_context, this);
+
+        public IPositionRepository PositionRepository => new PositionRepository(_context, this);
+
+        public IFormulaRepository FormulaRepository => new FormulaRepository(_context, this);
+
+        public IConfigRepository ConfigRepository => new ConfigRepository(_context, this);
     }
 }

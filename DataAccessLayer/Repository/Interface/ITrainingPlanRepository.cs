@@ -11,18 +11,26 @@ namespace DataAccessLayer.Repository.Interface
     public interface ITrainingPlanRepository : IGenericRepository<TrainingPlan>
     {
 
-        Task<TrainingPlan> GetTrainingPLanByIdAndNotDeleted(int id);
+        Task<TrainingPlan> GetTrainingPLanById(int id);
+
+        Task<User> GetOwnerByTrainingPlanId(int id);
+
+        Task<TrainingPlan> GetTrainingPlanByTraineeIdAndStatusActive(int traineeId);    
 
         Task<TrainingPlan> GetTrainingPLanByIdAndStatusActive(int id);
 
         Task<List<TrainingPlan>> GetTrainingPlanList();
 
+        Task<List<TrainingPlan>> GetTrainingPlanListSearchKeyword(string keyword);
+
         Task<List<TrainingPlan>> GetTrainingPlanListByOwnerId(int id);
+
+        Task<List<TrainingPlan>> GetTrainingPlanListByOwnerSearchKeyword(int id, string keyword);
 
         Task<UserTrainingPlan> GetUserTrainingPlanByIdAndIsOwner(int userId, int planId);
 
         Task<UserTrainingPlan> GetUserTrainingPlanById(int userId, int planId);
 
-        Task<TrainingPlanDetail> GetTrainingPlanDetailByIdAndNotDeleted(int id);
+        Task<TrainingPlanDetail> GetTrainingPlanDetailById(int id);
     }
 }

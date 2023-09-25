@@ -18,12 +18,11 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(100)")]
         public string Name { get; set; }
 
-        [Column(TypeName = "nvarchar(MAX)")]
+        [Column(TypeName = "nvarchar(1000)")]
         public string Url { get; set; }
 
-        public int? DataStartColumn { get; set; }
-
-        public int? DataStartRow { get; set; }
+        [Column(TypeName = "nvarchar(5)")]
+        public string StartCell { get; set; }
 
         public int? Status { get; set; }
 
@@ -31,9 +30,11 @@ namespace DataAccessLayer.Models
 
         public DateTime? UpdatedAt { get; set; }
 
-        public int? UniversityId { get; set; }
+        public int UniversityId { get; set; }
         [ForeignKey("UniversityId")]
         public University University { get; set; }
+
+        public virtual ICollection<OJTBatch> OJTBatches { get; set; }   
 
         // Relation with Template Header
         public virtual ICollection<TemplateHeader> TemplateHeaders { get; set; }

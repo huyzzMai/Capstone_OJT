@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,15 @@ namespace DataAccessLayer.Repository.Implement
         public UserRepository(OJTDbContext context, IUnitOfWork unitOfWork) : base(context, unitOfWork)
         {
         }
-
+        public override async Task<IEnumerable<User>> Get(Expression<Func<User, bool>> expression = null, params string[] includeProperties)
+        {
+            var result = await base.Get(expression, includeProperties);
+            foreach (var item in result)
+            {
+                item.UserCriterias = _unitOfWork.UserCriteriaRepository.Get(c => c.UserId == item.Id, "TemplateHeader").Result.ToList();
+            }
+            return result;
+        }
         public async Task<User> GetUserByEmailAndStatusActive(string email)
         {
             User user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Status == CommonEnums.USER_STATUS.ACTIVE);
@@ -32,9 +41,18 @@ namespace DataAccessLayer.Repository.Implement
             return user;
         }
 
+        public async Task<User> GetUserByRollNumber(string rollNumber)
+        {
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.RollNumber == rollNumber);
+            return user;
+        }
+
         public async Task<User> GetUserByIdAndStatusActive(int id)
         {
-            User user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && u.Status == CommonEnums.USER_STATUS.ACTIVE);
+            User user = await _context.Users
+                                      .Where(u => u.Id == id && u.Status == CommonEnums.USER_STATUS.ACTIVE)
+                                      .Include(u => u.Position)
+                                      .FirstOrDefaultAsync();
             return user;
         }
 
@@ -46,7 +64,10 @@ namespace DataAccessLayer.Repository.Implement
 
         public async Task<User> GetUserByResetCodeAndStatusActive(string token)
         {
-            User user = await _context.Users.FirstOrDefaultAsync(u => u.ResetPassordCode == token && u.Status == CommonEnums.USER_STATUS.ACTIVE);
+            User user = await _context.Users
+                .Where(u => u.ResetPassordCode == token && u.Status == CommonEnums.USER_STATUS.ACTIVE)
+                .Include(u => u.Position)
+                .FirstOrDefaultAsync();
             return user;
         }
 
@@ -56,19 +77,125 @@ namespace DataAccessLayer.Repository.Implement
             return user;
         }
 
-        public async Task<List<User>> GetTraineeList()
+        public async Task<User> GetUserByTrelloIdAndStatusActive(string id)
+        {
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.TrelloId == id && u.Status == CommonEnums.USER_STATUS.ACTIVE);
+            return user;
+        }
+
+        public async Task<User> GetUserByIdWithSkillList(int id)
+        {
+            User user = await _context.Users
+                        .Where(u => u.Id == id && u.Status == CommonEnums.USER_STATUS.ACTIVE) 
+                        .Include(u => u.UserSkills)
+                        .ThenInclude(u => u.Skill)
+                        .Include(u => u.Position)
+                        .Include(u => u.Trainer)
+                        .FirstOrDefaultAsync();
+            return user;
+        }
+
+        public async Task<User> GetTrainerWithListTraineeByIdAndStatusActive(int id)
+        {
+            User user = await _context.Users
+                        .Where(u => u.Id == id && u.Status == CommonEnums.USER_STATUS.ACTIVE)
+                        .Include(u => u.Trainees)    
+                        .FirstOrDefaultAsync();
+            return user;
+        }
+
+        public async Task<List<User>> GetUnassignedTraineeList()
         {
             List<User> users = await _context.Users
-                .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE)
-                .ToListAsync();
+                               .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE && u.UserReferenceId == null)
+                               .Include(u => u.Position)
+                               .ToListAsync();
             return users;
         }
 
-        public async Task<List<User>> GetTrainerList()
+        public async Task<List<User>> GetTraineeList(string keyword, int? positionId)
         {
-            List<User> users = await _context.Users
-                .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER)
+            List<User> users = new();
+            if (keyword == null && positionId == null)
+            {
+                users = await _context.Users
+                .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE)
+                .Include(u => u.Position)
+                .OrderByDescending(u => u.CreatedAt)
                 .ToListAsync();
+            }
+            else if (keyword == null)
+            {
+                users = await _context.Users
+                    .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE
+                                && u.PositionId == positionId)
+                    .Include(u => u.Position)
+                    .OrderByDescending(u => u.CreatedAt)
+                    .ToListAsync();
+            }
+            else if (positionId == null)
+            {
+                users = await _context.Users
+                    .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE
+                                && (u.FirstName.ToLower().Contains(keyword) || u.LastName.ToLower().Contains(keyword) || u.Email.ToLower().Contains(keyword)))
+                    .Include(u => u.Position)
+                    .OrderByDescending(u => u.CreatedAt)
+                    .ToListAsync();
+            }
+            else
+            {
+                users = await _context.Users
+                .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE
+                            && u.PositionId == positionId
+                            && (u.FirstName.ToLower().Contains(keyword) || u.LastName.ToLower().Contains(keyword) || u.Email.ToLower().Contains(keyword)))
+                .Include(u => u.Position)
+                .OrderByDescending(u => u.CreatedAt)
+                .ToListAsync();
+            }
+            return users;
+        }
+
+        public async Task<List<User>> GetTrainerList(string keyword, int? positionId)
+        {
+            List<User> users = new();
+            if (keyword == null && positionId == null)
+            {
+                users = await _context.Users
+                    .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER)
+                    .Include(u => u.Position)
+                    .OrderByDescending(u => u.CreatedAt)
+                    .ToListAsync();
+            }
+            else if (keyword == null)
+            {
+                users = await _context.Users
+                    .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER
+                         && u.PositionId == positionId)
+                    .Include(u => u.Position)
+                    .OrderByDescending(u => u.CreatedAt)
+                    .ToListAsync();
+            }
+            else if (positionId == null)
+            {
+                keyword = keyword.ToLower();
+                users = await _context.Users
+                    .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER
+                         && (u.FirstName.ToLower().Contains(keyword) || u.LastName.ToLower().Contains(keyword) || u.Email.ToLower().Contains(keyword)))
+                    .Include(u => u.Position)
+                    .OrderByDescending(u => u.CreatedAt)
+                    .ToListAsync();
+            }
+            else
+            {
+                keyword = keyword.ToLower();
+                users = await _context.Users
+                    .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINER
+                          && u.PositionId == positionId
+                          && (u.FirstName.ToLower().Contains(keyword) || u.LastName.ToLower().Contains(keyword) || u.Email.ToLower().Contains(keyword)))
+                    .Include(u => u.Position)
+                    .OrderByDescending(u => u.CreatedAt)
+                    .ToListAsync();
+            }
             return users;
         }
 
@@ -76,6 +203,7 @@ namespace DataAccessLayer.Repository.Implement
         {
             List<User> users = await _context.Users
                 .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE && u.UserReferenceId==id)
+                .Include(u => u.Position)
                 .ToListAsync();
             return users;
         }
@@ -87,27 +215,24 @@ namespace DataAccessLayer.Repository.Implement
                 .ToListAsync();
             return users;
         }
+      
+        public async Task<List<UserSkill>> GetListUserSkillTrainee(int userId)
+        {
+            var topSkills = await _context.UserSkills
+            .Where(us => us.UserId == userId)
+            .Include (us => us.Skill)   
+           .ToListAsync();
 
-        //public async Task<List<UserCriteriaReport>> GetUserReportList(int batchid,List<User> user)
-        //{
-        //    var userlist = user;
-        //    var reportuser= new List<UserCriteriaReport>();
-        //    var batch = await _unitOfWork.OJTBatchRepository.GetFirst(c=>c.Id==batchid && c.IsDeleted==false,"University");
-        //  foreach (var useritem in userlist)
-        //    {
-        //        var newreportuser = new UserCriteriaReport()
-        //        {
-        //            Name = useritem.Name,
-        //            Email= useritem.Email,
-        //            Position= useritem.Position,
-        //            RollNumber= useritem.RollNumber,
-        //            Birthday= useritem.Birthday,
-        //            University=batch.University.Name,
-        //            //TemplatePoint= await _unitOfWork.CriteriaRepository.GetPointListByUserId(useritem.Id)
-        //        };
-        //        reportuser.Add(newreportuser);
-        //    }
-        //    return reportuser;
-        //}
+            return topSkills;   
+        }
+
+        public async Task<List<User>> GetListTraineeByTrainerIdWithTaskAccomplishedList(int userId)
+        {
+            var trainees = await _context.Users
+                           .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE && u.UserReferenceId == userId)
+                           .Include(u => u.TaskAccomplished)
+                           .ToListAsync();
+            return trainees;    
+        }
     }
 }

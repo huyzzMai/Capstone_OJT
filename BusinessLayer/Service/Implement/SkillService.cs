@@ -1,8 +1,8 @@
-﻿using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.RequestModel.SkillRequest;
-using BusinessLayer.Models.ResponseModel;
-using BusinessLayer.Models.ResponseModel.CourseResponse;
-using BusinessLayer.Models.ResponseModel.SkillResponse;
+﻿using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.RequestModel.SkillRequest;
+using BusinessLayer.Payload.ResponseModel;
+using BusinessLayer.Payload.ResponseModel.CourseResponse;
+using BusinessLayer.Payload.ResponseModel.SkillResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Service.Implement
 {
-    public class SkillService:ISkillService
+    public class SkillService : ISkillService
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -28,18 +28,18 @@ namespace BusinessLayer.Service.Implement
         public async Task CreateSkill(CreateSkillRequest request)
         {
             try
-            {
-                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower() && c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
-                if (skill != null)
+            {               
+                var skillcheck = await _unitOfWork.SkillRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower() && c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
+
+                if (skillcheck != null)
                 {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT,"Skill already exists");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Duplicate skill names");
                 }
                 var newskill = new Skill()
                 {
                     Name=request.Name,
-                    Type=request.Type,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow.AddHours(7),
+                    UpdatedAt = DateTime.UtcNow.AddHours(7),
                     Status = CommonEnums.SKILL_STATUS.ACTIVE
                 };
                 await _unitOfWork.SkillRepository.Add(newskill);
@@ -54,17 +54,27 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task DeleteSkill(int skillId)
+        public async Task DisableSkill(int skillId)
         {
             try
             {
-                var cour = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId && c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
-                if (cour == null)
+                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId, "CourseSkills", "UserSkills");
+                if (skill == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Skill not found");
                 }
-                cour.Status = CommonEnums.SKILL_STATUS.DELETED;
-                await _unitOfWork.SkillRepository.Update(cour);
+                var ck = skill.CourseSkills.Any(c => c.Course.Status == CommonEnums.COURSE_STATUS.ACTIVE);
+                if(ck)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! There are some active course which use this skill");
+                }
+                var uk= skill.UserSkills.Any(c=>c.User.Status == CommonEnums.USER_STATUS.ACTIVE);
+                if(uk)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! There are some active user which use this skill");
+                }
+                skill.Status = CommonEnums.SKILL_STATUS.INACTIVE;
+                await _unitOfWork.SkillRepository.Update(skill);
             }
             catch (ApiException ex)
             {
@@ -76,19 +86,99 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<BasePagingViewModel<SkillResponse>> GetSkillList(PagingRequestModel paging)
+        public async Task ActiveSkill(int skillId)
         {
             try
             {
-                var listskill = await _unitOfWork.SkillRepository.Get(c => c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
+                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId, "CourseSkills", "UserSkills");
+                if (skill == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Skill not found");
+                }
+                var ck = skill.CourseSkills.Any(c => c.Course.Status == CommonEnums.COURSE_STATUS.ACTIVE);
+                if (ck)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! There are some active course which use this skill");
+                }
+                var uk = skill.UserSkills.Any(c => c.User.Status == CommonEnums.USER_STATUS.ACTIVE);
+                if (uk)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! There are some active user which use this skill");
+                }
+                skill.Status = CommonEnums.SKILL_STATUS.ACTIVE;
+                await _unitOfWork.SkillRepository.Update(skill);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<SkillDetailResponse> GetSkillDetail(int skillId)
+        {
+            try
+            {
+                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId);
+                if (skill == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Skill not found");
+                }
+                var skilldetail= new SkillDetailResponse()
+                {
+                    Id = skillId,
+                    Name = skill.Name,
+                    Status = skill.Status,
+                    CreatedAt = DateTimeService.ConvertToDateString(skill.CreatedAt),
+                    UpdatedAt = DateTimeService.ConvertToDateString(skill.UpdatedAt)
+                };
+                return skilldetail;
+
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+        public List<Skill> SearchSkills(string searchTerm,int? filterStatus, List<Skill> skilllist)
+        {
+            var query = skilllist.AsQueryable();
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(c =>
+                c.Name.ToLower().Contains(searchTerm)
+            );
+            }         
+            if (filterStatus != null)
+            {
+                query = query.Where(c => c.Status== filterStatus);
+            }          
+            return query.ToList();
+        }
+        public async Task<BasePagingViewModel<SkillResponse>> GetSkillList(PagingRequestModel paging, string searchTerm,int? filterStatus)
+        {
+            try
+            {
+                var listskill = await _unitOfWork.SkillRepository.Get();
+                if (!string.IsNullOrEmpty(searchTerm)|| filterStatus != null)
+                {
+                    listskill = SearchSkills(searchTerm, filterStatus, listskill.ToList());
+                }
                 var listresponse = listskill.OrderByDescending(c => c.CreatedAt).Select(c =>
                 {
                     return new SkillResponse()
                     {
                         Id= c.Id,
                         Name= c.Name,
-                        Status =c.Status,
-                        Type = c.Type ?? default(int)
+                        Status= c.Status
                     };
                 }).ToList();
                 int totalItem = listresponse.Count;
@@ -113,26 +203,24 @@ namespace BusinessLayer.Service.Implement
                 throw new Exception(e.Message);
             }
         }
-
         public async Task UpdateSkill(int skillId, UpdateSkillRequest request)
         {
             try
             {         
-                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId && c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
+                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId);
                 if (skill == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Skill not found");
                 }
-                var skillcheck = await _unitOfWork.SkillRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower()&&c.Status==CommonEnums.SKILL_STATUS.ACTIVE);
+                var skillcheck = await _unitOfWork.SkillRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower());
 
                 if (skillcheck != null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Duplicate skill names");
                 }
                 skill.Name = request.Name;
-                skill.Type= request.Type;
                 skill.Status = request.Status;
-                skill.UpdatedAt= DateTime.Now;
+                skill.UpdatedAt= DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.SkillRepository.Update(skill);
             }
             catch (ApiException ex)

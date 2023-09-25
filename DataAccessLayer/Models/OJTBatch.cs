@@ -23,16 +23,22 @@ namespace DataAccessLayer.Models
 
         public DateTime? EndTime { get; set; }
 
-        public bool? IsDeleted { get; set; }
+        //public bool? IsDeleted { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
 
-        public int? UniversityId { get; set; }
+        public int UniversityId { get; set; }
         [ForeignKey("UniversityId")]
         public University University { get; set; }
 
+        public int TemplateId { get; set; }
+        [ForeignKey("TemplateId")]
+        public Template Template { get; set; }
+
         public virtual ICollection<User> Trainees { get; set; }
+
+        //public virtual ICollection<CourseBatch> CourseBatches { get; set; }
     }
 }

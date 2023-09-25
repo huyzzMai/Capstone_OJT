@@ -11,5 +11,9 @@ namespace DataAccessLayer.Repository.Interface
     public interface IUserSkillRepository : IGenericRepository<UserSkill>
     {
         Task UpdateUserSkillCurrentLevel(int courseId, int userId);
+
+        Task<List<CourseSkill>> GetListSkillOfCourse(int courseId);
+
+        Task<List<UserSkill>> GetListUserSkill(int userId); 
     }
 }

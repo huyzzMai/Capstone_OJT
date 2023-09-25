@@ -19,9 +19,7 @@ namespace DataAccessLayer.Models
 
         public DbSet<Course> Courses { get; set; }
 
-        public DbSet<Certificate> Certificates { get; set; }
-
-        //public DbSet<Criteria> Criterias { get; set; }
+        public DbSet<Registration> Certificates { get; set; }
 
         public DbSet<University> Universities { get; set; }
 
@@ -51,7 +49,11 @@ namespace DataAccessLayer.Models
 
         public DbSet<TemplateHeader> TemplateHeaders { get; set; }
 
+        public DbSet<Formula> Formulas { get; set; }
+
         public DbSet<TaskAccomplished> TaskAccomplisheds { get; set; }
+
+        public DbSet<Config> Configs { get; set; }  
 
         #endregion
 
@@ -76,7 +78,7 @@ namespace DataAccessLayer.Models
             modelBuilder.Entity<UserTrainingPlan>()
                 .HasKey(c => new { c.UserId, c.TrainingPlanId });
 
-            modelBuilder.Entity<Certificate>()
+            modelBuilder.Entity<Registration>()
                 .HasKey(c => new { c.CourseId, c.UserId });
 
             modelBuilder.Entity<CourseSkill>()
@@ -85,8 +87,15 @@ namespace DataAccessLayer.Models
             modelBuilder.Entity<UserSkill>()
                 .HasKey(c => new { c.SkillId, c.UserId });
 
-            //modelBuilder.Entity<TemplateCriteria>()
-            //    .HasKey(c => new { c.TemplateId, c.CriteriaId });
+            modelBuilder.Entity<Config>().HasData(
+            new Config { Id = 1, Name = "Total Working Days Per Month",  Value = 20},
+            new Config { Id = 2, Name = "Work Hours Required", Value = 8}
+            );
+
+            modelBuilder.Entity<Template>()
+           .HasOne(e => e.University)
+           .WithMany(e => e.Templates)
+           .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

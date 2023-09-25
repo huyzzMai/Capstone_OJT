@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -10,13 +11,17 @@ namespace DataAccessLayer.Models
     [Table("TaskAccomplished")]
     public class TaskAccomplished
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
         [Column(TypeName = "nvarchar(40)")]
-        public string Id { get; set; }
+        public string TrelloTaskId { get; set; }
 
         [Column(TypeName = "nvarchar(200)")]
         public string Name { get; set; }
 
-        [Column(TypeName = "nvarchar(MAX)")]
+        [Column(TypeName = "nvarchar(2000)")]
         public string Description { get; set; }
 
         public DateTimeOffset? StartDate { get; set; }
@@ -28,7 +33,7 @@ namespace DataAccessLayer.Models
         public int? Status { get; set; }
 
         // Relation with User
-        public int? UserId { get; set; }
+        public int UserId { get; set; }
         [ForeignKey("UserId")]
         public User User { get; set; }
     }

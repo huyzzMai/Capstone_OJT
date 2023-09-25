@@ -11,6 +11,5 @@ namespace DataAccessLayer.Repository.Interface
 {
     public interface ITemplateHeaderRepository : IGenericRepository<TemplateHeader>
     {
-        //Task<List<TemplatePoint>> GetPointListByUserId(int id);
     }
 }

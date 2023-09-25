@@ -16,18 +16,22 @@ namespace DataAccessLayer.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public int? Position { get; set; }
+        //public int? Position { get; set; }
+
+        //public bool? IsDeleted { get; set; }
+
+        //public DateTime? CreatedAt { get; set; }
+
+        //public DateTime? UpdatedAt { get; set; }
 
         public bool? IsCompulsory { get; set; }
 
-        public bool? IsDeleted { get; set; }
-
-        public DateTime? CreatedAt { get; set; }
-
-        public DateTime? UpdatedAt { get; set; }
-
-        public int? CourseId { get; set; }
+        public int CourseId { get; set; }
         [ForeignKey("CourseId")]
         public Course Course { get; set; }
+
+        public int PositionId { get; set; }
+        [ForeignKey("PositionId")]
+        public Position Position { get; set; }
     }
 }

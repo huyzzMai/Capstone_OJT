@@ -17,7 +17,10 @@ namespace DataAccessLayer.Models
         public int Id { get; set; }
 
         [Column(TypeName = "nvarchar(100)")]
-        public string Name { get; set; }
+        public string FirstName { get; set; }
+
+        [Column(TypeName = "nvarchar(100)")]
+        public string LastName { get; set; }
 
         [Column(TypeName = "nvarchar(100)")]
         public string Email { get; set; }
@@ -38,10 +41,17 @@ namespace DataAccessLayer.Models
 
         public DateTime? Birthday { get; set; }
 
-        [Column(TypeName = "nvarchar(500)")]
+        [Column(TypeName = "nvarchar(700)")]
         public string AvatarURL { get; set; }
 
-        public int? Position { get; set; }
+        [Column(TypeName = "nvarchar(20)")]
+        public string StudentCode { get; set; }
+
+        //public int? Position { get; set; }
+        //Relation with Position
+        public int? PositionId { get; set; }
+        [ForeignKey("PositionId")]
+        public Position Position { get; set; }
 
         public int? Role { get; set; }
 
@@ -53,7 +63,7 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "nvarchar(40)")]
         public string TrelloId { get; set; }
 
-        [Column(TypeName = "nvarchar(MAX)")]
+        [Column(TypeName = "nvarchar(1000)")]
         public string RefreshToken { get; set; }    
 
         public DateTime? CreatedAt { get; set; }
@@ -84,7 +94,7 @@ namespace DataAccessLayer.Models
         public virtual ICollection<UserSkill> UserSkills { get; set; }
 
         // Relation with Certificate
-        public virtual ICollection<Certificate> Certificates { get; set; }
+        public virtual ICollection<Registration> Certificates { get; set; }
 
 
         // Relation with Notification

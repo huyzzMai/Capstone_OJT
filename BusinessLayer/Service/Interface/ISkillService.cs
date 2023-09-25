@@ -1,8 +1,8 @@
-﻿using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.ResponseModel;
+﻿using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.ResponseModel;
 using System.Threading.Tasks;
-using BusinessLayer.Models.RequestModel.SkillRequest;
-using BusinessLayer.Models.ResponseModel.SkillResponse;
+using BusinessLayer.Payload.RequestModel.SkillRequest;
+using BusinessLayer.Payload.ResponseModel.SkillResponse;
 
 namespace BusinessLayer.Service.Interface
 {
@@ -12,8 +12,12 @@ namespace BusinessLayer.Service.Interface
 
         Task UpdateSkill(int skillId, UpdateSkillRequest request);
 
-        Task DeleteSkill(int skillId);
+        Task DisableSkill(int skillId);
 
-        Task<BasePagingViewModel<SkillResponse>> GetSkillList(PagingRequestModel paging);
+        Task ActiveSkill(int skillId);
+
+        Task<BasePagingViewModel<SkillResponse>> GetSkillList(PagingRequestModel paging,string searchTerm,int? filterStatus);
+
+        Task<SkillDetailResponse> GetSkillDetail(int skillId);
     }
 }

@@ -15,6 +15,8 @@ namespace DataAccessLayer.Repository.Interface
 
         Task<User> GetUserByEmail(string email);
 
+        Task<User> GetUserByRollNumber(string rollNumber);  
+
         Task<User> GetUserByIdAndStatusActive(int id);
 
         Task<User> GetUserByResetCode(string token);
@@ -23,13 +25,25 @@ namespace DataAccessLayer.Repository.Interface
 
         Task<User> GetUserByRefTokenAndStatusActive(string token); 
 
-        Task<List<User>> GetTrainerList();
+        Task<User> GetUserByTrelloIdAndStatusActive(string id);
 
-        Task<List<User>> GetTraineeList();
+        Task<User> GetUserByIdWithSkillList(int id);
+
+        Task<List<User>> GetTrainerList(string keyword, int? position);
+
+        Task<User> GetTrainerWithListTraineeByIdAndStatusActive(int id);
+
+        Task<List<User>> GetUnassignedTraineeList();
+
+        Task<List<User>> GetTraineeList(string keyword, int? position);
 
         Task<List<User>> GetTraineeListByBatch(int batchid);
 
         Task<List<User>> GetTraineeListByTrainerId(int id);
+
+        Task<List<UserSkill>> GetListUserSkillTrainee(int userId);
+
+        Task<List<User>> GetListTraineeByTrainerIdWithTaskAccomplishedList(int userId);
 
         //Task<List<UserCriteriaReport>> GetUserReportList(int batchid,List<User> user);
     }

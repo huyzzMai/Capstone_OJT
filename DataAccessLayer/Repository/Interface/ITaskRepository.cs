@@ -10,6 +10,18 @@ namespace DataAccessLayer.Repository.Interface
     {
         Task<List<TaskAccomplished>> GetListTaskAccomplishedOfTrainee(int userId);
 
-        Task<TaskAccomplished> GastTaskByIdAndStatusPending(string taskId);
+        Task<TaskAccomplished> GetTaskAccomplishedById(int id); 
+
+        Task<TaskAccomplished> GastTaskByIdAndStatusPending(int taskId);
+
+        Task<TaskAccomplished> GetMatchingTask(string trelloTaskId, int userId);  
+
+        Task<TaskAccomplished> GetTaskAccomplishedByTrelloTaskId(string trelloTaskId);
+
+        Task<List<TaskAccomplished>> GetListTaskPendingOfTrainee(int userId);
+
+        Task<List<TaskAccomplished>> GetListTaskAccomplishedDoneOfTrainee(int userId);
+
+        Task<List<TaskAccomplished>> GetListTaskAccomplishedFailedOfTrainee(int userId);
     }
 }

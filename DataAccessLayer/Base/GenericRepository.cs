@@ -45,7 +45,7 @@ namespace DataAccessLayer.Base
                 filter = filter.Where(expression);
             }
             return await filter.ToListAsync();
-        }        
+        }
         public virtual async Task Update(TEntity entity)
         {
             _entities.Update(entity);

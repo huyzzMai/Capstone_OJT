@@ -1,4 +1,4 @@
-﻿using BusinessLayer.Models.RequestModel;
+﻿using BusinessLayer.Payload.RequestModel;
 using DataAccessLayer.Commons;
 using System;
 using System.Collections.Generic;

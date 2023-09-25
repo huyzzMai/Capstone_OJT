@@ -1,24 +1,16 @@
-﻿using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.RequestModel.TrainingPLanRequest;
-using BusinessLayer.Models.ResponseModel.TaskResponse;
-using BusinessLayer.Models.ResponseModel;
-using BusinessLayer.Models.ResponseModel.TrainingPlanResponse;
-using BusinessLayer.Models.ResponseModel.UserResponse;
+﻿using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.RequestModel.TrainingPLanRequest;
+using BusinessLayer.Payload.ResponseModel;
+using BusinessLayer.Payload.ResponseModel.TrainingPlanResponse;
 using BusinessLayer.Service.Interface;
+using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using DocumentFormat.OpenXml.Spreadsheet;
-using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
-using BusinessLayer.Utilities;
 
 namespace BusinessLayer.Service.Implement
 {
@@ -26,9 +18,12 @@ namespace BusinessLayer.Service.Implement
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public TrainingPlanService(IUnitOfWork unitOfWork)
+        private readonly INotificationService _notificationService;
+
+        public TrainingPlanService(IUnitOfWork unitOfWork, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
+            _notificationService = notificationService;
         }
 
         public async Task<TrainingPlanResponse> GetTrainingPlanForAllRole(int userId, int id)
@@ -42,9 +37,13 @@ namespace BusinessLayer.Service.Implement
                     var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanById(userId, id);
                     if (check == null)
                     {
-                        throw new Exception("Training plan not found or You are not assigned to this training plan !");
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Training plan not found or You are not assigned to this training plan !");
                     }
                     var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndStatusActive(id);
+                    if (tp == null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found!");
+                    }
 
                     List<TrainingPlanDetail> l = tp.TrainingPlanDetails.ToList();
                     var detailList = l
@@ -59,7 +58,7 @@ namespace BusinessLayer.Service.Implement
                                              Description = detail.Description,
                                              StartTime = detail.StartTime,
                                              EndTime = detail.EndTime,
-                                             IsEvaluativeTask = detail.IsEvaluativeTask
+                                             //IsEvaluativeTask = detail.IsEvaluativeTask
                                          };
                                      }
                                      ).ToList()
@@ -76,7 +75,11 @@ namespace BusinessLayer.Service.Implement
                 } 
                 else if (user.Role == CommonEnums.ROLE.MANAGER)
                 {
-                    var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(id);
+                    var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanById(id);
+                    if (tp == null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found!");
+                    }
 
                     List<TrainingPlanDetail> l = tp.TrainingPlanDetails.ToList();
                     var detailList = l
@@ -91,16 +94,22 @@ namespace BusinessLayer.Service.Implement
                                              Description = detail.Description,
                                              StartTime = detail.StartTime,
                                              EndTime = detail.EndTime,
-                                             IsEvaluativeTask = detail.IsEvaluativeTask
+                                             //IsEvaluativeTask = detail.IsEvaluativeTask
                                          };
                                      }
                                      ).ToList()
                                      ;
+                    var trainer = tp.UserTrainingPlans.Where(u => u.IsOwner ==true).FirstOrDefault();   
                     var res = new TrainingPlanResponse()
                     {
                         Id = tp.Id,
                         Name = tp.Name,
                         Status = tp.Status,
+                        TrainerId = trainer.User.Id,
+                        FirstName = trainer.User.FirstName, 
+                        LastName = trainer.User.LastName,
+                        CreateDate = tp.CreatedAt ?? default,
+                        UpdateDate = tp.UpdatedAt ?? default,
                         Details = detailList
                     };
                     return res;
@@ -112,11 +121,15 @@ namespace BusinessLayer.Service.Implement
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found or You not the owner of this training plan !");
                     }
-                    var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(id);
+                    var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanById(id);
+                    if (tp == null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found!");
+                    }
 
                     List<TrainingPlanDetail> l = tp.TrainingPlanDetails.ToList();
                     var detailList = l
-                                     .Where(u => u.Status != CommonEnums.TRAINING_PLAN_DETAIL_STATUS.DELETED)
+                                     //.Where(u => u.Status != CommonEnums.TRAINING_PLAN_DETAIL_STATUS.DELETED)
                                      .Select(
                                      detail =>
                                      {
@@ -127,19 +140,39 @@ namespace BusinessLayer.Service.Implement
                                              Description = detail.Description,
                                              StartTime = detail.StartTime,
                                              EndTime = detail.EndTime,
-                                             IsEvaluativeTask = detail.IsEvaluativeTask,
                                              Status = detail.Status,
                                          };
                                      }
                                      ).ToList()
                                      ;
+                    var trainer = tp.UserTrainingPlans.Where(u => u.IsOwner == true).FirstOrDefault();
                     var res = new TrainingPlanResponse()
                     {
                         Id = tp.Id,
                         Name = tp.Name,
                         Status = tp.Status,
+                        TrainerId = trainer.User.Id,
+                        FirstName = trainer.User.FirstName,
+                        LastName = trainer.User.LastName,
+                        CreateDate = tp.CreatedAt ?? default,
+                        UpdateDate = tp.UpdatedAt ?? default,
                         Details = detailList
                     };
+
+                    var listTrainee = new List<TrainingPlanResponse.AssignedTraineeResponse>();
+                    foreach (var ut in tp.UserTrainingPlans)
+                    {
+                        if (ut.IsOwner == false)
+                        {
+                            var s = new TrainingPlanResponse.AssignedTraineeResponse();
+                            s.TraineeName = ut.User.LastName + " " + ut.User.FirstName;
+                            s.TraineeEmail = ut.User.Email;
+                            s.AvatarURL = ut.User.AvatarURL;
+                            listTrainee.Add(s);
+                        }
+                    }
+                    res.Trainees = listTrainee;
+
                     return res;
                 }
             }
@@ -149,97 +182,272 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanList(PagingRequestModel paging)
-        {
-            var tplans = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanList();
-            List<TrainingPlanResponse> res = tplans.Select(
-                tplan =>
-                {
-                    return new TrainingPlanResponse()
-                    {
-                        Id = tplan.Id,
-                        Name = tplan.Name,
-                        Status = tplan.Status
-                    };
-                }
-                ).ToList();
-
-            int totalItem = res.Count;
-
-            res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
-                    .Take(paging.PageSize).ToList();
-
-            var result = new BasePagingViewModel<TrainingPlanResponse>()
-            {
-                PageIndex = paging.PageIndex,
-                PageSize = paging.PageSize,
-                TotalItem = totalItem,
-                TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
-                Data = res
-            };
-            return result;
-        }
-
-        public async Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanListByOwner(int id, PagingRequestModel paging)
-        {
-            var tplans = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanListByOwnerId(id);
-            List<TrainingPlanResponse> res = tplans.Select(
-                tplan =>
-                {
-                    return new TrainingPlanResponse()
-                    {
-                        Id = tplan.Id,
-                        Name = tplan.Name,
-                        Status = tplan.Status
-                    };
-                }
-                ).ToList();
-
-            int totalItem = res.Count;
-
-            res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
-                    .Take(paging.PageSize).ToList();
-
-            var result = new BasePagingViewModel<TrainingPlanResponse>()
-            {
-                PageIndex = paging.PageIndex,
-                PageSize = paging.PageSize,
-                TotalItem = totalItem,
-                TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
-                Data = res
-            };
-            return result;
-        }
-
-        public async Task AssignTraineeToTrainingPlan(int trainerId, int traineeId, int planId)
+        public async Task<TrainingPlanResponse> GetTrainingPlanForTrainee(int userId)
         {
             try
             {
-                var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
-                if (trainee == null || trainee.UserReferenceId != trainerId)
+                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanByTraineeIdAndStatusActive(userId);
+                if (tp == null)
                 {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Not found trainee or this is not your assiged trainee!");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found!");
                 }
 
-                var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(trainerId, planId);
+                List<TrainingPlanDetail> l = tp.TrainingPlanDetails.ToList();
+                var detailList = l
+                                 .Where(u => u.Status == CommonEnums.TRAINING_PLAN_DETAIL_STATUS.ACTIVE)
+                                 .Select(
+                                 detail =>
+                                 {
+                                     return new TrainingPlanDetailResponse()
+                                     {
+                                         Id = detail.Id,
+                                         Name = detail.Name,
+                                         Description = detail.Description,
+                                         StartTime = detail.StartTime,
+                                         EndTime = detail.EndTime,
+                                         //IsEvaluativeTask = detail.IsEvaluativeTask
+                                     };
+                                 }
+                                 ).ToList()
+                                 ;
+
+                var res = new TrainingPlanResponse()
+                {
+                    Id = tp.Id,
+                    Name = tp.Name,
+                    Status = tp.Status,
+                    CreateDate = tp.CreatedAt ?? default,
+                    Details = detailList
+                };
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanList(PagingRequestModel paging, string keyword, int? status)
+        {
+            try
+            {
+                List<TrainingPlan> tplans = new List<TrainingPlan>();
+                if (keyword == null && status == null)
+                {
+                    tplans = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanList();
+                }
+                else if (status == null)
+                {
+                    keyword = keyword.ToLower();
+                    tplans = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanListSearchKeyword(keyword);
+                }
+                else if (keyword == null)
+                {
+                    //if (status == CommonEnums.TRAINING_PLAN_STATUS.DELETED)
+                    //{
+                    //    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Status Invalid!");
+                    //}
+                    var list = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanList();
+                    tplans = list.Where(u => u.Status == status).ToList();
+                }
+                else if (keyword != null && status != null)
+                {
+                    //if (status == CommonEnums.TRAINING_PLAN_STATUS.DELETED)
+                    //{
+                    //    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Status Invalid!");
+                    //}
+                    keyword = keyword.ToLower();
+                    var list = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanListSearchKeyword(keyword);
+                    tplans = list.Where(u => u.Status == status).ToList();
+                }
+
+                List<TrainingPlanResponse> res = new();
+                foreach (var  tpl in tplans)
+                {
+                    TrainingPlanResponse a = new()
+                    {
+                        Id = tpl.Id,
+                        Name = tpl.Name,
+                        Status = tpl.Status,
+                        CreateDate = tpl.CreatedAt ?? default,
+                        UpdateDate = tpl.UpdatedAt ?? default
+                    };
+
+                    var trainer = await _unitOfWork.TrainingPlanRepository.GetOwnerByTrainingPlanId(tpl.Id);
+                    a.TrainerId = trainer.Id;
+                    a.FirstName = trainer.FirstName;
+                    a.LastName = trainer.LastName;
+                    res.Add(a);
+                }
+                //List<TrainingPlanResponse> res = tplans.Select(
+                //tplan =>
+                //{
+                //    return new TrainingPlanResponse()
+                //    {
+                //        Id = tplan.Id,
+                //        Name = tplan.Name,
+                //        Status = tplan.Status
+                //    };
+                //}
+                //).ToList();
+
+                int totalItem = res.Count;
+
+                res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                        .Take(paging.PageSize).ToList();
+
+                var result = new BasePagingViewModel<TrainingPlanResponse>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = res
+                };
+                return result;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanListByOwner(int id, PagingRequestModel paging, string keyword, int? status)
+        {
+            try
+            {
+                //var tplans = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanListByOwnerId(id);
+                List<TrainingPlan> tplans = new List<TrainingPlan>();
+                if (keyword == null && status == null)
+                {
+                    tplans = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanListByOwnerId(id);
+                }
+                else if (status == null)
+                {
+                    keyword = keyword.ToLower();
+                    tplans = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanListByOwnerSearchKeyword(id, keyword);
+                }
+                else if (keyword == null)
+                {
+                    //if (status == CommonEnums.TRAINING_PLAN_STATUS.DELETED)
+                    //{
+                    //    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Status Invalid!");
+                    //}
+                    var list = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanListByOwnerId(id);
+                    tplans = list.Where(u => u.Status == status).ToList();
+
+                }
+                else if (keyword != null && status != null)
+                {
+                    //if (status == CommonEnums.TRAINING_PLAN_STATUS.DELETED)
+                    //{
+                    //    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Status Invalid!");
+                    //}
+                    keyword = keyword.ToLower();
+                    var list = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanListByOwnerSearchKeyword(id, keyword);
+                    tplans = list.Where(u => u.Status == status).ToList();
+                }
+
+                List<TrainingPlanResponse> res = tplans.Select(
+                    tplan =>
+                    {
+                        return new TrainingPlanResponse()
+                        {
+                            Id = tplan.Id,
+                            Name = tplan.Name,
+                            Status = tplan.Status,
+                            CreateDate = tplan.CreatedAt ?? default,
+                            UpdateDate = tplan.UpdatedAt ?? default 
+                        };
+                    }
+                    ).ToList();
+
+                int totalItem = res.Count;
+
+                res = res.Skip((paging.PageIndex - 1) * paging.PageSize)
+                        .Take(paging.PageSize).ToList();
+
+                var result = new BasePagingViewModel<TrainingPlanResponse>()
+                {
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    TotalItem = totalItem,
+                    TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                    Data = res
+                };
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        //public async Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanListPending(PagingRequestModel paging, string keyword)
+        //{
+        //    try
+        //    {
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
+
+
+        //public async Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanListDeniedForOwner(int trainerId, PagingRequestModel paging, string keyword)
+        //{
+        //    try
+        //    {
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
+
+        public async Task AssignTraineeToTrainingPlan(int trainerId, AssignTrainingPlanForTraineeRequest request)
+        {
+            try
+            {
+                var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(trainerId, request.TrainingPlanId);
                 if (check == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan not found or you not the owner of this training plan!");
                 }
 
-                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndStatusActive(planId);
+                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndStatusActive(request.TrainingPlanId);
                 if (tp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Not found training plan!");
                 }
 
-                UserTrainingPlan utp = new()
+                foreach (var item in request.Trainees)
                 {
-                    UserId = traineeId,
-                    TrainingPlanId = planId,
-                    IsOwner = false
-                };
-                await _unitOfWork.UserTrainingPlanRepository.Add(utp);
+                    var trainee = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(item.TraineeId);
+                    if (trainee == null || trainee.UserReferenceId != trainerId)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Not found trainee or this is not your assiged trainee!");
+                    }
+
+                    var checkExist = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanById(item.TraineeId, request.TrainingPlanId);
+                    if (checkExist != null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Trainee "+ trainee.FirstName + " has been assigned to a training plan!");
+                    }
+
+                    UserTrainingPlan utp = new()
+                    {
+                        UserId = item.TraineeId,
+                        TrainingPlanId = request.TrainingPlanId,
+                        IsOwner = false
+                    };
+                    await _unitOfWork.UserTrainingPlanRepository.Add(utp);
+                    await _notificationService.CreateNotificaion(item.TraineeId, "Training Plan Assigned",
+                                                "You have been assigned to a training plan.", CommonEnums.NOTIFICATION_TYPE.TRAINING_PLAN_TYPE);
+                }
             }
             catch (Exception ex)
             {
@@ -258,24 +466,26 @@ namespace BusinessLayer.Service.Implement
                     CreatedAt = DateTime.UtcNow.AddHours(7)
                 };
 
-                ICollection<TrainingPlanDetail> re = new List<TrainingPlanDetail>();
-                foreach (var detail in request.Details)
+                if (request.Details != null && request.Details.Count != 0)
                 {
-                    TrainingPlanDetail tpd = new()
+                    ICollection<TrainingPlanDetail> re = new List<TrainingPlanDetail>();
+                    foreach (var detail in request.Details)
                     {
-                        Name = detail.Name,
-                        Description = detail.Description,
-                        StartTime = detail.StartTime,
-                        EndTime = detail.EndTime,
-                        IsEvaluativeTask = detail.IsEvaluativeTask,
-                        Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.ACTIVE,
-                        CreatedAt = DateTime.UtcNow.AddHours(7),
-                        TrainingPlanId = tp.Id
-                    };
-                    re.Add(tpd);
+                        TrainingPlanDetail tpd = new()
+                        {
+                            Name = detail.Name,
+                            Description = detail.Description,
+                            StartTime = detail.StartTime,
+                            EndTime = detail.EndTime,
+                            //IsEvaluativeTask = detail.IsEvaluativeTask,
+                            Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.ACTIVE,
+                            CreatedAt = DateTime.UtcNow.AddHours(7),
+                            TrainingPlanId = tp.Id
+                        };
+                        re.Add(tpd);
+                    }
+                    tp.TrainingPlanDetails = re;
                 }
-
-                tp.TrainingPlanDetails = re;
 
                 await _unitOfWork.TrainingPlanRepository.Add(tp);
 
@@ -303,7 +513,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan not found or You not the owner of this training plan !");
                 }
-                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(planId);
+                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanById(planId);
                 if (tp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
@@ -313,9 +523,94 @@ namespace BusinessLayer.Service.Implement
                 {
                     tp.Name = request.Name;
                 }
+
+                if (request.Details != null && request.Details.Count != 0) 
+                {
+                    ICollection<TrainingPlanDetail> re = new List<TrainingPlanDetail>();
+                    foreach (var detail in request.Details)
+                    {
+                        if (detail.Id != null)
+                        {
+                            var tpd = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailById(detail.Id ?? default);
+                            if (tpd == null)
+                            {
+                                throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Training plan detail updated not found !");
+                            }
+                            tpd.Name = detail.Name;
+                            tpd.Description = detail.Description;
+                            tpd.StartTime = detail.StartTime;
+                            tpd.EndTime = detail.EndTime;
+                            //tpd.IsEvaluativeTask = detail.IsEvaluativeTask; 
+                            tpd.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                            re.Add(tpd);
+                        }
+                        else
+                        {
+                            TrainingPlanDetail td = new()
+                            {
+                                Name = detail.Name,
+                                Description = detail.Description,   
+                                StartTime = detail.StartTime,   
+                                EndTime = detail.EndTime,
+                                //IsEvaluativeTask = detail.IsEvaluativeTask,
+                                Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.ACTIVE,
+                                CreatedAt = DateTime.UtcNow.AddHours(7)
+                        };
+                            re.Add(td);
+                        }
+                    }   
+                    tp.TrainingPlanDetails = re;    
+                }
+
                 tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.TrainingPlanRepository.Update(tp);
 
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task UpdateTrainingPlanDetail(int userId, int detailId, CreateTrainingPlanDetailRequest request)
+        {
+            try
+            {
+                //var detail = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailByIdAndNotDeleted(detailId);
+                var detail = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailById(detailId);
+                if (detail == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan detail not found !");
+                }
+                var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(userId, detail.TrainingPlanId);
+                if (check == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "You are not the owner of this training plan detail !");
+                }
+
+                if (request.Name != null)
+                {
+                    detail.Name = request.Name;
+                }
+                if (request.Description != null)
+                {
+                    detail.Description = request.Description;
+                }
+                if (request.StartTime != null)
+                {
+                    detail.StartTime = request.StartTime;
+                }
+                if (request.EndTime != null)
+                {
+                    detail.EndTime = request.EndTime;
+                }
+                //if (request.IsEvaluativeTask != null)
+                //{
+                //    detail.IsEvaluativeTask = request.IsEvaluativeTask;
+                //}
+
+                detail.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                await _unitOfWork.TrainingPlanDetailRepository.Update(detail);
             }
             catch (Exception ex)
             {
@@ -332,7 +627,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan not found or You not the owner of this training plan !");
                 }
-                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(planId);
+                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanById(planId);
                 if (tp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
@@ -361,7 +656,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan not found or You not the owner of this training plan !");
                 }
-                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(planId);
+                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanById(planId);
                 if (tp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
@@ -381,7 +676,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task CreateTrainingPlanDetailForExistingTrainingPlan(int userId, int planId, CreateTrainingPlanDetailRequest request)
+        public async Task CreateTrainingPlanDetailForExistingTrainingPlan(int userId, int planId, List<CreateTrainingPlanDetailRequest> request)
         {
             try
             {
@@ -390,23 +685,27 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan not found or You not the owner of this training plan !");
                 }
-                var tpcheck = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(planId);
+                var tpcheck = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanById(planId);
                 if (tpcheck == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
                 }
-                TrainingPlanDetail tpd = new()
+
+                foreach (var item in request) 
                 {
-                    Name = request.Name,
-                    Description = request.Description,
-                    StartTime = request.StartTime,
-                    EndTime = request.EndTime,
-                    IsEvaluativeTask = request.IsEvaluativeTask,
-                    CreatedAt = DateTime.UtcNow.AddHours(7),
-                    Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.ACTIVE,
-                    TrainingPlanId = planId
-                };
-                await _unitOfWork.TrainingPlanDetailRepository.Add(tpd);
+                    TrainingPlanDetail tpd = new()
+                    {
+                        Name = item.Name,
+                        Description = item.Description,
+                        StartTime = item.StartTime,
+                        EndTime = item.EndTime,
+                        //IsEvaluativeTask = item.IsEvaluativeTask,
+                        CreatedAt = DateTime.UtcNow.AddHours(7),
+                        Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.ACTIVE,
+                        TrainingPlanId = planId
+                    };
+                    await _unitOfWork.TrainingPlanDetailRepository.Add(tpd); 
+                }
             }
             catch (Exception ex) 
             {
@@ -414,56 +713,11 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task UpdateTrainingPlanDetail(int userId, int detailId, CreateTrainingPlanDetailRequest request) 
-        {
-            try
-            {
-                var detail = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailByIdAndNotDeleted(detailId);
-                if (detail == null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan detail not found !");
-                }
-                var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(userId, detail.TrainingPlanId ?? default(int));
-                if (check == null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "You are not the owner of this training plan detail !");
-                }
-
-                if (request.Name != null)
-                {
-                    detail.Name = request.Name;
-                }
-                if (request.Description != null)
-                {
-                    detail.Description = request.Description;
-                }
-                if (request.StartTime != null)
-                {
-                    detail.StartTime = request.StartTime;
-                }
-                if (request.EndTime != null)
-                {
-                    detail.EndTime = request.EndTime;
-                }
-                if (request.IsEvaluativeTask != null)
-                {
-                    detail.IsEvaluativeTask = request.IsEvaluativeTask;
-                }
-
-                detail.UpdatedAt = DateTime.UtcNow.AddHours(7);
-                await _unitOfWork.TrainingPlanDetailRepository.Update(detail);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);    
-            }
-        }
-
         public async Task AcceptTrainingPlan(int id)
         {
             try
             {
-                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(id);
+                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanById(id);
                 if (tp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
@@ -473,9 +727,18 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan is not on Pending status !");
                 }
 
+                var owner = await _unitOfWork.TrainingPlanRepository.GetOwnerByTrainingPlanId(id);
+                if (owner == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Owner not found!");
+                }
+
                 tp.Status = CommonEnums.TRAINING_PLAN_STATUS.ACTIVE;
                 tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.TrainingPlanRepository.Update(tp);
+
+                await _notificationService.CreateNotificaion(owner.Id, "Training Plan Accepted",
+                      "Your training plan is accepted.", CommonEnums.NOTIFICATION_TYPE.TRAINING_PLAN_TYPE);
             }
             catch (Exception ex)
             {
@@ -487,7 +750,7 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(id);
+                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanById(id);
                 if (tp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
@@ -497,9 +760,18 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan is not on Pending status !");
                 }
 
+                var owner = await _unitOfWork.TrainingPlanRepository.GetOwnerByTrainingPlanId(id);
+                if (owner == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Owner not found!");
+                }
+
                 tp.Status = CommonEnums.TRAINING_PLAN_STATUS.DENIED;
                 tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.TrainingPlanRepository.Update(tp);
+
+                await _notificationService.CreateNotificaion(owner.Id, "Training Plan Accepted",
+                      "Your training plan is accepted.", CommonEnums.NOTIFICATION_TYPE.TRAINING_PLAN_TYPE);
             }
             catch (Exception ex)
             {
@@ -507,54 +779,54 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task DeleteTrainingPlan(int planId, int trainerId)
-        {
-            try
-            {
-                var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(trainerId, planId);
-                if (check == null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan not found or You not the owner of this training plan !");
-                }
-                var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanByIdAndNotDeleted(planId);
-                if (tp == null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
-                }
+        //public async Task DeleteTrainingPlan(int planId, int trainerId)
+        //{
+        //    try
+        //    {
+        //        var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(trainerId, planId);
+        //        if (check == null)
+        //        {
+        //            throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Training plan not found or You not the owner of this training plan !");
+        //        }
+        //        var tp = await _unitOfWork.TrainingPlanRepository.GetTrainingPLanById(planId);
+        //        if (tp == null)
+        //        {
+        //            throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
+        //        }
 
-                tp.Status = CommonEnums.TRAINING_PLAN_STATUS.DELETED;
-                tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
-                await _unitOfWork.TrainingPlanRepository.Update(tp);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+        //        tp.Status = CommonEnums.TRAINING_PLAN_STATUS.DELETED;
+        //        tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
+        //        await _unitOfWork.TrainingPlanRepository.Update(tp);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
 
-        public async Task DeleteTrainingPlanDetail(int detailId, int trainerId)
-        {
-            try
-            {
-                var detail = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailByIdAndNotDeleted(detailId);
-                if (detail == null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan detail not found !");
-                }
-                var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(trainerId, detail.TrainingPlanId ?? default(int));
-                if (check == null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "You are not the owner of this training plan detail !");
-                }
+        //public async Task DeleteTrainingPlanDetail(int detailId, int trainerId)
+        //{
+        //    try
+        //    {
+        //        var detail = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailByIdAndNotDeleted(detailId);
+        //        if (detail == null)
+        //        {
+        //            throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan detail not found !");
+        //        }
+        //        var check = await _unitOfWork.TrainingPlanRepository.GetUserTrainingPlanByIdAndIsOwner(trainerId, detail.TrainingPlanId ?? default(int));
+        //        if (check == null)
+        //        {
+        //            throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "You are not the owner of this training plan detail !");
+        //        }
 
-                detail.Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.DELETED;
-                detail.UpdatedAt = DateTime.UtcNow.AddHours(7);    
-                await _unitOfWork.TrainingPlanDetailRepository.Update(detail);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+        //        detail.Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.DELETED;
+        //        detail.UpdatedAt = DateTime.UtcNow.AddHours(7);    
+        //        await _unitOfWork.TrainingPlanDetailRepository.Update(detail);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
     }
 }

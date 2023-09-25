@@ -1,7 +1,7 @@
 ﻿using API.Hubs;
-using BusinessLayer.Models.RequestModel;
-using BusinessLayer.Models.RequestModel.UserRequest;
-using BusinessLayer.Models.ResponseModel.ExcelResponse;
+using BusinessLayer.Payload.RequestModel;
+using BusinessLayer.Payload.RequestModel.UserRequest;
+using BusinessLayer.Payload.ResponseModel.ExcelResponse;
 using BusinessLayer.Service.Implement;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
@@ -46,6 +46,10 @@ namespace API.Controllers.UserController
                 return StatusCode(StatusCodes.Status201Created,
                     "Create account successfully.");
             }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
@@ -55,12 +59,12 @@ namespace API.Controllers.UserController
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<IActionResult> GetAccountList([FromQuery] PagingRequestModel paging)
+        public async Task<IActionResult> GetAccountList([FromQuery] PagingRequestModel paging,string searchTerm, int? role,int? filterStatus)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                return Ok(await userService.GetUserList(paging));
+                return Ok(await userService.GetUserList(paging,searchTerm,role,filterStatus));
             }
             catch (Exception ex)
             {
@@ -69,32 +73,91 @@ namespace API.Controllers.UserController
             }
         }
         [Authorize(Roles = "Admin")]
-        [HttpPost("data-of-file-attendance")]
-        public async Task<IActionResult> UploadAttendanceFile(IFormFile file)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAccountDetail(int id)
         {
-            if (file == null || file.Length == 0)
-                return BadRequest("No file uploaded.");
-
             try
             {
-                var filePath = await _attendanceService.SaveTempFile(file); // Save the file temporarily on the server
-                var attendanceData = await _attendanceService.ProcessAttendanceFile(filePath); // Pass the file path to the service
-                return Ok(attendanceData);
+                var user = await userService.GetUserDetail(id);
+                return Ok(user);
             }
-            catch (Exception ex)
+            catch (ApiException ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
             }
         }
-
+        [Authorize(Roles = "Admin")]
+        [HttpPut("disable-user/{id}")]
+        public async Task<IActionResult> DisableUser(int id)
+        {
+            try
+            {
+                await userService.DisableUser(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.USER_MESSAGE.UPDATE);
+                return Ok("User is updated successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPut("active-user/{id}")]
+        public async Task<IActionResult> ActiveUser(int id)
+        {
+            try
+            {
+                await userService.ActiveUser(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.USER_MESSAGE.UPDATE);
+                return Ok("User is updated successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
         [Authorize(Roles = "Admin,Manager")]
         [HttpGet("trainer")]
-        public async Task<IActionResult> GetTrainerList([FromQuery] PagingRequestModel paging)
+        public async Task<IActionResult> GetTrainerList([FromQuery] PagingRequestModel paging, [FromQuery] string keyword, [FromQuery] int? position)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                return Ok(await userService.GetTrainerList(paging));
+                return Ok(await userService.GetTrainerList(paging, keyword, position));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Manager")]
+        [HttpGet("trainer/{trainerId}")]
+        public async Task<IActionResult> GetTrainerDetail(int trainerId)
+        {
+            try
+            {
+                return Ok(await userService.GetTrainerDetail(trainerId));
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
             }
             catch (Exception ex)
             {
@@ -105,12 +168,47 @@ namespace API.Controllers.UserController
 
         [Authorize(Roles = "Admin,Manager")]
         [HttpGet("trainee")]
-        public async Task<IActionResult> GetTraineeList([FromQuery] PagingRequestModel paging)
+        public async Task<IActionResult> GetTraineeList([FromQuery] PagingRequestModel paging, [FromQuery] string keyword, [FromQuery] int? position)
         {
             try
             {
                 paging = PagingUtil.checkDefaultPaging(paging);
-                return Ok(await userService.GetTraineeList(paging));
+                return Ok(await userService.GetTraineeList(paging, keyword, position));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Manager")]
+        [HttpGet("unassigned-trainee")]
+        public async Task<IActionResult> GetUnassignedTraineeList()
+        {
+            try
+            {
+                return Ok(await userService.GetUnassignedTraineeList());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainer,Manager")]
+        [HttpGet("trainee/{traineeId}")]
+        public async Task<IActionResult> GetTraineeDetail (int traineeId)
+        {
+            try
+            {
+                int id = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await userService.GetTraineeDetail(id, traineeId));
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
             }
             catch (Exception ex)
             {
@@ -125,10 +223,14 @@ namespace API.Controllers.UserController
         {
             try
             {
-                //await userService.AssignTraineeToTrainer(trainerId, traineeId);
                 await userService.AssignTraineeToTrainer(request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.USER_MESSAGE.ASSIGNED);
                 return StatusCode(StatusCodes.Status201Created,
                     "Assign successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
             }
             catch (Exception ex)
             {
@@ -146,6 +248,23 @@ namespace API.Controllers.UserController
                 paging = PagingUtil.checkDefaultPaging(paging);
                 int id = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 return Ok(await userService.GetTraineeListByTrainer(id, paging));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Manager")]
+        [HttpGet("manager/trainee-list/{trainerId}")]
+        public async Task<IActionResult> GetTraineeListByTrainerForManager([FromQuery] PagingRequestModel paging, int trainerId)
+        {
+            try
+            {
+                paging = PagingUtil.checkDefaultPaging(paging);
+                //int id = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await userService.GetTraineeListByTrainer(trainerId, paging));
             }
             catch (Exception ex)
             {

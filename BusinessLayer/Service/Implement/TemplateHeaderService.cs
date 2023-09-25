@@ -1,6 +1,10 @@
-﻿using BusinessLayer.Models.RequestModel.CriteriaRequest;
+﻿using BusinessLayer.Payload.RequestModel.CriteriaRequest;
+using BusinessLayer.Payload.RequestModel.TemplateHeaderRequest;
+using BusinessLayer.Payload.ResponseModel.TemplateResponse;
 using BusinessLayer.Service.Interface;
+using BusinessLayer.Utilities;
 using DataAccessLayer.Base;
+using DataAccessLayer.Commons;
 using DataAccessLayer.Interface;
 using DataAccessLayer.Models;
 using OfficeOpenXml;
@@ -19,29 +23,158 @@ namespace BusinessLayer.Service.Implement
          {
              _unitOfWork = unitOfWork;
          }
-        public List<string> GetPropertyData(List<User> userList, string propertyName)
+        public async Task AddTemplateHeader(int templateId, CreateTemplateHeaderRequest request)
         {
-            var propertyType = typeof(User).GetProperty(propertyName)?.PropertyType;
-
-            if (propertyType == null || propertyType != typeof(string))
+            try
             {
-                throw new ArgumentException($"Property '{propertyName}' is not of type string in the User class.");
+                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId);
+                if (temp == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template not found");
+                }
+                var activeojt = await _unitOfWork.OJTBatchRepository.GetlistActiveOjtbatchWithTemplate(templateId);
+                if (activeojt.Any())
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Template header is used in active batch");
+                }
+                var temheader = new TemplateHeader()
+                {
+                    Name = request.Name,
+                    IsCriteria = request.IsCriteria,
+                    MatchedAttribute = request.MatchedAttribute,
+                    Order = request.Order,
+                    Status = CommonEnums.TEMPLATEHEADER_STATUS.ACTIVE,
+                    FormulaId = request.FormulaId,
+                    TemplateId = templateId,
+                    TotalPoint = request.TotalPoint,
+                    CreatedAt = DateTime.UtcNow.AddHours(7),
+                    UpdatedAt = DateTime.UtcNow.AddHours(7)
+                };
+                await _unitOfWork.TemplateHeaderRepository.Add(temheader);
             }
-
-            var values = userList.Select(user => user.GetType().GetProperty(propertyName)?.GetValue(user)?.ToString())
-                                 .Where(value => value != null)
-                                 .ToList();
-            return values;
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
         }
-        //public async Task<Criteria> CreateCriteria(CreateCriteriaRequest request)
-        //{
-        //    var criteria= new Criteria();
-        //    criteria.Name = request.Name;
-        //    criteria.TotalPoint= request.TotalPoint;
-        //    criteria.CreatedAt=DateTime.Now;
-        //    //criteria.IsDeleted = false;
-        //    await _unitOfWork.CriteriaRepository.Add(criteria);
-        //    return criteria;
-        //}
+
+        public async Task UpdateTemplateHeader(int templateId, UpdateTemplateHeaderRequest request)
+        {
+            try
+            {
+                var temp = await _unitOfWork.TemplateHeaderRepository.GetFirst(c => c.Id == templateId, "UserCriterias");
+                if (temp == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template not found");
+                }
+                var activeojt = await _unitOfWork.OJTBatchRepository.GetlistActiveOjtbatchWithTemplate(templateId);
+                if (activeojt.Any())
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Template header is used in active batch");
+                }
+                temp.MatchedAttribute = request.MatchedAttribute;
+                temp.Name = request.Name;
+                temp.Order = request.Order;
+                temp.Status = request.Status;
+                temp.IsCriteria= request.IsCriteria;
+                temp.FormulaId = request.FormulaId;
+                temp.TotalPoint = request.TotalPoint;
+                temp.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                await _unitOfWork.TemplateHeaderRepository.Update(temp);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+        public async Task<List<ListTemplateHeaderCriteriaResponse>> GetCriteriaTemplateHeader(int templateId)
+        {
+            try
+            {               
+                var list = await _unitOfWork.TemplateHeaderRepository.Get(c=>c.TemplateId==templateId && c.IsCriteria==true);
+                if(list==null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND,"There is no criteria template header");
+                }
+                var response= list.OrderBy(c=>c.Order).Select(
+                    r=>
+                    {
+                        return new ListTemplateHeaderCriteriaResponse
+                        {
+                            TeamplateHeaderId = r.Id,
+                            Name = r.Name,
+                            MaxPoint=r.TotalPoint
+                        };
+                    }                  
+                    ).ToList();
+                return response;
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task DisableTemplateHeader(int templateId)
+        {
+            try
+            {
+                var tempheader = await _unitOfWork.TemplateHeaderRepository.GetFirst(c => c.Id == templateId);
+                if (tempheader == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template header not found");
+                }
+                var activeojt = await _unitOfWork.OJTBatchRepository.GetlistActiveOjtbatchWithTemplate(tempheader.TemplateId);
+                if (activeojt.Any())
+                {
+
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Template header is used in active batch");
+                }
+                tempheader.Status = CommonEnums.TEMPLATEHEADER_STATUS.INACTIVE;
+                await _unitOfWork.TemplateHeaderRepository.Update(tempheader);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task ActiveTemplateHeader(int templateId)
+        {
+            try
+            {
+                var tempheader = await _unitOfWork.TemplateHeaderRepository.GetFirst(c => c.Id == templateId);
+                if (tempheader == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template header not found");
+                }
+                tempheader.Status = CommonEnums.TEMPLATEHEADER_STATUS.ACTIVE;
+                await _unitOfWork.TemplateHeaderRepository.Update(tempheader);
+            }
+            catch (ApiException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }

@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using System;
-using BusinessLayer.Models.RequestModel.AuthenticationRequest;
+using BusinessLayer.Payload.RequestModel.AuthenticationRequest;
 using BusinessLayer.Utilities;
-using BusinessLayer.Models.ResponseModel.AuthenticationResponse;
+using BusinessLayer.Payload.ResponseModel.AuthenticationResponse;
 using DataAccessLayer.Commons;
 
 namespace API.Controllers.AuthenticationController
@@ -22,8 +22,8 @@ namespace API.Controllers.AuthenticationController
         public AuthenticationController(IUserService userService)
         {
             this.userService = userService;
-        } 
-        
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
@@ -57,9 +57,9 @@ namespace API.Controllers.AuthenticationController
                     return BadRequest("Invalid Credentials");
                 }
             }
-            catch (ApiException e)
+            catch (ApiException ex)
             {
-                return StatusCode(e.StatusCode, e.Message);
+                return StatusCode(ex.StatusCode, ex.Message);
             }
             catch (Exception ex)
             {
@@ -142,6 +142,10 @@ namespace API.Controllers.AuthenticationController
                 await userService.SendTokenResetPassword(email);
                 return Ok("Reset code sent to your email.");
             }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
@@ -157,6 +161,10 @@ namespace API.Controllers.AuthenticationController
                 await userService.VerifyResetCode(request.ResetCode);
                 return Ok("Reset code correct.");
             }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
@@ -165,13 +173,17 @@ namespace API.Controllers.AuthenticationController
         }
 
         // After successfully verify reset code, go to this API
-        [HttpPost("reset-password")]
+        [HttpPut("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
             try
             {
                 await userService.ResetPassword(request);
                 return Ok("Reset password successfully!");
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
             }
             catch (Exception ex)
             {

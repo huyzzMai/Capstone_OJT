@@ -20,12 +20,23 @@ namespace DataAccessLayer.Repository.Implement
 
         public async Task<List<TaskAccomplished>> GetListTaskAccomplishedOfTrainee(int userId)
         {
-            var list = await _context.TaskAccomplisheds.Where(u => u.UserId == userId)
+            var list = await _context.TaskAccomplisheds
+                       .Where(u => u.UserId == userId)
+                       .Include(u => u.User)
                        .ToListAsync();
             return list;
         }
 
-        public async Task<TaskAccomplished> GastTaskByIdAndStatusPending(string taskId)
+        public async Task<TaskAccomplished> GetTaskAccomplishedById(int id)
+        {
+            var task = await _context.TaskAccomplisheds
+                                     .Where(u => u.Id == id) 
+                                     .Include(u => u.User)
+                                     .FirstOrDefaultAsync();    
+            return task;    
+        }
+
+        public async Task<TaskAccomplished> GastTaskByIdAndStatusPending(int taskId)
         {
             var task = await _context.TaskAccomplisheds
                                      .Where(u => u.Id == taskId && u.Status == CommonEnums.ACCOMPLISHED_TASK_STATUS.PENDING)
@@ -34,5 +45,45 @@ namespace DataAccessLayer.Repository.Implement
             return task;
         }
 
+        public async Task<TaskAccomplished> GetTaskAccomplishedByTrelloTaskId(string trelloTaskId)
+        {
+            var task = await _context.TaskAccomplisheds
+                                     .Where(u => u.TrelloTaskId == trelloTaskId)
+                                     .Include(u => u.User)
+                                     .FirstOrDefaultAsync();
+            return task;
+        }
+
+        public async Task<TaskAccomplished> GetMatchingTask(string trelloTaskId, int userId)
+        {
+            var task = await _context.TaskAccomplisheds
+                                     .Where(u => u.TrelloTaskId == trelloTaskId && u.UserId == userId)
+                                     .FirstOrDefaultAsync();
+            return task;
+        }
+
+        public async Task<List<TaskAccomplished>> GetListTaskPendingOfTrainee(int userId)
+        {
+            var list = await _context.TaskAccomplisheds
+                       .Where(u => u.UserId == userId && u.Status == CommonEnums.ACCOMPLISHED_TASK_STATUS.PENDING)
+                       .ToListAsync();
+            return list;
+        }
+
+        public async Task<List<TaskAccomplished>> GetListTaskAccomplishedDoneOfTrainee(int userId)
+        {
+            var list = await _context.TaskAccomplisheds
+                       .Where(u => u.UserId == userId && u.Status == CommonEnums.ACCOMPLISHED_TASK_STATUS.DONE)
+                       .ToListAsync();
+            return list;
+        }
+
+        public async Task<List<TaskAccomplished>> GetListTaskAccomplishedFailedOfTrainee(int userId)
+        {
+            var list = await _context.TaskAccomplisheds
+                       .Where(u => u.UserId == userId && u.Status == CommonEnums.ACCOMPLISHED_TASK_STATUS.FAILED)
+                       .ToListAsync();
+            return list;
+        }
     }
 }
