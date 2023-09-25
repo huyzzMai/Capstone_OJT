@@ -27,9 +27,6 @@ namespace BusinessLayer.Service.Interface
         Task<List<ListTemplateUniversityResponse>> GetTemplateUniversityList(int uniId);
 
         Task<TemplateDetailResponse> GetTemplateDetail(int templateId);
-
-        Task AddTemplateHeader(int templateId, CreateTemplateHeaderRequest request);
-
-        Task UpdateTemplateHeader(int templateId, UpdateTemplateHeaderRequest request);
+        
     }
 }

@@ -848,8 +848,19 @@ namespace BusinessLayer.Service.Implement
 
         public async Task CreateUserCriteria(int userid,int batchId)
         {
-            var ojtbatch = await _unitOfWork.OJTBatchRepository.GetFirst(c=>c.Id==batchId);
-            var template = await _unitOfWork.TemplateRepository.GetFirst(c=>c.Id == ojtbatch.TemplateId, "TemplateHeaders");
+            var currentdate= DateTimeService.GetCurrentDateTime();
+            var ojtbatch = await _unitOfWork.OJTBatchRepository.GetFirst(c=>c.Id==batchId 
+            && c.StartTime.Value.Date.AddDays(10) >= currentdate.Date);
+            if (ojtbatch == null)
+            {
+                throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Invalid ojt bacth");
+            }
+            var template = await _unitOfWork.TemplateRepository.GetFirst(c=>c.Id == ojtbatch.TemplateId 
+            && c.Status==CommonEnums.TEMPLATE_STATUS.ACTIVE, "TemplateHeaders");
+            if(template == null)
+            {
+                throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Template not found");
+            }
             foreach (var item in template.TemplateHeaders)
             {
                 if(item.IsCriteria==true && item.Status==CommonEnums.TEMPLATEHEADER_STATUS.ACTIVE)
@@ -863,7 +874,7 @@ namespace BusinessLayer.Service.Implement
                     };
                     await _unitOfWork.UserCriteriaRepository.Add(usercriteria);
                 }            
-            }
+            }      
         }
         public async Task CreateUser(CreateUserRequest request)
         {
@@ -946,6 +957,10 @@ namespace BusinessLayer.Service.Implement
                 }
                 var sender = new MailSender();
                 sender.SendMailCreateAccount(user.Email, user.FirstName, user.Email, pwd);
+            }
+            catch (ApiException e)
+            {
+                throw e;
             }
             catch (Exception ex)
             {

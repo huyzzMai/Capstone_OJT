@@ -29,28 +29,7 @@ namespace API.Controllers.TemplateController
             _headerservice = headerService;
             _hubContext = hubContext;
         }
-
-        [Authorize(Roles = "Manager,Trainer")]
-        [Route("template-header/criteriaheader/{templateId}")]
-        [HttpGet]
-        public async Task<IActionResult> GetListcriteriaheader(int templateId)
-        {
-            try
-            {
-                var list = await _headerservice.GetCriteriaTemplateHeader(templateId);
-                return Ok(list);
-
-            }
-            catch (ApiException ex)
-            {
-                return StatusCode(ex.StatusCode, ex.Message);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                  e.Message);
-            }
-        }
+      
 
         [Authorize(Roles = "Manager")]
         [HttpGet]
@@ -95,68 +74,7 @@ namespace API.Controllers.TemplateController
                   e.Message);
             }
         }
-        [Authorize(Roles = "Manager")]
-        [HttpPost]
-        public async Task<IActionResult> Createtemplate([FromBody] CreateTemplateRequest request)
-        {
-            try
-            {
-                await _service.CreateTemplate(request);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATE_SIGNALR_MESSAGE.CREATED);
-                return StatusCode(StatusCodes.Status201Created, "Template is created successfully");
-            }
-            catch (ApiException ex)
-            {
-                return StatusCode(ex.StatusCode, ex.Message);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                  e.Message);
-            }
-        }
-        [Authorize(Roles = "Manager")]     
-        [Route("template-header/{templateId}")]
-        [HttpPost]
-        public async Task<IActionResult> Createtemplateheader(int templateId,[FromBody] CreateTemplateHeaderRequest request)
-        {
-            try
-            {
-                await _service.AddTemplateHeader(templateId,request);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATEHEADER_SIGNALR_MESSAGE.CREATED);
-                return StatusCode(StatusCodes.Status201Created, "Template header is add to template successfully");
-            }
-            catch (ApiException ex)
-            {
-                return StatusCode(ex.StatusCode, ex.Message);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                  e.Message);
-            }
-        }
-        [Authorize(Roles = "Manager")]      
-        [Route("template-header/{templateId}")]
-        [HttpPut]
-        public async Task<IActionResult> UpdateTemplate(int templateId, [FromBody] UpdateTemplateHeaderRequest request)
-        {
-            try
-            {
-                await _service.UpdateTemplateHeader(templateId, request);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATEHEADER_SIGNALR_MESSAGE.UPDATED);
-                return Ok("Template header is updated successfully.");
-            }
-            catch (ApiException ex)
-            {
-                return StatusCode(ex.StatusCode, ex.Message);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                  e.Message);
-            }
-        }
+
         [Authorize(Roles = "Manager")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTemplate(int id, [FromBody] UpdateTemplateRequest request)
@@ -177,6 +95,7 @@ namespace API.Controllers.TemplateController
                   e.Message);
             }
         }
+
         [Authorize(Roles = "Manager")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDetailTemplateById(int id)
@@ -195,7 +114,114 @@ namespace API.Controllers.TemplateController
                 return StatusCode(StatusCodes.Status500InternalServerError,
                   e.Message);
             }
-        }       
+        }
+
+        [Authorize(Roles = "Manager")]
+        [HttpPost]
+        public async Task<IActionResult> Createtemplate([FromBody] CreateTemplateRequest request)
+        {
+            try
+            {
+                await _service.CreateTemplate(request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATE_SIGNALR_MESSAGE.CREATED);
+                return StatusCode(StatusCodes.Status201Created, "Template is created successfully");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+
+        [Authorize(Roles = "Manager")]
+        [HttpPut("active-template/{id}")]
+        public async Task<IActionResult> ActiveTemplate(int id)
+        {
+            try
+            {
+                await _service.ActiveTemplate(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATE_SIGNALR_MESSAGE.UPDATED);
+                return Ok("Template is active successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+
+        [Authorize(Roles = "Manager,Trainer")]
+        [Route("template-header/criteriaheader/{templateId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetListcriteriaheader(int templateId)
+        {
+            try
+            {
+                var list = await _headerservice.GetCriteriaTemplateHeader(templateId);
+                return Ok(list);
+
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+
+        [Authorize(Roles = "Manager")]     
+        [Route("template-header/{templateId}")]
+        [HttpPost]
+        public async Task<IActionResult> Createtemplateheader(int templateId,[FromBody] CreateTemplateHeaderRequest request)
+        {
+            try
+            {
+                await _headerservice.AddTemplateHeader(templateId,request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATEHEADER_SIGNALR_MESSAGE.CREATED);
+                return StatusCode(StatusCodes.Status201Created, "Template header is add to template successfully");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        [Authorize(Roles = "Manager")]      
+        [Route("template-header/{templateId}")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateTemplate(int templateId, [FromBody] UpdateTemplateHeaderRequest request)
+        {
+            try
+            {
+                await _headerservice.UpdateTemplateHeader(templateId, request);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATEHEADER_SIGNALR_MESSAGE.UPDATED);
+                return Ok("Template header is updated successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }           
         [Authorize(Roles = "Manager")]
         [HttpPut("disable-template/{id}")]
         public async Task<IActionResult> DisableTemplate(int id)
@@ -217,14 +243,14 @@ namespace API.Controllers.TemplateController
             }
         }
         [Authorize(Roles = "Manager")]
-        [HttpPut("active-template/{id}")]
-        public async Task<IActionResult> ActiveTemplate(int id)
+        [HttpPut("template-header/disable-template/{id}")]
+        public async Task<IActionResult> DisableTemplateHeader(int id)
         {
             try
             {
-                await _service.ActiveTemplate(id);
-                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATE_SIGNALR_MESSAGE.UPDATED);
-                return Ok("Template is active successfully.");
+                await _headerservice.DisableTemplateHeader(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATEHEADER_SIGNALR_MESSAGE.UPDATED);
+                return Ok("Template header is disable successfully.");
             }
             catch (ApiException ex)
             {
@@ -236,5 +262,26 @@ namespace API.Controllers.TemplateController
                   e.Message);
             }
         }
+        [Authorize(Roles = "Manager")]
+        [HttpPut("template-header/active-template/{id}")]
+        public async Task<IActionResult> ActiveTemplateHeader(int id)
+        {
+            try
+            {
+                await _headerservice.ActiveTemplateHeader(id);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATEHEADER_SIGNALR_MESSAGE.UPDATED);
+                return Ok("Template header is active successfully.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                  e.Message);
+            }
+        }
+        
     }
 }

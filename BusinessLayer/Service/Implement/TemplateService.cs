@@ -25,39 +25,7 @@ namespace BusinessLayer.Service.Implement
             _unitOfWork = unitOfWork;
         }
 
-        public async Task AddTemplateHeader(int templateId, CreateTemplateHeaderRequest request)
-        {
-            try
-            {
-                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId);
-                if (temp == null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template not found");
-                }
-                var temheader = new TemplateHeader()
-                {
-                    Name = request.Name,
-                    IsCriteria = request.IsCriteria,
-                    MatchedAttribute = request.MatchedAttribute,
-                    Order = request.Order,
-                    Status = CommonEnums.TEMPLATEHEADER_STATUS.ACTIVE,
-                    FormulaId = request.FormulaId,
-                    TemplateId = templateId,
-                    TotalPoint = request.TotalPoint,
-                    CreatedAt = DateTime.UtcNow.AddHours(7),
-                    UpdatedAt = DateTime.UtcNow.AddHours(7)
-                };
-                await _unitOfWork.TemplateHeaderRepository.Add(temheader);
-            }
-            catch (ApiException ex)
-            {
-                throw ex;
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-        }
+        
 
         public async Task CreateTemplate(CreateTemplateRequest request)
         {
@@ -97,21 +65,7 @@ namespace BusinessLayer.Service.Implement
                         UpdatedAt = DateTime.UtcNow.AddHours(7),
 
                     };
-                    await _unitOfWork.TemplateHeaderRepository.Add(newtemp);
-                    //if (i.IsCriteria == true)
-                    //{
-                    //    foreach (var j in listuser)
-                    //    {
-                    //        var usercriteria = new UserCriteria()
-                    //        {
-                    //            UserId = j.Id,
-                    //            TemplateHeaderId = newtemp.Id,
-                    //            UpdatedDate = DateTime.UtcNow.AddHours(7),
-                    //            CreatedDate = DateTime.UtcNow.AddHours(7),
-                    //        };
-                    //        await _unitOfWork.UserCriteriaRepository.Add(usercriteria);
-                    //    }
-                    //}
+                    await _unitOfWork.TemplateHeaderRepository.Add(newtemp);                  
                 }
 
             }
@@ -129,20 +83,17 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId);
-                var tempheader = await _unitOfWork.TemplateHeaderRepository.Get(c =>c.TemplateId==templateId,"UserCriterias");                           
+                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId);                                      
                 if (temp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template not found");
                 }
-                if (tempheader.Any())
+                var activeojt = await _unitOfWork.OJTBatchRepository.GetlistActiveOjtbatchWithTemplate(templateId);
+                if (activeojt.Any())
                 {
-                    temp.TemplateHeaders = tempheader.ToList();
-                    if (temp.TemplateHeaders.Any(header => header.UserCriterias.Any()))
-                    {
-                        throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "There are some trainees use this template");
-                    }
-                }             
+
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Template is used in active batch");
+                }
                 temp.Status = CommonEnums.TEMPLATE_STATUS.INACTIVE;
                 await _unitOfWork.TemplateRepository.Update(temp);
             }
@@ -300,25 +251,19 @@ namespace BusinessLayer.Service.Implement
                 var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId);
                 if (temp == null)
                 {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Template not found");
-                }
-                var tempheader = await _unitOfWork.TemplateHeaderRepository.Get(c => c.TemplateId == templateId, "UserCriterias");
-                if (temp == null)
-                {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template not found");
                 }
-                if (tempheader.Any())
+                var activeojt = await _unitOfWork.OJTBatchRepository.GetlistActiveOjtbatchWithTemplate(templateId);
+                if (activeojt.Any())
                 {
-                    temp.TemplateHeaders = tempheader.ToList();
-                    if (temp.TemplateHeaders.Any(header => header.UserCriterias.Any()))
-                    {
-                        throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "There are some trainees use this template");
-                    }
+                   
+                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Template is used in active batch");
                 }
                 temp.Name = request.Name;
                 temp.Status = request.Status;
                 temp.StartCell = request.StartCell;
                 temp.Url = request.Url;
+                temp.UniversityId = request.UniversityId;
                 temp.UpdatedAt = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.TemplateRepository.Update(temp);
             }
@@ -332,37 +277,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task UpdateTemplateHeader(int templateId, UpdateTemplateHeaderRequest request)
-        {
-            try
-            {
-                var temp = await _unitOfWork.TemplateHeaderRepository.GetFirst(c => c.Id == templateId, "UserCriterias");
-                if (temp == null)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template not found");
-                }           
-                if (temp.UserCriterias.Any())
-                {
-                   throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "There are some trainees use this template");
-                }
-                temp.MatchedAttribute = request.MatchedAttribute;
-                temp.Name=request.Name;
-                temp.Order = request.Order;
-                temp.Status = request.Status;
-                temp.FormulaId=request.FormulaId;
-                temp.TotalPoint=request.TotalPoint;
-                temp.UpdatedAt= DateTime.UtcNow.AddHours(7);
-                await _unitOfWork.TemplateHeaderRepository.Update(temp);              
-            }
-            catch (ApiException ex)
-            {
-                throw ex;
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-        }
+        
 
         public async Task<List<ListTemplateUniversityResponse>> GetTemplateUniversityList(int uniId)
         {
