@@ -21,7 +21,7 @@ namespace API.Controllers.ChartController
             this.userService = userService;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("batch-and-trainee/{year}")]
         public async Task<IActionResult> getBatchAndTrainee(int year)
         {

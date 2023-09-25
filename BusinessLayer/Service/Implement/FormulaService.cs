@@ -34,33 +34,28 @@ namespace BusinessLayer.Service.Implement
                 string pattern = @"\b[a-zA-Z]+\b";
 
                 List<string> variables = new List<string>();
-               if (expression.Contains("/0"))
-                {
-                    return false;
-                }
+
                 MatchEvaluator evaluator = (match) =>
                 {
-                    variables.Add(match.Value); 
-                    return "0"; 
+                    variables.Add(match.Value);
+                    return random.Next(1, 100).ToString();
                 };
-                string replacedExpression = Regex.Replace(expression, pattern, evaluator);
-                Expression ncalcExpression = new  Expression(expression); ;             
-                foreach (var variable in variables)
-                {
-                    int randomValue = random.Next(1, 100);
-                    ncalcExpression.Parameters[variable] = randomValue.ToString();
-                }
 
-                object result = ncalcExpression.Evaluate();
+                string replacedExpression = Regex.Replace(expression, pattern, evaluator);
+                Expression ncalcExpression = new Expression(replacedExpression);
+
+                var result=ncalcExpression.Evaluate(); // Thử tính toán biểu thức
+
                 if (result is double && double.IsInfinity((double)result))
                 {
                     return false;
                 }
-                return true;
+
+                return true; // Nếu không có ngoại lệ, biểu thức hợp lệ
             }
             catch
             {
-                return false;
+                return false; // Nếu có ngoại lệ, biểu thức không hợp lệ
             }
         }
         public async Task CreateFormula(CreateFormulaRequest request)
