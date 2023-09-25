@@ -110,7 +110,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET,"formula not found");
                 }
-                var ojt= await _unitOfWork.OJTBatchRepository.GetlistOjtbatchWithFormula(formulaId);
+                var ojt= await _unitOfWork.OJTBatchRepository.GetlistActiveOjtbatchWithFormula(formulaId);
                 if(ojt.Any())
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "formula in use some active batch");
@@ -253,7 +253,7 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "formula not found");
 
                 }
-                var ojt = await _unitOfWork.OJTBatchRepository.GetlistOjtbatchWithFormula(formulaId);
+                var ojt = await _unitOfWork.OJTBatchRepository.GetlistActiveOjtbatchWithFormula(formulaId);
                 if (ojt.Any())
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "formula in use some active batch");
