@@ -18,7 +18,16 @@ namespace BusinessLayer.Payload.ResponseModel.UserResponse
         public string RollNumber { get; set; }    
         public string AvatarURL { get; set; }   
         public string PositionName { get; set; }
-        public string StudentCode { get; set; } 
+        public string StudentCode { get; set; }
+
+        public class PersonalTrainerResponse
+        {
+            public string TrainerName { get; set; }
+            public string TrainerEmail { get; set; }
+            public string TrainerPhoneNumber { get; set; }
+            public string AvatarURL { get; set; }
+        }
+        public PersonalTrainerResponse TrainerResponse { get; set; }    
 
         public class PersonalSkillResponse
         {

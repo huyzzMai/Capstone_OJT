@@ -84,6 +84,7 @@ namespace DataAccessLayer.Repository.Implement
                         .Include(u => u.UserSkills)
                         .ThenInclude(u => u.Skill)
                         .Include(u => u.Position)
+                        .Include(u => u.Trainer)
                         .FirstOrDefaultAsync();
             return user;
         }

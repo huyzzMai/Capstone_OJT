@@ -47,7 +47,7 @@ namespace BusinessLayer.Service
             {
                 new OperandModel { Key = "TotalTask", Name = "Tổng task", Description = "miêu tả" },
                 new OperandModel { Key = "TaskOverdue", Name = "Tổng task trễ hạn", Description = "miêu tả" },
-                new OperandModel { Key = "TaskComplete", Name = "Tổng task làm đúng hạn", Description = "miêu tả" },
+                new OperandModel { Key = "TaskComplete", Name = "Tổng task được chấp thuận", Description = "miêu tả" },
                 new OperandModel { Key = "TaskFailed", Name = "Tổng số task thất bại", Description = "miêu tả" }
             };
         }

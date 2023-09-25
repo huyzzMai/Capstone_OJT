@@ -385,6 +385,14 @@ namespace BusinessLayer.Service.Implement
                     result.PositionName = user.Position.Name;
                 }
 
+                if (user.Trainer != null)
+                {
+                    result.TrainerResponse.TrainerName = user.Trainer.LastName + user.Trainer.FirstName;
+                    result.TrainerResponse.TrainerEmail = user.Trainer.Email;   
+                    result.TrainerResponse.AvatarURL = user.Trainer.AvatarURL;  
+                    result.TrainerResponse.TrainerPhoneNumber = user.Trainer.PhoneNumber;   
+                }
+
                 var listSkill = new List<PersonalUserResponse.PersonalSkillResponse>();
 
                 foreach (var sa in user.UserSkills)

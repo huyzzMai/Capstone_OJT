@@ -89,7 +89,26 @@ namespace API.Controllers.ChartController
             {
                 // Get id of current log in user 
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
-                return Ok(await _service.GetTopSkillByTrainee(userId)); 
+                return Ok(await _service.GetTopSkillByTrainee(userId));
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainer,Manager")]
+        [HttpGet("trainee-top-skill/{traineeId}")]
+        public async Task<IActionResult> GetTopSkillByTraineeForTrainerAndManager(int traineeId)
+        {
+            try
+            {
+                return Ok(await _service.GetTopSkillByTrainee(traineeId)); 
             }
             catch (ApiException ex)
             {
