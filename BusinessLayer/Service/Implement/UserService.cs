@@ -879,6 +879,12 @@ namespace BusinessLayer.Service.Implement
                 string pwd = GenerateRandomCharacter() + r;
                 string encryptPwd = EncryptPassword(pwd);
 
+                var rollNumberCheck = await _unitOfWork.UserRepository.GetUserByRollNumber(request.RollNumber);
+                if (rollNumberCheck != null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Roll number has been used!");
+                }
+
                 User user = new User()
                 {
                     Role = request.Role,
@@ -905,6 +911,11 @@ namespace BusinessLayer.Service.Implement
                     if (user.PositionId == null)
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Trainee or Trainer must have a Position!");
+                    }
+                    var positionCheck = await _unitOfWork.PositionRepository.GetFirst(s => s.Id == request.Position && s.Status == CommonEnums.POSITION_STATUS.ACTIVE);
+                    if (positionCheck == null)
+                    {
+                        throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Position invalid!");
                     }
                     var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
                     var trelloUsers = await client.GetMembersOfOrganizationAsync(_configuration["TrelloWorkspace:WorkspaceId"]); 
