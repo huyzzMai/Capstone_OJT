@@ -1221,6 +1221,7 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "User not found");
                 }
                 user.Status = CommonEnums.USER_STATUS.INACTIVE;
+                user.RefreshToken = null;
                 await _unitOfWork.UserRepository.Update(user);
             }
             catch (ApiException ex)
