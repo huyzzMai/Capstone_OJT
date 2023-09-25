@@ -27,10 +27,20 @@ namespace DataAccessLayer.Repository.Implement
             return result;
         }
 
-        public async Task<List<OJTBatch>> GetlistOjtbatchWithFormula(int formulaId)
+        public async Task<List<OJTBatch>> GetlistActiveOjtbatchWithFormula(int formulaId)
         {
             var listojt = await _context.OJTBatches
                 .Where(o=>o.Template.TemplateHeaders.Any(th=>th.FormulaId==formulaId) && o.EndTime.Value.AddDays(10) > DateTime.UtcNow.AddHours(7))
+                .Include(c => c.Template)
+                .ThenInclude(c => c.TemplateHeaders)
+                .ToListAsync();
+            return listojt;
+        }
+
+        public async Task<List<OJTBatch>> GetlistActiveOjtbatchWithTemplate(int temId)
+        {
+            var listojt = await _context.OJTBatches
+                .Where(o => o.TemplateId==temId && o.EndTime.Value.AddDays(10) > DateTime.UtcNow.AddHours(7))
                 .Include(c => c.Template)
                 .ThenInclude(c => c.TemplateHeaders)
                 .ToListAsync();

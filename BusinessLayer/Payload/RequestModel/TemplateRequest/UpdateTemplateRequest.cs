@@ -18,5 +18,7 @@ namespace BusinessLayer.Payload.RequestModel.TemplateRequest
         public string StartCell { get; set; }
         [Required]
         public int? Status { get; set; }
+        [Required]
+        public int UniversityId { get; set; }
     }
 }
