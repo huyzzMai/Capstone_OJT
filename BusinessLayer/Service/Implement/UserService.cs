@@ -16,12 +16,14 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using TrelloDotNet;
 using TrelloDotNet.Model;
+using static BusinessLayer.Payload.ResponseModel.UserResponse.PersonalUserResponse;
 
 //using static BusinessLayer.Models.ResponseModel.UserResponse.PersonalUserResponse;
 
@@ -387,10 +389,18 @@ namespace BusinessLayer.Service.Implement
 
                 if (user.Trainer != null)
                 {
-                    result.TrainerResponse.TrainerName = user.Trainer.LastName + user.Trainer.FirstName;
-                    result.TrainerResponse.TrainerEmail = user.Trainer.Email;   
-                    result.TrainerResponse.AvatarURL = user.Trainer.AvatarURL;  
-                    result.TrainerResponse.TrainerPhoneNumber = user.Trainer.PhoneNumber;   
+                    PersonalTrainerResponse trainer = new()
+                    {
+                        TrainerName = user.Trainer.LastName + user.Trainer.FirstName,
+                        AvatarURL = user.Trainer.AvatarURL,
+                        TrainerEmail = user.Trainer.Email,
+                        TrainerPhoneNumber = user.Trainer.PhoneNumber
+                    };
+                    result.TrainerResponse = trainer;
+                    //result.TrainerResponse.TrainerName = user.Trainer.LastName + user.Trainer.FirstName;
+                    //result.TrainerResponse.TrainerEmail = user.Trainer.Email;   
+                    //result.TrainerResponse.AvatarURL = user.Trainer.AvatarURL;  
+                    //result.TrainerResponse.TrainerPhoneNumber = user.Trainer.PhoneNumber;   
                 }
 
                 var listSkill = new List<PersonalUserResponse.PersonalSkillResponse>();
