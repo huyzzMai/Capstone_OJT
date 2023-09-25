@@ -23,6 +23,8 @@ namespace DataAccessLayer.Repository.Implement
             var tp = await _context.TrainingPlans
                      .Where(u => u.Id == id)
                      .Include(u => u.TrainingPlanDetails)
+                     .Include (u => u.UserTrainingPlans)
+                     .ThenInclude(u => u.User)
                      .FirstOrDefaultAsync();
             return tp;
         }

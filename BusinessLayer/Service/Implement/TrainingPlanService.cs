@@ -99,11 +99,17 @@ namespace BusinessLayer.Service.Implement
                                      }
                                      ).ToList()
                                      ;
+                    var trainer = tp.UserTrainingPlans.Where(u => u.IsOwner ==true).FirstOrDefault();   
                     var res = new TrainingPlanResponse()
                     {
                         Id = tp.Id,
                         Name = tp.Name,
                         Status = tp.Status,
+                        TrainerId = trainer.User.Id,
+                        FirstName = trainer.User.FirstName, 
+                        LastName = trainer.User.LastName,
+                        CreateDate = tp.CreatedAt ?? default,
+                        UpdateDate = tp.UpdatedAt ?? default,
                         Details = detailList
                     };
                     return res;
@@ -134,19 +140,39 @@ namespace BusinessLayer.Service.Implement
                                              Description = detail.Description,
                                              StartTime = detail.StartTime,
                                              EndTime = detail.EndTime,
-                                             //IsEvaluativeTask = detail.IsEvaluativeTask,
                                              Status = detail.Status,
                                          };
                                      }
                                      ).ToList()
                                      ;
+                    var trainer = tp.UserTrainingPlans.Where(u => u.IsOwner == true).FirstOrDefault();
                     var res = new TrainingPlanResponse()
                     {
                         Id = tp.Id,
                         Name = tp.Name,
                         Status = tp.Status,
+                        TrainerId = trainer.User.Id,
+                        FirstName = trainer.User.FirstName,
+                        LastName = trainer.User.LastName,
+                        CreateDate = tp.CreatedAt ?? default,
+                        UpdateDate = tp.UpdatedAt ?? default,
                         Details = detailList
                     };
+
+                    var listTrainee = new List<TrainingPlanResponse.AssignedTraineeResponse>();
+                    foreach (var ut in tp.UserTrainingPlans)
+                    {
+                        if (ut.IsOwner == false)
+                        {
+                            var s = new TrainingPlanResponse.AssignedTraineeResponse();
+                            s.TraineeName = ut.User.LastName + ut.User.FirstName;
+                            s.TraineeEmail = ut.User.Email;
+                            s.AvatarURL = ut.User.AvatarURL;
+                            listTrainee.Add(s);
+                        }
+                    }
+                    res.Trainees = listTrainee;
+
                     return res;
                 }
             }

@@ -19,6 +19,14 @@ namespace BusinessLayer.Payload.ResponseModel.TrainingPlanResponse
         public string FirstName { get; set; }
         public string LastName { get; set; }    
 
+        public class AssignedTraineeResponse
+        {
+            public string TraineeName { get; set; }
+            public string TraineeEmail { get; set; }
+            public string AvatarURL { get; set; }       
+        }
+        public List<AssignedTraineeResponse> Trainees { get; set; }     
+
         public List<TrainingPlanDetailResponse> Details { get; set; }
     }
 }
