@@ -15,6 +15,8 @@ namespace DataAccessLayer.Repository.Interface
 
         Task<User> GetUserByEmail(string email);
 
+        Task<User> GetUserByRollNumber(string rollNumber);  
+
         Task<User> GetUserByIdAndStatusActive(int id);
 
         Task<User> GetUserByResetCode(string token);

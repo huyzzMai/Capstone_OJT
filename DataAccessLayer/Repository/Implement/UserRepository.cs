@@ -41,6 +41,12 @@ namespace DataAccessLayer.Repository.Implement
             return user;
         }
 
+        public async Task<User> GetUserByRollNumber(string rollNumber)
+        {
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.RollNumber == rollNumber);
+            return user;
+        }
+
         public async Task<User> GetUserByIdAndStatusActive(int id)
         {
             User user = await _context.Users

@@ -165,7 +165,7 @@ namespace BusinessLayer.Service.Implement
                         if (ut.IsOwner == false)
                         {
                             var s = new TrainingPlanResponse.AssignedTraineeResponse();
-                            s.TraineeName = ut.User.LastName + ut.User.FirstName;
+                            s.TraineeName = ut.User.LastName + " " + ut.User.FirstName;
                             s.TraineeEmail = ut.User.Email;
                             s.AvatarURL = ut.User.AvatarURL;
                             listTrainee.Add(s);

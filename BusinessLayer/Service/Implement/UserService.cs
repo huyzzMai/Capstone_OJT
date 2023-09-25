@@ -851,10 +851,6 @@ namespace BusinessLayer.Service.Implement
             var currentdate= DateTimeService.GetCurrentDateTime();
             var ojtbatch = await _unitOfWork.OJTBatchRepository.GetFirst(c=>c.Id==batchId 
             && c.StartTime.Value.Date.AddDays(10) >= currentdate.Date);
-            if (ojtbatch == null)
-            {
-                throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Invalid ojt bacth");
-            }
             var template = await _unitOfWork.TemplateRepository.GetFirst(c=>c.Id == ojtbatch.TemplateId 
             && c.Status==CommonEnums.TEMPLATE_STATUS.ACTIVE, "TemplateHeaders");
             if(template == null)
@@ -894,6 +890,14 @@ namespace BusinessLayer.Service.Implement
                 if (rollNumberCheck != null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Roll number has been used!");
+                }
+
+                var currentdate = DateTimeService.GetCurrentDateTime();
+                var ojtbatch = await _unitOfWork.OJTBatchRepository.GetFirst(c => c.Id == request.BatchId
+                && c.StartTime.Value.Date.AddDays(10) >= currentdate.Date);
+                if (ojtbatch == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Invalid ojt bacth");
                 }
 
                 User user = new User()
