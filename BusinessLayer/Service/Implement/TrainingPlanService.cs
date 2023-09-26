@@ -2,6 +2,7 @@
 using BusinessLayer.Payload.RequestModel.TrainingPLanRequest;
 using BusinessLayer.Payload.ResponseModel;
 using BusinessLayer.Payload.ResponseModel.TrainingPlanResponse;
+using BusinessLayer.Payload.ResponseModel.UserResponse;
 using BusinessLayer.Service.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Commons;
@@ -408,6 +409,34 @@ namespace BusinessLayer.Service.Implement
         //    }
         //}
 
+        public async Task<List<UnassignedTraineeResponse>> GetListTraineeUnassignedTrainingPlan(int userId)
+        {
+            try
+            {
+                var trainees = await _unitOfWork.UserRepository.GetTraineeListByTrainerId(userId); 
+                trainees = trainees.Where(u => u.UserTrainingPlans.Count == 0).ToList();
+                List<UnassignedTraineeResponse> res = trainees.Select(
+                user =>
+                {
+                    return new UnassignedTraineeResponse()
+                    {
+                        Id = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Email = user.Email,
+                        AvatarURL = user.AvatarURL,
+                        PositionName = user.Position.Name
+                    };
+                }
+                ).ToList();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task AssignTraineeToTrainingPlan(int trainerId, AssignTrainingPlanForTraineeRequest request)
         {
             try
@@ -519,52 +548,103 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Training plan not found !");
                 }
 
-                if (request.Name != null)
+                if (tp.Status == CommonEnums.TRAINING_PLAN_STATUS.DENIED)
                 {
-                    tp.Name = request.Name;
-                }
-
-                if (request.Details != null && request.Details.Count != 0) 
-                {
-                    ICollection<TrainingPlanDetail> re = new List<TrainingPlanDetail>();
-                    foreach (var detail in request.Details)
+                    if (request.Name != null)
                     {
-                        if (detail.Id != null)
+                        tp.Name = request.Name;
+                    }
+
+                    if (request.Details != null && request.Details.Count != 0)
+                    {
+                        ICollection<TrainingPlanDetail> re = new List<TrainingPlanDetail>();
+                        foreach (var detail in request.Details)
                         {
-                            var tpd = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailById(detail.Id ?? default);
-                            if (tpd == null)
+                            if (detail.Id != null)
                             {
-                                throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Training plan detail updated not found !");
+                                var tpd = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailById(detail.Id ?? default);
+                                if (tpd == null)
+                                {
+                                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Training plan detail updated not found !");
+                                }
+                                tpd.Name = detail.Name;
+                                tpd.Description = detail.Description;
+                                tpd.StartTime = detail.StartTime;
+                                tpd.EndTime = detail.EndTime;
+                                tpd.Status = detail.Status;
+                                tpd.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                                re.Add(tpd);
                             }
-                            tpd.Name = detail.Name;
-                            tpd.Description = detail.Description;
-                            tpd.StartTime = detail.StartTime;
-                            tpd.EndTime = detail.EndTime;
-                            //tpd.IsEvaluativeTask = detail.IsEvaluativeTask; 
-                            tpd.UpdatedAt = DateTime.UtcNow.AddHours(7);
-                            re.Add(tpd);
-                        }
-                        else
-                        {
-                            TrainingPlanDetail td = new()
+                            else
                             {
-                                Name = detail.Name,
-                                Description = detail.Description,   
-                                StartTime = detail.StartTime,   
-                                EndTime = detail.EndTime,
-                                //IsEvaluativeTask = detail.IsEvaluativeTask,
-                                Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.ACTIVE,
-                                CreatedAt = DateTime.UtcNow.AddHours(7)
-                        };
-                            re.Add(td);
+                                TrainingPlanDetail td = new()
+                                {
+                                    Name = detail.Name,
+                                    Description = detail.Description,
+                                    StartTime = detail.StartTime,
+                                    EndTime = detail.EndTime,
+                                    //IsEvaluativeTask = detail.IsEvaluativeTask,
+                                    Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.ACTIVE,
+                                    CreatedAt = DateTime.UtcNow.AddHours(7)
+                                };
+                                re.Add(td);
+                            }
                         }
-                    }   
-                    tp.TrainingPlanDetails = re;    
+                        tp.TrainingPlanDetails = re;
+                    }
+
+                    tp.Status = CommonEnums.TRAINING_PLAN_STATUS.PENDING;
+                    tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                    await _unitOfWork.TrainingPlanRepository.Update(tp);
                 }
+                else
+                {
+                    if (request.Name != null)
+                    {
+                        tp.Name = request.Name;
+                    }
 
-                tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
-                await _unitOfWork.TrainingPlanRepository.Update(tp);
+                    if (request.Details != null && request.Details.Count != 0)
+                    {
+                        ICollection<TrainingPlanDetail> re = new List<TrainingPlanDetail>();
+                        foreach (var detail in request.Details)
+                        {
+                            if (detail.Id != null)
+                            {
+                                var tpd = await _unitOfWork.TrainingPlanRepository.GetTrainingPlanDetailById(detail.Id ?? default);
+                                if (tpd == null)
+                                {
+                                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Training plan detail updated not found !");
+                                }
+                                tpd.Name = detail.Name;
+                                tpd.Description = detail.Description;
+                                tpd.StartTime = detail.StartTime;
+                                tpd.EndTime = detail.EndTime;
+                                tpd.Status = detail.Status; 
+                                tpd.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                                re.Add(tpd);
+                            }
+                            else
+                            {
+                                TrainingPlanDetail td = new()
+                                {
+                                    Name = detail.Name,
+                                    Description = detail.Description,
+                                    StartTime = detail.StartTime,
+                                    EndTime = detail.EndTime,
+                                    //IsEvaluativeTask = detail.IsEvaluativeTask,
+                                    Status = CommonEnums.TRAINING_PLAN_DETAIL_STATUS.ACTIVE,
+                                    CreatedAt = DateTime.UtcNow.AddHours(7)
+                                };
+                                re.Add(td);
+                            }
+                        }
+                        tp.TrainingPlanDetails = re;
+                    }
 
+                    tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                    await _unitOfWork.TrainingPlanRepository.Update(tp);
+                }
             }
             catch (Exception ex)
             {

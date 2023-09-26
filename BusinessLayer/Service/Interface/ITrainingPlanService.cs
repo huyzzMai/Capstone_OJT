@@ -2,6 +2,7 @@
 using BusinessLayer.Payload.RequestModel.TrainingPLanRequest;
 using BusinessLayer.Payload.ResponseModel;
 using BusinessLayer.Payload.ResponseModel.TrainingPlanResponse;
+using BusinessLayer.Payload.ResponseModel.UserResponse;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -16,6 +17,8 @@ namespace BusinessLayer.Service.Interface
         Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanList(PagingRequestModel paging, string keyword, int? status);
 
         Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanListByOwner(int id, PagingRequestModel paging, string keyword, int? status);
+
+        Task<List<UnassignedTraineeResponse>> GetListTraineeUnassignedTrainingPlan(int userId);
 
         //Task<BasePagingViewModel<TrainingPlanResponse>> GetTrainingPlanListPending(PagingRequestModel paging, string keyword);
 

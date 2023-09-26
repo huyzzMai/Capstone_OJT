@@ -315,6 +315,27 @@ namespace API.Controllers.TrainingPlanController
         //}
 
         [Authorize(Roles = "Trainer")]
+        [HttpGet("unassigned-trainee")]
+        public async Task<IActionResult> GetUnassignedTraineeList()
+        {
+            try
+            {
+                // Get id of current log in user 
+                int trainerId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
+                return Ok(await trainingService.GetListTraineeUnassignedTrainingPlan(trainerId));
+            }
+            catch (ApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Trainer")]
         [HttpPost("assign-trainee")]
         public async Task<IActionResult> AssignTraineeToTrainingPlan([FromBody] AssignTrainingPlanForTraineeRequest request)
         {

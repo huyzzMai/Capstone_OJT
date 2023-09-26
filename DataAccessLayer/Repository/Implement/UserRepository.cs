@@ -204,6 +204,7 @@ namespace DataAccessLayer.Repository.Implement
             List<User> users = await _context.Users
                 .Where(u => u.Status == CommonEnums.USER_STATUS.ACTIVE && u.Role == CommonEnums.ROLE.TRAINEE && u.UserReferenceId==id)
                 .Include(u => u.Position)
+                .Include(u =>u.UserTrainingPlans)
                 .ToListAsync();
             return users;
         }
