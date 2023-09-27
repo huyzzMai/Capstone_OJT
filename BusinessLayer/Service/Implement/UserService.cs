@@ -391,7 +391,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     PersonalTrainerResponse trainer = new()
                     {
-                        TrainerName = user.Trainer.LastName + user.Trainer.FirstName,
+                        TrainerName = user.Trainer.LastName + " " + user.Trainer.FirstName,
                         AvatarURL = user.Trainer.AvatarURL,
                         TrainerEmail = user.Trainer.Email,
                         TrainerPhoneNumber = user.Trainer.PhoneNumber
@@ -756,7 +756,7 @@ namespace BusinessLayer.Service.Implement
                         Address = trainee.Address,
                         Birthday = trainee.Birthday ?? default,
                         Status = trainee.Status,
-                        TrainerName = trainee.Trainer.LastName + trainee.Trainer.FirstName,
+                        TrainerName = trainee.Trainer.LastName + " " + trainee.Trainer.FirstName,
                         TrainerEmail = trainee.Trainer.Email
                     };
 
