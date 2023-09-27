@@ -95,6 +95,7 @@ namespace BusinessLayer.Service.Implement
                             Id = noti.Id,
                             Title = noti.Title, 
                             Message = noti.Message,
+                            CreatedAt = noti.CreatedAt ?? default,
                             Type = noti.Type ?? default(int),
                             IsRead = noti.IsRead ?? default(bool)
                         };
