@@ -181,13 +181,13 @@ namespace API.Controllers.TemplateController
         }
 
         [Authorize(Roles = "Manager")]     
-        [Route("template-header/{templateId}")]
+        [Route("template-header/{id}")]
         [HttpPost]
-        public async Task<IActionResult> Createtemplateheader(int templateId,[FromBody] CreateTemplateHeaderRequest request)
+        public async Task<IActionResult> Createtemplateheader(int id,[FromBody] CreateTemplateHeaderRequest request)
         {
             try
             {
-                await _headerservice.AddTemplateHeader(templateId,request);
+                await _headerservice.AddTemplateHeader(id,request);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATEHEADER_SIGNALR_MESSAGE.CREATED);
                 return StatusCode(StatusCodes.Status201Created, "Template header is add to template successfully");
             }
@@ -202,13 +202,13 @@ namespace API.Controllers.TemplateController
             }
         }
         [Authorize(Roles = "Manager")]      
-        [Route("template-header/{templateId}")]
+        [Route("template-header/{id}")]
         [HttpPut]
-        public async Task<IActionResult> UpdateTemplate(int templateId, [FromBody] UpdateTemplateHeaderRequest request)
+        public async Task<IActionResult> UpdateTemplate(int id, [FromBody] UpdateTemplateHeaderRequest request)
         {
             try
             {
-                await _headerservice.UpdateTemplateHeader(templateId, request);
+                await _headerservice.UpdateTemplateHeader(id, request);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TEMPLATEHEADER_SIGNALR_MESSAGE.UPDATED);
                 return Ok("Template header is updated successfully.");
             }
