@@ -274,10 +274,6 @@ namespace BusinessLayer.Service.Implement
                 var listcour = await _unitOfWork.CourseRepository.Get(c => c.Status == CommonEnums.COURSE_STATUS.ACTIVE 
                 && c.CoursePositions.Any(cp => cp.IsCompulsory == true && cp.PositionId==user.PositionId), 
                 "CoursePositions", "CourseSkills");
-                if (!listcour.Any())
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
-                }
                 var listresponse = listcour.OrderByDescending(c => c.CreatedAt).Select(c =>
                 {
                     return new CourseResponse()
