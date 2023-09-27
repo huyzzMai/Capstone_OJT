@@ -314,7 +314,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        public async Task CreateFinishTask(string taskId)
+        public async Task CreateFinishTask(string taskId, string creatorId)
         {
             try
             {
@@ -324,9 +324,18 @@ namespace BusinessLayer.Service.Implement
 
                 if (memberIds == null || memberIds.Count == 0)
                 {
+                    card.DueComplete = false;
+                    await client.UpdateCardAsync(card);
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "There is no user for this Task!");
                 }
                 //var memId = memberIds.FirstOrDefault();
+                var check = memberIds.Where(u => u == creatorId).FirstOrDefault();
+                if (check == null)
+                {
+                    card.DueComplete = false;
+                    await client.UpdateCardAsync(card);
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "You not the creator of this Task!");
+                }
 
                 foreach (var memId in memberIds)
                 {

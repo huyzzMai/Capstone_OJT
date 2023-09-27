@@ -756,9 +756,12 @@ namespace BusinessLayer.Service.Implement
                         Address = trainee.Address,
                         Birthday = trainee.Birthday ?? default,
                         Status = trainee.Status,
-                        TrainerName = trainee.Trainer.LastName + " " + trainee.Trainer.FirstName,
-                        TrainerEmail = trainee.Trainer.Email
                     };
+                    if (trainee.Trainer  != null)
+                    {
+                        res.TrainerName = trainee.Trainer.LastName + " " + trainee.Trainer.FirstName;
+                        res.TrainerEmail = trainee.Trainer.Email;
+                    }
 
                     var listSkill = new List<PersonalTraineeResponse.PersonalSkillResponse>();
 

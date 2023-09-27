@@ -22,7 +22,7 @@ namespace BusinessLayer.Service.Interface
 
         Task<BasePagingViewModel<TaskAccomplishedWithTraineeInfoResponse>> GetListTaskAccomplishOfBoard(string boardId, PagingRequestModel paging, int? status);
 
-        Task CreateFinishTask(string taskId);
+        Task CreateFinishTask(string taskId, string creatorId);
 
         Task AcceptTraineeTask(int trainerId, int taskId);
 

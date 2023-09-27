@@ -104,8 +104,8 @@ namespace API.Controllers.TaskController
         private async Task OnDueCardIsMarkedAsComplete(WebhookSmartEventDueMarkedAsComplete args)
         {
             var check = args.CardId;
-            var test = args.MemberCreator;
-            await taskService.CreateFinishTask(args.CardId);
+            var creatorId = args.MemberCreator.Id;
+            await taskService.CreateFinishTask(args.CardId, creatorId);
             await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TASK_MESSAGE.UPDATE_FINISH);
         }
 
