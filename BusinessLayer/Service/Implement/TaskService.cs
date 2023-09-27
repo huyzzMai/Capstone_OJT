@@ -50,6 +50,10 @@ namespace BusinessLayer.Service.Implement
 
                 foreach (var card in cards)
                 {
+                    if (card.DueComplete == true)
+                    {
+                        continue;
+                    }
                     DateTimeOffset og = card.Start ?? default(DateTimeOffset);
                     card.Start = og.ToLocalTime();
 
@@ -62,8 +66,6 @@ namespace BusinessLayer.Service.Implement
                     task.Description = card.Description;
                     task.StartTime = card.Start;
                     task.EndTime = dueCheck;
-                    if (card.DueComplete == false)
-                    {
                         if (dueCheck.CompareTo(DateTimeOffset.UtcNow.AddHours(7)) < 0)
                         {
                             task.Status = CommonEnums.TRAINEE_TASK_STATUS.OVERDUE;
@@ -72,11 +74,6 @@ namespace BusinessLayer.Service.Implement
                         {
                             task.Status = CommonEnums.TRAINEE_TASK_STATUS.IN_PROCESS;
                         }
-                    }
-                    else
-                    {
-                        task.Status = CommonEnums.TRAINEE_TASK_STATUS.FINISHED;
-                    }
 
                     res.Add(task);
                 }
