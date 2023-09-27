@@ -12,7 +12,6 @@ namespace BusinessLayer.Payload.RequestModel.TemplateHeaderRequest
         [Required]
         public string Name { get; set; }
         public double? TotalPoint { get; set; }
-        [Required]
         public string MatchedAttribute { get; set; }
         [Required]
         public bool? IsCriteria { get; set; }

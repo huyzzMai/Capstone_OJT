@@ -44,17 +44,21 @@ namespace BusinessLayer.Service.Implement
         public static List<string> GetPropertyDataforUser(string propertyName, List<User> userList)
         {
             var query = userList.OrderBy(c => c.Id).AsQueryable();
-
-
-            var propertyInfo = typeof(User).GetProperty(propertyName);
-
-            if (propertyInfo == null)
+            if(propertyName=="FullName")
             {
-                throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, $"Property '{propertyName}' not found in User class.");
-            }
+                var values = query.Select(u => u.LastName+" "+u.FirstName).ToList();
+                return values;
+            } else
+            {
+                var propertyInfo = typeof(User).GetProperty(propertyName);
 
-            var values = query.Select(u => (string)propertyInfo.GetValue(u)).ToList();
-            return values;
+                if (propertyInfo == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, $"Property '{propertyName}' not found in User class.");
+                }
+                var values = query.Select(u => (string)propertyInfo.GetValue(u)).ToList();
+                return values;
+            }         
         }
         public static List<string> GetPropertyDataforCriteria(string propertyName, List<UserCriteria> userList)
         {
@@ -74,12 +78,8 @@ namespace BusinessLayer.Service.Implement
                 string stringValue = value?.ToString() ?? "";
                 stringValues.Add(stringValue);
             }
-
             return stringValues;
         }
-
-
-
         public List<string> GetTotal(List<User> list)
         {
             List<string> totalist = new List<string>();
@@ -97,36 +97,39 @@ namespace BusinessLayer.Service.Implement
             foreach (var h in th)
             {
                 List<string> list = new List<string>();
-                if (h.IsCriteria == true)
+                if(h.MatchedAttribute==null)
                 {
-                     if (h.MatchedAttribute == "Total")
+                    foreach(var user in ojt.Trainees)
                     {
-                        List<string> totallist = GetTotal(ojt.Trainees.ToList());
-                        dataMap.Add(totallist);
+                        list.Add("");
+                    }
+                    dataMap.Add(list);
+                    continue;
+                } else if (h.MatchedAttribute == "Total")
+                {
+                    List<string> totallist = GetTotal(ojt.Trainees.ToList());
+                    dataMap.Add(totallist);
+                    continue;
 
-                    } else
-                    {
+                }
+                else if (h.MatchedAttribute == "STT")
+                {
+                    List<string> indexList = GetIndexList(ojt.Trainees.Count());
+                    dataMap.Add(indexList);
+                    continue;
+
+                }
+                if (h.IsCriteria == true)
+                {                   
                         h.UserCriterias = h.UserCriterias.Where(c => ojt.Trainees.Any(o => o.Id == c.UserId)).ToList();
                         list = GetPropertyDataforCriteria(h.MatchedAttribute, h.UserCriterias.ToList());
-                        dataMap.Add(list);
-                    }
-                    
+                        dataMap.Add(list);                    
                 }
                 else
-                {
-                    if (h.MatchedAttribute == "STT")
-                    {
-                        List<string> indexList = GetIndexList(ojt.Trainees.Count());
-                        dataMap.Add(indexList);
-
-                    }                  
-                    else
-                    {
+                {                   
                         var users = await _unitOfWork.UserRepository.Get(c => c.Status == CommonEnums.USER_STATUS.ACTIVE && c.OJTBatch.UniversityId == headers.UniversityId, "OJTBatch");
                         list = GetPropertyDataforUser(h.MatchedAttribute, ojt.Trainees.ToList());
                         dataMap.Add(list);
-                    }
-                    
                 }
             }
             return dataMap;
@@ -209,12 +212,16 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var ojtbatch = await _unitOfWork.OJTBatchRepository.GetFirst(c=>c.Id==batchId);
-                var trainees = await _unitOfWork.UserRepository.Get(c=>c.OJTBatchId==batchId && c.Status==CommonEnums.USER_STATUS.ACTIVE);
-                ojtbatch.Trainees = trainees.ToList();
+                var ojtbatch = await _unitOfWork.OJTBatchRepository.GetFirst(c=>c.Id==batchId);              
                 if (ojtbatch == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Ojt batch not found");
+                }
+                var trainees = await _unitOfWork.UserRepository.Get(c => c.OJTBatchId == batchId && c.Status == CommonEnums.USER_STATUS.ACTIVE);
+                ojtbatch.Trainees = trainees.ToList();
+                if (!trainees.Any())
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Ojt batch not found any traniees");
                 }
                 var template = await _unitOfWork.TemplateRepository.GetFirst(c => c.Status == CommonEnums.TEMPLATE_STATUS.ACTIVE && c.Id == ojtbatch.TemplateId, "TemplateHeaders");
                 if (template == null)
@@ -222,6 +229,10 @@ namespace BusinessLayer.Service.Implement
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Template not found");
                 }
                 var data = await GenerateData(template, ojtbatch);
+                if(!data.Any())
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Date not found");
+                }
                 (int row, int col) = GetRowAndColumnFromCellIndex(template.StartCell);
                 var updatedExcelData = UpdateExcelFile(row, col, excelStream, data);
                 return updatedExcelData;

@@ -10,17 +10,11 @@ namespace BusinessLayer.Payload.RequestModel.TemplateHeaderRequest
     public class UpdateTemplateHeaderRequest
     {
         [Required]
-        public string Name { get; set; }
-        [Required]
-        public double? TotalPoint { get; set; }
-        [Required]
+        public string Name { get; set; }     
+        public double? TotalPoint { get; set; }       
         public string MatchedAttribute { get; set; }
         [Required]
         public bool? IsCriteria { get; set; }
         public int FormulaId { get; set; }
-        [Required]
-        public int? Status { get; set; }
-        [Required]
-        public int? Order { get; set; }
     }
 }

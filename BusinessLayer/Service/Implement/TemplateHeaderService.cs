@@ -78,8 +78,6 @@ namespace BusinessLayer.Service.Implement
                 }
                 temp.MatchedAttribute = request.MatchedAttribute;
                 temp.Name = request.Name;
-                temp.Order = request.Order;
-                temp.Status = request.Status;
                 temp.IsCriteria= request.IsCriteria;
                 temp.FormulaId = request.FormulaId;
                 temp.TotalPoint = request.TotalPoint;
