@@ -37,7 +37,8 @@ namespace BusinessLayer.Service.Implement
                 foreach (var courseSkillRequest in request.CourseSkills)
                 {
                     var skillId = courseSkillRequest.SkillId;
-                    var skill = await _unitOfWork.SkillRepository.GetFirst(s => s.Id == skillId);                      
+                    var skill = await _unitOfWork.SkillRepository.GetFirst(s => s.Id == skillId 
+                    && s.Status == CommonEnums.SKILL_STATUS.ACTIVE);                      
                     if (courseSkillRequest.AfterwardLevel < courseSkillRequest.RecommendedLevel)
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Afterward Level can not smaller than Recommended Level");
@@ -50,7 +51,8 @@ namespace BusinessLayer.Service.Implement
                 foreach (var coursePositionRequest in request.CoursePosition)
                 {
                     var positionId = coursePositionRequest.PositionId;
-                    var position = await _unitOfWork.SkillRepository.GetFirst(s => s.Id == positionId);                    
+                    var position = await _unitOfWork.PositionRepository.GetFirst(s => s.Id == positionId 
+                    && s.Status==CommonEnums.POSITION_STATUS.ACTIVE);                    
                     if (position == null)
                     {
                         throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, $"Position with positionId '{positionId}' not found.");
