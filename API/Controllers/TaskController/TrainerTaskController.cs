@@ -136,6 +136,7 @@ namespace API.Controllers.TaskController
             {
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await taskService.AcceptTraineeTask(userId, taskId);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TASK_MESSAGE.UPDATE_PROCESS);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.CREATE_NOTI);
                 return Ok("Process task successfully.");
             }
@@ -157,6 +158,7 @@ namespace API.Controllers.TaskController
             {
                 int userId = userService.GetCurrentLoginUserId(Request.Headers["Authorization"]);
                 await taskService.RejectTraineeTask(userId, taskId);
+                await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TASK_MESSAGE.UPDATE_PROCESS);
                 await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.CREATE_NOTI);
                 return Ok("Process task successfully.");
             }

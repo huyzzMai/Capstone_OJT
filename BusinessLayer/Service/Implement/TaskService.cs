@@ -22,10 +22,13 @@ namespace BusinessLayer.Service.Implement
 
         public IConfiguration _configuration;
 
-        public TaskService(IUnitOfWork unitOfWork, IConfiguration configuration)
+        private readonly INotificationService _notificationService;
+
+        public TaskService(IUnitOfWork unitOfWork, IConfiguration configuration, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
+            _notificationService = notificationService;
         }
 
         public async Task<BasePagingViewModel<TraineeTaskResponse>> GetAllTaskOfTrainee(int userId, PagingRequestModel paging, int? status)
@@ -384,6 +387,9 @@ namespace BusinessLayer.Service.Implement
 
                 task.Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.DONE;
                 await _unitOfWork.TaskRepository.Update(task);
+
+                await _notificationService.CreateNotificaion(task.UserId, "Task Verified",
+                      "Your task has been verified by the Trainer.", CommonEnums.NOTIFICATION_TYPE.TASK_TYPE);
             }
             catch (Exception ex)
             {
@@ -407,6 +413,9 @@ namespace BusinessLayer.Service.Implement
 
                 task.Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.FAILED;
                 await _unitOfWork.TaskRepository.Update(task);
+
+                await _notificationService.CreateNotificaion(task.UserId, "Task Verified",
+                      "Your task has been verified by the Trainer.", CommonEnums.NOTIFICATION_TYPE.TASK_TYPE);
             }
             catch (Exception ex)
             {
