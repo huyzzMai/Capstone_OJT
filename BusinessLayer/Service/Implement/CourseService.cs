@@ -265,9 +265,16 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == userid && c.Status == CommonEnums.USER_STATUS.ACTIVE && c.Role == CommonEnums.ROLE.TRAINEE);
-                var listcour = await _unitOfWork.CourseRepository.Get(c => c.Status == CommonEnums.COURSE_STATUS.ACTIVE && c.CoursePositions.Any(c => c.IsCompulsory == true && c.Position.Equals(user.Position)), "CoursePositions", "CourseSkills");
-                if (listcour == null)
+                var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == userid 
+                && c.Status == CommonEnums.USER_STATUS.ACTIVE && c.Role == CommonEnums.ROLE.TRAINEE);
+                if(user == null)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Invalid user");
+                }
+                var listcour = await _unitOfWork.CourseRepository.Get(c => c.Status == CommonEnums.COURSE_STATUS.ACTIVE 
+                && c.CoursePositions.Any(cp => cp.IsCompulsory == true && cp.PositionId==user.PositionId), 
+                "CoursePositions", "CourseSkills");
+                if (!listcour.Any())
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
                 }
@@ -425,7 +432,8 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == userid && c.Status == CommonEnums.USER_STATUS.ACTIVE && c.Role == CommonEnums.ROLE.TRAINEE, "UserSkills");
+                var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == userid 
+                && c.Status == CommonEnums.USER_STATUS.ACTIVE && c.Role == CommonEnums.ROLE.TRAINEE, "UserSkills");
                 if (user == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found");
