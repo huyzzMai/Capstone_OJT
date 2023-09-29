@@ -27,7 +27,8 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId);
+                var temp = await _unitOfWork.TemplateRepository.GetFirst(c => c.Id == templateId 
+                && c.Status==CommonEnums.TEMPLATE_STATUS.ACTIVE);
                 if (temp == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Template not found");
