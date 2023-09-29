@@ -41,7 +41,7 @@ namespace DataAccessLayer.Repository.Implement
         public async Task<TrainingPlan> GetTrainingPlanByTraineeIdAndStatusActive(int traineeId)
         {
             var tp = await _context.UserTrainingPlans
-                     .Where(u => u.TrainingPlanId == traineeId)
+                     .Where(u => u.UserId == traineeId)
                      .Include(u => u.TrainingPlan.TrainingPlanDetails)
                      .Select(u => u.TrainingPlan)
                      .Where(u => u.Status == CommonEnums.TRAINING_PLAN_STATUS.ACTIVE)
