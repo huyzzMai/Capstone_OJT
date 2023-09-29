@@ -28,12 +28,14 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var position = await _unitOfWork.PositionRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower() && c.Status == CommonEnums.POSITION_STATUS.ACTIVE);
+                var position = await _unitOfWork.PositionRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower() 
+                && c.Status == CommonEnums.POSITION_STATUS.ACTIVE);
                 if (position != null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Position already exists");
                 }
-                var positioncheck = await _unitOfWork.PositionRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower() && c.Status == CommonEnums.POSITION_STATUS.ACTIVE);
+                var positioncheck = await _unitOfWork.PositionRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower() 
+                && c.Status == CommonEnums.POSITION_STATUS.ACTIVE);
 
                 if (positioncheck != null)
                 {
@@ -66,7 +68,11 @@ namespace BusinessLayer.Service.Implement
                 if (position == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Position not found");
-                }                
+                }
+                if(position.Users.Any(u=>u.Status==CommonEnums.USER_STATUS.ACTIVE))
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Some active users have this position");
+                }
                 position.Status = CommonEnums.POSITION_STATUS.INACTIVE;
                 await _unitOfWork.PositionRepository.Update(position);
             }
@@ -155,7 +161,7 @@ namespace BusinessLayer.Service.Implement
                 {
                     listposition = SearchPositions(searchTerm, filterStatus, listposition.ToList());
                 }
-                var listresponse = listposition.Select(c =>
+                var listresponse = listposition.OrderByDescending(p=>p.CreatedAt).Select(c =>
                 {
                     return new ListPostionResponse()
                     {
@@ -191,12 +197,18 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var position = await _unitOfWork.PositionRepository.GetFirst(c => c.Id == id);
+                var position = await _unitOfWork.PositionRepository.GetFirst(c => c.Id == id,"Users", "CoursePositions");
                 if (position == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Position not found");
                 }
-                var positioncheck = await _unitOfWork.SkillRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower() && c.Status == CommonEnums.POSITION_STATUS.ACTIVE);
+                if (position.Users.Any(u => u.Status == CommonEnums.USER_STATUS.ACTIVE))
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Some active users have this position");
+
+                }
+                var positioncheck = await _unitOfWork.SkillRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower() 
+                && c.Status == CommonEnums.POSITION_STATUS.ACTIVE);
 
                 if (positioncheck != null)
                 {

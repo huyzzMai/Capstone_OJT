@@ -29,7 +29,8 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {               
-                var skillcheck = await _unitOfWork.SkillRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower() && c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
+                var skillcheck = await _unitOfWork.SkillRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower() 
+                && c.Status == CommonEnums.SKILL_STATUS.ACTIVE);
 
                 if (skillcheck != null)
                 {
@@ -66,12 +67,12 @@ namespace BusinessLayer.Service.Implement
                 var ck = skill.CourseSkills.Any(c => c.Course.Status == CommonEnums.COURSE_STATUS.ACTIVE);
                 if(ck)
                 {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! There are some active course which use this skill");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Disable fail! There are some active course which use this skill");
                 }
                 var uk= skill.UserSkills.Any(c=>c.User.Status == CommonEnums.USER_STATUS.ACTIVE);
                 if(uk)
                 {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! There are some active user which use this skill");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Disable fail! There are some active user which use this skill");
                 }
                 skill.Status = CommonEnums.SKILL_STATUS.INACTIVE;
                 await _unitOfWork.SkillRepository.Update(skill);
@@ -94,17 +95,7 @@ namespace BusinessLayer.Service.Implement
                 if (skill == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Skill not found");
-                }
-                var ck = skill.CourseSkills.Any(c => c.Course.Status == CommonEnums.COURSE_STATUS.ACTIVE);
-                if (ck)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! There are some active course which use this skill");
-                }
-                var uk = skill.UserSkills.Any(c => c.User.Status == CommonEnums.USER_STATUS.ACTIVE);
-                if (uk)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Delete fail! There are some active user which use this skill");
-                }
+                }               
                 skill.Status = CommonEnums.SKILL_STATUS.ACTIVE;
                 await _unitOfWork.SkillRepository.Update(skill);
             }
@@ -206,17 +197,27 @@ namespace BusinessLayer.Service.Implement
         public async Task UpdateSkill(int skillId, UpdateSkillRequest request)
         {
             try
-            {         
-                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId);
+            {
+                var listskill = await _unitOfWork.SkillRepository.Get();
+                var skill = await _unitOfWork.SkillRepository.GetFirst(c => c.Id == skillId 
+                , "CourseSkills", "UserSkills");
                 if (skill == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Skill not found");
-                }
-                var skillcheck = await _unitOfWork.SkillRepository.GetFirst(c => c.Name.ToLower() == request.Name.Trim().ToLower());
-
-                if (skillcheck != null)
+                }           
+                var ck = skill.CourseSkills.Any(c => c.Course.Status == CommonEnums.COURSE_STATUS.ACTIVE);
+                if (ck)
                 {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Duplicate skill names");
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Update fail! There are some active courses which use this skill");
+                }
+                var uk = skill.UserSkills.Any(c => c.User.Status == CommonEnums.USER_STATUS.ACTIVE);
+                if (uk)
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Update fail! There are some active users which use this skill");
+                }
+                if(listskill.Any(c=>c.Name==skill.Name && skill.Name.ToLower() != request.Name.ToLower()))
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Name duplicate");
                 }
                 skill.Name = request.Name;
                 skill.Status = request.Status;

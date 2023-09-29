@@ -122,6 +122,12 @@ namespace BusinessLayer.Service.Implement
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Course not found");
                 }
+                if (cour.Certificates.Any(c => c.Status == CommonEnums.CERTIFICATE_STATUS.PENDING
+                || c.Status == CommonEnums.CERTIFICATE_STATUS.NOT_SUBMIT
+                || c.Status == CommonEnums.CERTIFICATE_STATUS.DENY))
+                {
+                    throw new ApiException(CommonEnums.CLIENT_ERROR.CONFLICT, "Some submission is not verified yet");
+                }
                 cour.Status = CommonEnums.COURSE_STATUS.INACTIVE;
                 await _unitOfWork.CourseRepository.Update(cour);
                 var cercour = cour.Certificates.Where(c => c.Status != CommonEnums.CERTIFICATE_STATUS.DELETED);
@@ -171,9 +177,11 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == userid && c.Status == CommonEnums.USER_STATUS.ACTIVE
+                var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == userid 
+                && c.Status == CommonEnums.USER_STATUS.ACTIVE
                 && c.Role == CommonEnums.ROLE.TRAINEE, "UserSkills");
-                var course = await _unitOfWork.CourseRepository.GetFirst(c=>c.Id==courseId && c.Status==CommonEnums.COURSE_STATUS.ACTIVE);
+                var course = await _unitOfWork.CourseRepository.GetFirst(c=>c.Id==courseId 
+                && c.Status==CommonEnums.COURSE_STATUS.ACTIVE);
                 if (user == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Invalid user");
@@ -216,9 +224,11 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == traineeId && c.Status == CommonEnums.USER_STATUS.ACTIVE
+                var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == traineeId 
+                && c.Status == CommonEnums.USER_STATUS.ACTIVE
                 && c.Role == CommonEnums.ROLE.TRAINEE, "UserSkills");
-                var course = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId && c.Status == CommonEnums.COURSE_STATUS.ACTIVE);
+                var course = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId 
+                && c.Status == CommonEnums.COURSE_STATUS.ACTIVE);
                 if (user == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Invalid user");
@@ -268,7 +278,8 @@ namespace BusinessLayer.Service.Implement
             try
             {
                 var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == userid 
-                && c.Status == CommonEnums.USER_STATUS.ACTIVE && c.Role == CommonEnums.ROLE.TRAINEE);
+                && c.Status == CommonEnums.USER_STATUS.ACTIVE 
+                && c.Role == CommonEnums.ROLE.TRAINEE);
                 if(user == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "Invalid user");
@@ -276,7 +287,7 @@ namespace BusinessLayer.Service.Implement
                 var listcour = await _unitOfWork.CourseRepository.Get(c => c.Status == CommonEnums.COURSE_STATUS.ACTIVE 
                 && c.CoursePositions.Any(cp => cp.IsCompulsory == true && cp.PositionId==user.PositionId), 
                 "CoursePositions", "CourseSkills");
-                if (!listcour.Any())
+                if (listcour==null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
                 }
@@ -435,7 +446,8 @@ namespace BusinessLayer.Service.Implement
             try
             {
                 var user = await _unitOfWork.UserRepository.GetFirst(c => c.Id == userid 
-                && c.Status == CommonEnums.USER_STATUS.ACTIVE && c.Role == CommonEnums.ROLE.TRAINEE, "UserSkills");
+                && c.Status == CommonEnums.USER_STATUS.ACTIVE 
+                && c.Role == CommonEnums.ROLE.TRAINEE, "UserSkills");
                 if (user == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "User not found");
@@ -506,7 +518,8 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var c = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId, "CoursePositions", "CourseSkills","Certificates");
+                var c = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId,
+                    "CoursePositions", "CourseSkills","Certificates");
                 if (c == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "Course not found");
@@ -557,7 +570,8 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var listcour = await _unitOfWork.CourseRepository.Get(c => c.Status == CommonEnums.COURSE_STATUS.ACTIVE && c.Certificates.Any(c => c.UserId == userid), "CoursePositions", "Certificates");
+                var listcour = await _unitOfWork.CourseRepository.Get(c => c.Status == CommonEnums.COURSE_STATUS.ACTIVE 
+                && c.Certificates.Any(c => c.UserId == userid), "CoursePositions", "Certificates");
                 if (listcour == null)
                 {
                     throw new ApiException(CommonEnums.CLIENT_ERROR.NOT_FOUND, "No courses found");
@@ -646,7 +660,8 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId, "CourseSkills", "Certificates");
+                var cour = await _unitOfWork.CourseRepository.GetFirst(c => c.Id == courseId, 
+                    "CourseSkills", "Certificates");
                 var courskill = cour.CourseSkills.Where(c=>c.SkillId==request.SkillId).FirstOrDefault();
                 if (courskill != null)
                 {

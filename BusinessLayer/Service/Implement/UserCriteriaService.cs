@@ -79,7 +79,9 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {             
-                var users = await _unitOfWork.UserRepository.Get(c => c.UserReferenceId == tranerId && c.OJTBatchId == ojtBatchId, "UserCriterias");
+                var users = await _unitOfWork.UserRepository.Get(c => c.UserReferenceId == tranerId 
+                && c.OJTBatchId == ojtBatchId 
+                && c.Status==CommonEnums.USER_STATUS.ACTIVE, "UserCriterias");
                 OperandsHandler handler=null;
                 if (users == null)
                 {
@@ -125,46 +127,7 @@ namespace BusinessLayer.Service.Implement
             }
         }
 
-        //public async Task<TaskCounterResponse> CountTaskOfTrainee(int traineeId)
-        //{
-        //    try
-        //    {
-        //        var user = await _unitOfWork.UserRepository.GetUserByIdAndStatusActive(traineeId);
-        //        if (user == null)
-        //        {
-        //            throw new Exception("User not found!");
-        //        }
-        //        var trelloUserId = user.TrelloId;
-        //        if(trelloUserId==null)
-        //        {
-        //            return null;
-        //        }
-        //        var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
-
-        //        var cards = await client.GetCardsForMemberAsync(trelloUserId);
-
-        //        int totalTask = cards.Count();
-
-        //        var doneTasks = await _unitOfWork.TaskRepository.GetListTaskAccomplishedDoneOfTrainee(traineeId);
-
-        //        int totalDoneTask = doneTasks.Count();
-
-        //        int totalOverdueTask = totalTask - totalDoneTask;
-
-        //        TaskCounterResponse result = new()
-        //        {
-        //            TotalTask = totalTask,
-        //            TaskComplete = totalDoneTask,
-        //            TaskOverdue = totalOverdueTask
-        //        };
-        //        return result;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
-
+       
         public async Task UpdatePoints(int trainerId, List<UpdateCriteriaRequest> requests)
         {
             try
@@ -201,7 +164,8 @@ namespace BusinessLayer.Service.Implement
         {
             try
             {
-                var users = await _unitOfWork.UserRepository.Get(c => c.UserReferenceId == tranerId && c.OJTBatchId == ojtBatchId, "UserCriterias");
+                var users = await _unitOfWork.UserRepository.Get(c => c.UserReferenceId == tranerId 
+                && c.OJTBatchId == ojtBatchId, "UserCriterias");
                 
                 var res = users.Select(
                 user =>
