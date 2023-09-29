@@ -107,6 +107,7 @@ namespace API.Controllers.TaskController
             var creatorId = args.MemberCreator.Id;
             await taskService.CreateFinishTask(args.CardId, creatorId);
             await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.TASK_MESSAGE.UPDATE_FINISH);
+            await _hubContext.Clients.All.SendAsync(CommonEnumsMessage.NOTIFICATION_MESSAGE.CREATE_NOTI);
         }
 
         [AllowAnonymous]

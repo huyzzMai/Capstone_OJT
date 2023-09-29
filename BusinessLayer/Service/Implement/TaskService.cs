@@ -361,9 +361,12 @@ namespace BusinessLayer.Service.Implement
                         Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.PENDING,
                         UserId = trainee.Id
                     };
-
                     await _unitOfWork.TaskRepository.Add(ta);
                 }
+                var notiUser = await _unitOfWork.UserRepository.GetUserByTrelloIdAndStatusActive(creatorId);
+
+                await _notificationService.CreateNotificaion(notiUser.UserReferenceId ?? default, "Task Verified",
+                  "Your trainee has finished a task. Go verify it.", CommonEnums.NOTIFICATION_TYPE.TASK_TYPE);
             }
             catch (Exception ex)
             {
