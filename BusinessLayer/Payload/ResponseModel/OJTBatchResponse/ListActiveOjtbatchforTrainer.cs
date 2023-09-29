@@ -24,5 +24,7 @@ namespace BusinessLayer.Payload.ResponseModel.OJTBatchResponse
 
         public string UniversityName { get; set; }
 
+        public int? templatedId { get; set; }
+
     }
 }
