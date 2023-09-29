@@ -12,6 +12,6 @@ namespace BusinessLayer.Payload.RequestModel.CriteriaRequest
         [Required]
         public int TemplateHeaderId { get; set; }
         [Required]
-        public int Point { get; set; }
+        public double Point { get; set; }
     }
 }
