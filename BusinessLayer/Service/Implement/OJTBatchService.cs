@@ -115,6 +115,7 @@ namespace BusinessLayer.Service.Implement
                                 NumberTrainee = ojt.Trainees.Count(),
                                 UniversityCode = ojt.University.UniversityCode,
                                 UniversityName=ojt.University.Name,
+                                templatedId=ojt.TemplateId,
                                 Status="Not Grade yet"
                             };
                         }
@@ -129,6 +130,7 @@ namespace BusinessLayer.Service.Implement
                                 NumberTrainee = ojt.Trainees.Count(),
                                 UniversityCode = ojt.University.UniversityCode,
                                 UniversityName = ojt.University.Name,
+                                templatedId= ojt.TemplateId,
                                 Status = "Graded"
 
                             };
