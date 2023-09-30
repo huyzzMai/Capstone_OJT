@@ -303,8 +303,8 @@ namespace BusinessLayer.Service.Implement
                 }
                 //await _unitOfWork.UserSkillRepository.UpdateUserSkillCurrentLevel(request.UserId, request.CourseId);
 
-                await _notificationService.CreateNotificaion(request.UserId, "Certificate Verified",
-                      "Your certificate has been approved by the Trainer.", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
+                await _notificationService.CreateNotificaion(request.UserId, "Xử Lý Chứng Chỉ",
+                      "Chứng chỉ của bạn đã được xác nhận bởi đào tạo viên.", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
             }
             catch (Exception e)
             {
@@ -340,8 +340,8 @@ namespace BusinessLayer.Service.Implement
                 cer.Status = CommonEnums.CERTIFICATE_STATUS.DENY;
                 await _unitOfWork.CertificateRepository.Update(cer);
 
-                await _notificationService.CreateNotificaion(request.UserId, "Certificate Denied",
-                      "Your certificate has been denied by the Trainer.", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
+                await _notificationService.CreateNotificaion(request.UserId, "Xử Lý Chứng Chỉ",
+                      "Chứng chỉ của bạn đã bị từ chối bởi đào tạo viên.", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
             }
             catch (Exception e)
             {
@@ -372,8 +372,8 @@ namespace BusinessLayer.Service.Implement
                 cer.Status = CommonEnums.CERTIFICATE_STATUS.PENDING;
                 cer.SubmitDate = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.CertificateRepository.Update(cer);
-                await _notificationService.CreateNotificaion(user.UserReferenceId ??default, "Certificate submit",
-                    $"Trainee '{user.FirstName}' has submit certificate. Please evaluate", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
+                await _notificationService.CreateNotificaion(user.UserReferenceId ??default, "Nộp Chứng Chỉ",
+                    $"Thực tập viên '{user.FirstName}' đã nộp bằng. Hãy vào xác nhận.", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
 
             }
             catch (Exception e)
@@ -409,8 +409,8 @@ namespace BusinessLayer.Service.Implement
                 cer.Status = CommonEnums.CERTIFICATE_STATUS.PENDING;
                 cer.SubmitDate = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.CertificateRepository.Update(cer);
-                await _notificationService.CreateNotificaion(user.UserReferenceId ?? default, "Certificate submit",
-                    $"Trainee '{user.FirstName}' has submit certificate. Please evaluate", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
+                await _notificationService.CreateNotificaion(user.UserReferenceId ?? default, "Nộp Lại Chứng Chỉ",
+                    $"Thực tập viên '{user.FirstName}' đã nộp bằng. Hãy vào xác nhận.", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
             }
             catch (Exception e)
             {

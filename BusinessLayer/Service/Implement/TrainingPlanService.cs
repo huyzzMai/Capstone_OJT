@@ -474,8 +474,8 @@ namespace BusinessLayer.Service.Implement
                         IsOwner = false
                     };
                     await _unitOfWork.UserTrainingPlanRepository.Add(utp);
-                    await _notificationService.CreateNotificaion(item.TraineeId, "Training Plan Assigned",
-                                                "You have been assigned to a training plan.", CommonEnums.NOTIFICATION_TYPE.TRAINING_PLAN_TYPE);
+                    await _notificationService.CreateNotificaion(item.TraineeId, "Phân Công Kế Hoạch Đào Tạo",
+                                                "Bạn đã được phân công vào 1 kế hoạch đào tạo.", CommonEnums.NOTIFICATION_TYPE.TRAINING_PLAN_TYPE);
                 }
             }
             catch (Exception ex)
@@ -817,8 +817,8 @@ namespace BusinessLayer.Service.Implement
                 tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.TrainingPlanRepository.Update(tp);
 
-                await _notificationService.CreateNotificaion(owner.Id, "Training Plan Accepted",
-                      "Your training plan is accepted.", CommonEnums.NOTIFICATION_TYPE.TRAINING_PLAN_TYPE);
+                await _notificationService.CreateNotificaion(owner.Id, "Chấp Nhận Kế Hoạch Đào Tạo",
+                      "Kế hoạch đào tạo của bạn đã được chấp nhận.", CommonEnums.NOTIFICATION_TYPE.TRAINING_PLAN_TYPE);
             }
             catch (Exception ex)
             {
@@ -850,8 +850,8 @@ namespace BusinessLayer.Service.Implement
                 tp.UpdatedAt = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.TrainingPlanRepository.Update(tp);
 
-                await _notificationService.CreateNotificaion(owner.Id, "Training Plan Accepted",
-                      "Your training plan is accepted.", CommonEnums.NOTIFICATION_TYPE.TRAINING_PLAN_TYPE);
+                await _notificationService.CreateNotificaion(owner.Id, "Từ Chối Kế Hoạch Đào Tạo",
+                      "Kế hoạch đào tạo của bạn đã bị từ chối.", CommonEnums.NOTIFICATION_TYPE.TRAINING_PLAN_TYPE);
             }
             catch (Exception ex)
             {

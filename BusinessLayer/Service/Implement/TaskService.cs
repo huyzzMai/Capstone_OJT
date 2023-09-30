@@ -365,8 +365,8 @@ namespace BusinessLayer.Service.Implement
                 }
                 var notiUser = await _unitOfWork.UserRepository.GetUserByTrelloIdAndStatusActive(creatorId);
 
-                await _notificationService.CreateNotificaion(notiUser.UserReferenceId ?? default, "Task Verified",
-                  "Your trainee has finished a task. Go verify it.", CommonEnums.NOTIFICATION_TYPE.TASK_TYPE);
+                await _notificationService.CreateNotificaion(notiUser.UserReferenceId ?? default, "Xác Nhận Công Việc",
+                  "Thực tập viên vừa hoàn thành 1 côn việc. Hãy vào xác nhận.", CommonEnums.NOTIFICATION_TYPE.TASK_TYPE);
             }
             catch (Exception ex)
             {
@@ -391,8 +391,8 @@ namespace BusinessLayer.Service.Implement
                 task.Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.DONE;
                 await _unitOfWork.TaskRepository.Update(task);
 
-                await _notificationService.CreateNotificaion(task.UserId, "Task Verified",
-                      "Your task has been verified by the Trainer.", CommonEnums.NOTIFICATION_TYPE.TASK_TYPE);
+                await _notificationService.CreateNotificaion(task.UserId, "Xử Lý Công Việc",
+                      "Công việc của bạn đã được đào tạo viên xử lý.", CommonEnums.NOTIFICATION_TYPE.TASK_TYPE);
             }
             catch (Exception ex)
             {
@@ -417,8 +417,8 @@ namespace BusinessLayer.Service.Implement
                 task.Status = CommonEnums.ACCOMPLISHED_TASK_STATUS.FAILED;
                 await _unitOfWork.TaskRepository.Update(task);
 
-                await _notificationService.CreateNotificaion(task.UserId, "Task Verified",
-                      "Your task has been verified by the Trainer.", CommonEnums.NOTIFICATION_TYPE.TASK_TYPE);
+                await _notificationService.CreateNotificaion(task.UserId, "Xử Lý Công Việc",
+                      "Công việc của bạn đã được đào tạo viên xử lý.", CommonEnums.NOTIFICATION_TYPE.TASK_TYPE);
             }
             catch (Exception ex)
             {
