@@ -13,6 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TrelloDotNet;
+using static ClosedXML.Excel.XLPredefinedFormat;
 
 namespace BusinessLayer.Service.Implement
 {
@@ -72,7 +73,9 @@ namespace BusinessLayer.Service.Implement
                 }
                 finalResult = doubleValue;
             }
-            return finalResult;
+            finalResult = (double)(finalResult * templateheader.TotalPoint);
+            double rounded = Math.Round(finalResult, 2);
+            return rounded;
         }
 
         public async Task<List<UserCriteriaResponse>> GetUserCriteriaToGrade(int tranerId, int ojtBatchId)
