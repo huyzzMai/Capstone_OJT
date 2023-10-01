@@ -297,7 +297,10 @@ namespace BusinessLayer.Service.Implement
                     }
                     else
                     {
-                        check.CurrentLevel = skill.AfterwardLevel;
+                        if (check.CurrentLevel < skill.AfterwardLevel)
+                        {
+                            check.CurrentLevel = skill.AfterwardLevel;
+                        }
                         await _unitOfWork.UserSkillRepository.Update(check);
                     }
                 }
