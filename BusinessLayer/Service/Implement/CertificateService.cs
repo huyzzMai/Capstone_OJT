@@ -376,7 +376,7 @@ namespace BusinessLayer.Service.Implement
                 cer.SubmitDate = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.CertificateRepository.Update(cer);
                 await _notificationService.CreateNotificaion(user.UserReferenceId ??default, "Nộp Chứng Chỉ",
-                    $"Thực tập viên '{user.FirstName}' đã nộp bằng. Hãy vào xác nhận.", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
+                    $"Thực tập viên {user.FirstName} đã nộp bằng. Hãy vào xác nhận.", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
 
             }
             catch (Exception e)
@@ -413,7 +413,7 @@ namespace BusinessLayer.Service.Implement
                 cer.SubmitDate = DateTime.UtcNow.AddHours(7);
                 await _unitOfWork.CertificateRepository.Update(cer);
                 await _notificationService.CreateNotificaion(user.UserReferenceId ?? default, "Nộp Lại Chứng Chỉ",
-                    $"Thực tập viên '{user.FirstName}' đã nộp bằng. Hãy vào xác nhận.", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
+                    $"Thực tập viên {user.FirstName} đã nộp bằng. Hãy vào xác nhận.", CommonEnums.NOTIFICATION_TYPE.CERTIFICATE_TYPE);
             }
             catch (Exception e)
             {
