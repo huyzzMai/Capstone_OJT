@@ -597,19 +597,22 @@ namespace BusinessLayer.Service.Implement
             {
                 var client = new TrelloClient(_configuration["TrelloWorkspace:ApiKey"], _configuration["TrelloWorkspace:token"]);
                 var cards = await client.GetCardsOnBoardAsync(boardId);
-                if (cards == null || cards.Count == 0)
-                {
-                    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "There is no task in this Board!");
-                }
+                //if (cards == null || cards.Count == 0)
+                //{
+                //    throw new ApiException(CommonEnums.CLIENT_ERROR.BAD_REQUET, "There is no task in this Board!");
+                //}
                 List<TaskAccomplished> tasks = new();
-                foreach (var card in cards)
+                if (cards.Count != 0)
                 {
-                    var task = await _unitOfWork.TaskRepository.GetTaskAccomplishedByTrelloTaskId(card.Id); 
-                    if (task == null)
+                    foreach (var card in cards)
                     {
-                        continue;
+                        var task = await _unitOfWork.TaskRepository.GetTaskAccomplishedByTrelloTaskId(card.Id);
+                        if (task == null)
+                        {
+                            continue;
+                        }
+                        tasks.Add(task);
                     }
-                    tasks.Add(task);
                 }
 
                 if (status != null)
