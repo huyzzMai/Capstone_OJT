@@ -97,7 +97,7 @@ namespace BusinessLayer.Service.Implement
             foreach (var h in th)
             {
                 List<string> list = new List<string>();
-                if(h.MatchedAttribute==null)
+                if(string.IsNullOrEmpty(h.MatchedAttribute))
                 {
                     foreach(var user in ojt.Trainees)
                     {
